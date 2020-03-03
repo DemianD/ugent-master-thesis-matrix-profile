@@ -30,11 +30,11 @@ const NavLink = ({ children, ...props }) => {
 
 const Header = () => {
   return (
-    <header className="mt-6 flex items-center justify-between w-5/6">
+    <header className="w-full max-w-5xl flex items-center justify-between mt-6">
       <NavLink to="/">
         <Logo className="w-10 h-10" />
       </NavLink>
-      <nav>
+      <nav className="hidden sm:block">
         <NavLink to="/">Home</NavLink>
         <NavLink to="/explore">Explore</NavLink>
         <NavLink to="/query">Query</NavLink>

@@ -4,6 +4,7 @@ import { H1 } from '../components/Heading';
 import Input from '../components/Input';
 import Label from '../components/Label';
 import Comunica from '../components/Comunica';
+import Content from '../components/Content';
 
 const Query = () => {
   const [execute, setExecute] = useState(false);
@@ -34,7 +35,7 @@ const Query = () => {
         </a>
         .
       </span>
-      <section className="w-9/12 mt-10">
+      <Content className="mt-10">
         <div className="max-w-md">
           <div className="mb-4">
             <Label htmlFor="datasource">Datasource</Label>
@@ -66,7 +67,7 @@ const Query = () => {
           onData={onDataCallback}
           onEnd={onEndCallback}
         />
-      </section>
+      </Content>
     </>
   );
 };

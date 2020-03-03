@@ -1,5 +1,6 @@
 import React from 'react';
 import { H1, H3 } from '../components/Heading';
+import Content from '../components/Content';
 
 const Home = () => {
   return (
@@ -10,21 +11,20 @@ const Home = () => {
           on the linked, semantic web
         </H1>
       </div>
-      <div className="w-8/12 mt-16 flex flex-col md:flex-row">
+      <Content className="mt-16 flex flex-col md:flex-row">
         <section className="w-full mb-8 md:w-1/2">
           <H3>Abstract</H3>
           <p className="mb-2">
-            This is part of a master thesis where time series are published on
-            the semantic web using linked data.
+            This is part of a master thesis where time series are published on the semantic web
+            using linked data.
           </p>
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
           </p>
         </section>
-      </div>
+      </Content>
     </>
   );
 };
