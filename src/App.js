@@ -3,6 +3,7 @@ import { Router } from '@reach/router';
 import Header from './components/Header';
 import Home from './screens/Home';
 import Explore from './screens/Explore';
+import Query from './screens/Query';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Router className="w-full flex flex-col items-center">
           <Home path="/" />
           <Explore path="/explore" />
+          <Query path="/query" />
         </Router>
       </div>
       <footer className="text-xs text-blue-1100 mb-2">
