@@ -14,7 +14,7 @@ function App() {
           <Explore path="/explore" />
         </Router>
       </div>
-      <footer className="text-xs text-gray-900 mb-2">
+      <footer className="text-xs text-blue-1100 mb-2">
         &copy; {new Date().getFullYear()} Demian Dekoninck
       </footer>
     </div>
