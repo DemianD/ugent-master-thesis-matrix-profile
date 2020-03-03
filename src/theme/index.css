@@ -13,6 +13,9 @@ html,
 }
 
 input,
-button {
+textarea,
+button,
+button:focus,
+button:active {
   outline: none;
 }
