@@ -8,9 +8,19 @@ import Content from '../components/Content';
 
 const Query = () => {
   const [execute, setExecute] = useState(false);
-  const [datasource, setDatasource] = useState('http://fragments.dbpedia.org/2015/en');
+  const [datasource, setDatasource] = useState(
+    'http://127.0.0.1:8000/P10/parkingNumberOfVacantSpaces/fragment?page=2020-03-04T16:00:00.000Z'
+  );
   const [query, setQuery] = useState(
-    'SELECT * WHERE { ?s ?p <http://dbpedia.org/resource/Belgium>. ?s ?p ?o } LIMIT 100'
+    `PREFIX sosa: <http://www.w3.org/ns/sosa/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT ?simpleResult ?resultTime
+WHERE { 
+    ?s rdf:type sosa:Observation.
+    ?s sosa:hasSimpleResult ?simpleResult.
+    ?s sosa:resultTime ?resultTime.
+}`
   );
 
   const onDataCallback = useCallback(data => {
