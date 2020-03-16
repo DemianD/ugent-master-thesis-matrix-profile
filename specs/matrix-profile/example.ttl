@@ -1,0 +1,45 @@
+@prefix hydra: <http://www.w3.org/ns/hydra/core#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix sosa: <http://www.w3.org/ns/sosa/>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix mp: <http://www.example.com/TODO/>.
+
+@base <https://example.com/timeseries/>.
+
+## Collection Page
+
+<A> rdf:type <hydra:Collection>;
+    hydra:totalItems "2";
+    hydra:member <A/2020-02-28T16:02:00>, <A/2020-02-28T16:03:00>;
+    mp:matrixProfile <A/matrix-profiles/10080>. # This link should be followed by the client
+
+<A/2020-02-28T16:02:00> a sosa:Observation;
+                        sosa:hasFeatureOfInterest <P10>;
+                        sosa:observedProperty <P10/A>;
+                        sosa:hasSimpleResult 100;
+                        sosa:resultTime "2020-02-28T16:02:00"^^xsd:dateTime.
+
+<A/2020-02-28T16:03:00> a sosa:Observation;
+                        sosa:hasFeatureOfInterest <P10>;
+                        sosa:observedProperty <P10/A>;
+                        sosa:hasSimpleResult 105;
+                        sosa:resultTime "2020-02-28T16:03:00"^^xsd:dateTime.
+
+## Matrix Profile Page
+
+<A/matrix-profiles/10080> a mp:MatrixProfile;
+                          mp:belongsTo <A>;
+                          mp:windowSize 10080;
+                          # hydra:member ... -> Do we need this?
+
+<A/matrix-profiles/10080/2020-02-28T16:02:00> a mp:Result;
+                                              mp:matrixProfile <A/matrix-profiles/10080>; # The domain in the spec is currently hydra:Collection. 
+                                              mp:dataPoint <A/2020-02-28T16:02:00>;
+                                              mp:value 0.0;
+                                              mp:index "2020-02-28T16:03:00"^^xsd:dateTime.
+
+<A/matrix-profiles/10080/2020-02-28T16:03:00> a mp:Result;
+                                              mp:matrixProfile <A/matrix-profiles/10080>;
+                                              mp:dataPoint <A/2020-02-28T16:03:00>;
+                                              mp:value 0.0;
+                                              mp:index "2020-02-28T16:02:00"^^xsd:dateTime.

@@ -1,0 +1,67 @@
+@prefix cc: <http://creativecommons.org/ns#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix sosa: <http://www.w3.org/ns/sosa/>.
+@prefix hydra: <http://www.w3.org/ns/hydra/core#>.
+@prefix mp: <http://www.example.com/TODO/>.
+
+mp: a foaf:Document;
+    foaf:primaryTopic mp:Ontology;
+    cc:license <http://creativecommons.org/licenses/by/4.0/>.
+
+mp:Ontology a owl:Ontology;
+            rdfs:label "Matrix Profile Ontology"@en;
+            rdfs:comment "Ontology for describing matrix profile values and indexes"@en.
+
+mp:matrixProfile a rdf:Property;
+                 rdfs:label "Has matrix profile"@en;
+                 rdfs:comment "A mp:matrixProfile is used to define matrix profiles that are present for a collection"@en;
+                 rdfs:domain hydra:Collection; # The domain can also be a mp:Result, can we define multiple domains? Or should we define another property?
+                 rdfs:range mp:MatrixProfile.
+
+## MatrixProfile
+
+# Should this class contain a property like hydra:member to list all members?
+
+mp:MatrixProfile a rdfs:Class;
+                 rdfs:label "Matrix Profile"@en;
+                 rdfs:comment "A class to describe the matrix profile properties"@en;
+                 rdfs:subClassOf hydra:Collection.
+
+mp:windowSize a rdf:Property;
+              rdfs:label "Window size"@en;
+              rdfs:comment "Contains the window size of the matrix profile"@en;
+              rdfs:domain mp:MatrixProfile;
+              rdfs:range xsd:integer.
+
+mp:belongsTo a rdf:Property;
+             rdfs:label "Belongs to collection"@en;
+             rdfs:comment "A mp:belongsTo is used to link back to the collection"@en;
+             rdfs:domain mp:MatrixProfile;
+             rdfs:range hydra:Collection.
+
+## Result
+
+mp:Result a rdfs:Class;
+          rdfs:label "Result"@en;
+          rdfs:comment "A class to define the result of the matrix profile for a data point"@en.
+
+mp:dataPoint a rdf:Property;
+             rdfs:label "Data point"@en;
+             rdfs:comment "Links to the corresponding object"@en;
+             rdfs:domain mp:Result.
+
+mp:value a rdf:Property;
+         rdfs:label "Value"@en;
+         rdfs:comment "The value that corresonds to the matrix profile"@en;
+         rdfs:domain mp:Result;
+         rdfs:range xsd:decimal.
+
+mp:index a rdf:Property;
+         rdfs:label "Index"@en;
+         rdfs:comment "Contains the date of the nearest neighbor of the data point"@en;
+         rdfs:domain mp:Result;
+         rdfs:range xsd:dateTime. # TBD: We can also specify the URI of the appropriate data point
