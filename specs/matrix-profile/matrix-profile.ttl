@@ -5,7 +5,6 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
 @prefix sosa: <http://www.w3.org/ns/sosa/>.
-@prefix hydra: <http://www.w3.org/ns/hydra/core#>.
 @prefix mp: <http://www.example.com/TODO/>.
 
 mp: a foaf:Document;
