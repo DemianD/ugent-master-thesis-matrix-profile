@@ -49,3 +49,4 @@ A property to define on a `hydra:collection` to state that it has a matrix profi
 ## Future work
 
 - Describe snippets
+- https://github.com/TREEcg/specification/issues/15
