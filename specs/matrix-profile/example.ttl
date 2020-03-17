@@ -6,38 +6,47 @@
 
 @base <https://example.com/timeseries/>.
 
-## Collection Page
+## Time Series
 
 <A> a hydra:Collection;
-    hydra:totalItems "2";
-    hydra:member <A/2020-02-28T16:02:00>, <A/2020-02-28T16:03:00>;
+    hydra:totalItems "2"^^xsd:integer;
+    hydra:member <A/2020-02-28T16:00:00>, <A/2020-02-28T16:01:00>;
     mp:matrixProfile <A/matrix-profiles/10080>. # This link should be followed by the client
 
-<A/2020-02-28T16:02:00> a sosa:Observation;
-                        sosa:hasFeatureOfInterest <P10>;
-                        sosa:observedProperty <P10/A>;
-                        sosa:hasSimpleResult 100;
-                        sosa:resultTime "2020-02-28T16:02:00"^^xsd:dateTime.
+<A/2020-02-28T16:00:00> a sosa:Observation;
+                        sosa:hasFeatureOfInterest ...;
+                        sosa:observedProperty ...;
+                        sosa:hasSimpleResult "100"^^xsd:integer;
+                        sosa:resultTime "2020-02-28T16:00:00"^^xsd:dateTime.
 
-<A/2020-02-28T16:03:00> a sosa:Observation;
-                        sosa:hasFeatureOfInterest <P10>;
-                        sosa:observedProperty <P10/A>;
-                        sosa:hasSimpleResult 105;
-                        sosa:resultTime "2020-02-28T16:03:00"^^xsd:dateTime.
+<A/2020-02-28T16:01:00> a sosa:Observation;
+                        sosa:hasFeatureOfInterest ...;
+                        sosa:observedProperty ...;
+                        sosa:hasSimpleResult "105"^^xsd:integer;
+                        sosa:resultTime "2020-02-28T16:01:00"^^xsd:dateTime.
 
-## Matrix Profile Page
 
-<A/matrix-profiles/10080> a mp:MatrixProfile;
+## Matrix Profile
+
+<A/matrix-profiles/10080> a mp:MatrixProfile, hydra:Collection;
                           mp:belongsTo <A>;
-                          mp:windowSize 10080;
-                          hydra:member <A/matrix-profiles/10080/2020-02-28T16:02:00>, <A/matrix-profiles/10080/2020-02-28T16:03:00>.
+                          mp:windowSize "10080"^^xsd:integer;
+                          hydra:member <A/matrix-profiles/10080/2020-02-28T16:00:00>, <A/matrix-profiles/10080/2020-02-28T16:03:00>.
 
-<A/matrix-profiles/10080/2020-02-28T16:02:00> a mp:Result;
-                                              mp:dataPoint <A/2020-02-28T16:02:00>;
-                                              mp:value 0.0;
-                                              mp:index "2020-02-28T16:03:00"^^xsd:dateTime.
+<matrix-profile/distance> a sosa:ObservableProperty;
+   rdfs:label "Matrix Profile Distance"@en;
+   rdfs:comment "The shortest distance from itself to its nearest neighbor"@en.
 
-<A/matrix-profiles/10080/2020-02-28T16:03:00> a mp:Result;
-                                              mp:dataPoint <A/2020-02-28T16:03:00>;
-                                              mp:value 0.0;
-                                              mp:index "2020-02-28T16:02:00"^^xsd:dateTime.
+<matrix-profile/distance/procedure> a sosa:Procedure;
+   rdfs:comment "Information about which algorithm was used to calculate the distance."@en.
+
+<A/matrix-profiles/10080/2020-02-28T16:00:00> a sosa:Observation; 
+                                              sosa:observedProperty <matrix-profile/distance>;
+                                              sosa:usedProcedure <matrix-profile/distance/procedure>;
+                                              sosa:hasFeatureOfInterest <A/2020-02-28T16:00:00>;
+                                              sosa:hasResult [
+                                                  mp:distance "0.0"^^xsd:decimal
+                                                  mp:normalisedDistance "0.0"^^xsd:decimal
+                                                  mp:nearestNeighbor "2020-02-28T16:03:00"^^xsd:dateTime.
+                                              ].
+
