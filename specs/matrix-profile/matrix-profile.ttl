@@ -19,7 +19,6 @@ mp:Ontology a owl:Ontology;
 mp:matrixProfile a rdf:Property;
                  rdfs:label "Has matrix profile"@en;
                  rdfs:comment "A mp:matrixProfile is used to define matrix profiles that are present for a collection"@en;
-                 rdfs:domain hydra:Collection;
                  rdfs:range mp:MatrixProfile.
 
 ## MatrixProfile
