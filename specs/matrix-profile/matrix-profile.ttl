@@ -24,8 +24,6 @@ mp:matrixProfile a rdf:Property;
 
 ## MatrixProfile
 
-# Should this class contain a property like hydra:member to list all members?
-
 mp:MatrixProfile a rdfs:Class;
                  rdfs:label "Matrix Profile"@en;
                  rdfs:comment "A class to describe the matrix profile properties"@en;
