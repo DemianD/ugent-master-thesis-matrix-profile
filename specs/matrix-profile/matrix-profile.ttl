@@ -25,8 +25,7 @@ mp:matrixProfile a rdf:Property;
 
 mp:MatrixProfile a rdfs:Class;
                  rdfs:label "Matrix Profile"@en;
-                 rdfs:comment "A class to describe the matrix profile properties"@en;
-                 rdfs:subClassOf hydra:Collection.
+                 rdfs:comment "A class to describe the matrix profile properties"@en.
 
 mp:windowSize a rdf:Property;
               rdfs:label "Window size"@en;
