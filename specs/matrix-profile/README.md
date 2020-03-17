@@ -2,49 +2,51 @@
 
 ## mp:matrixProfile
 
-A property to define on a `hydra:collection` to state that it has a matrix profile.
+`mp:matrixProfile` is a property to define on a collection to state that it has a matrix profile.
 
 ```turtle
-<A> a hydra:Collection;
-    hydra:totalItems "2";
-    hydra:member <A/2020-02-28T16:02:00>, <A/2020-02-28T16:03:00>;
-    mp:matrixProfile <A/matrix-profiles/10080>. # This link should be followed by the client, when the client is interested.
+<A> a hydra:Collection; # This doesn't need to be a hydra:Collection, it can also be a tree:Collection or another collection.
+    hydra:totalItems "2"^^xsd:integer;
+    hydra:member <A/2020-02-28T16:00:00>, <A/2020-02-28T16:01:00>;
+    mp:matrixProfile <A/matrix-profiles/10080>. # This link should be followed by the client, when the client is interested
 ```
 
-## Classes
+## mp:MatrixProfile
 
-### mp:MatrixProfile
+`mp:MatrixProfile` is a class that describes the matrix profile and which collection (time series) was used. You should define a collection type to define the members of the matrix profile.
 
 ```turtle
-<A/matrix-profiles/10080> a mp:MatrixProfile;
+<A/matrix-profiles/10080> a mp:MatrixProfile, hydra:Collection;
                           mp:belongsTo <A>;
-                          mp:windowSize 10080;
-                          hydra:member <A/matrix-profiles/10080/2020-02-28T16:02:00>, <A/matrix-profiles/10080/2020-02-28T16:03:00>.
+                          mp:windowSize "10080"^^xsd:integer;
+                          hydra:member <A/matrix-profiles/10080/2020-02-28T16:00:00>, <A/matrix-profiles/10080/2020-02-28T16:03:00>.
+
+<A/matrix-profiles/10080> a mp:MatrixProfile, hydra:Collection;
+                          mp:belongsTo <A>;
+                          mp:windowSize "10080"^^xsd:integer;
+                          hydra:member <A/matrix-profiles/10080/2020-02-28T16:00:00>, <A/matrix-profiles/10080/2020-02-28T16:03:00>.
 ```
 
 **Properties:**
 
-- mp:belongsTo: A mp:belongsTo is used to link back to the collection
-- mp:windowSize: size of the window
+- `mp:belongsTo`: A mp:belongsTo is used to link back to the collection
+- `mp:windowSize`: size of the window
 
-### mp:Result
+**Members**
+
+To model the members, we use the `sosa:Observation` class.
 
 ```turtle
-<A/matrix-profiles/10080/2020-02-28T16:03:00> a mp:Result;
-                                              mp:matrixProfile <A/matrix-profiles/10080>;
-                                              mp:dataPoint <A/2020-02-28T16:03:00>;
-                                              mp:value 0.0;
-                                              mp:index "2020-02-28T16:02:00"^^xsd:dateTime.
+<A/matrix-profiles/10080/2020-02-28T16:00:00> a sosa:Observation;
+                                              sosa:observedProperty <matrix-profile/distance>;
+                                              sosa:usedProcedure <matrix-profile/distance/procedure>;
+                                              sosa:hasFeatureOfInterest <A/2020-02-28T16:00:00>;
+                                              sosa:hasResult [
+                                                  mp:distance "0.0"^^xsd:decimal
+                                                  mp:normalisedDistance "0.0"^^xsd:decimal
+                                                  mp:nearestNeighbor "2020-02-28T16:03:00"^^xsd:dateTime.
+                                              ].
 ```
-
-**Properties:**
-
-- mp:matrixProfile: links back to the matrix profile
-- mp:dataPoint: Links to the corresponding object. Or should we just define the date, similar to mp:index?
-- mp:value: The value that corresonds to the matrix profile
-- mp:index: Contains the date of the nearest neighbor of the data point
-
-> Question: mp:dataPoint contains an object. This can for example be an `sosa:Observation`. Instead of using an object, we could also just define the date of the `sosa:Observation`.
 
 ## Future work
 

@@ -8,10 +8,10 @@
 
 ## Time Series
 
-<A> a hydra:Collection;
+<A> a hydra:Collection; # This doesn't need to be a hydra:Collection, it can also be a tree:Collection or another collection.
     hydra:totalItems "2"^^xsd:integer;
     hydra:member <A/2020-02-28T16:00:00>, <A/2020-02-28T16:01:00>;
-    mp:matrixProfile <A/matrix-profiles/10080>. # This link should be followed by the client
+    mp:matrixProfile <A/matrix-profiles/10080>. # This link should be followed by the client, when the client is interested
 
 <A/2020-02-28T16:00:00> a sosa:Observation;
                         sosa:hasFeatureOfInterest ...;
@@ -38,7 +38,7 @@
    rdfs:comment "The shortest distance from itself to its nearest neighbor"@en.
 
 <matrix-profile/distance/procedure> a sosa:Procedure;
-   rdfs:comment "Information about which algorithm was used to calculate the distance."@en.
+   rdfs:comment "Information about how the calculations were made. E.g. which algorithm was used"@en.
 
 <A/matrix-profiles/10080/2020-02-28T16:00:00> a sosa:Observation; 
                                               sosa:observedProperty <matrix-profile/distance>;
@@ -49,4 +49,3 @@
                                                   mp:normalisedDistance "0.0"^^xsd:decimal
                                                   mp:nearestNeighbor "2020-02-28T16:03:00"^^xsd:dateTime.
                                               ].
-
