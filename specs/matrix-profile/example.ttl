@@ -33,13 +33,11 @@
                           # hydra:member ... -> Do we need this?
 
 <A/matrix-profiles/10080/2020-02-28T16:02:00> a mp:Result;
-                                              mp:matrixProfile <A/matrix-profiles/10080>; # The domain in the spec is currently hydra:Collection. 
                                               mp:dataPoint <A/2020-02-28T16:02:00>;
                                               mp:value 0.0;
                                               mp:index "2020-02-28T16:03:00"^^xsd:dateTime.
 
 <A/matrix-profiles/10080/2020-02-28T16:03:00> a mp:Result;
-                                              mp:matrixProfile <A/matrix-profiles/10080>;
                                               mp:dataPoint <A/2020-02-28T16:03:00>;
                                               mp:value 0.0;
                                               mp:index "2020-02-28T16:02:00"^^xsd:dateTime.

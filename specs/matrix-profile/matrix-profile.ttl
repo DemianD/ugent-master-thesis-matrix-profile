@@ -19,7 +19,7 @@ mp:Ontology a owl:Ontology;
 mp:matrixProfile a rdf:Property;
                  rdfs:label "Has matrix profile"@en;
                  rdfs:comment "A mp:matrixProfile is used to define matrix profiles that are present for a collection"@en;
-                 rdfs:domain hydra:Collection; # The domain can also be a mp:Result, can we define multiple domains? Or should we define another property?
+                 rdfs:domain hydra:Collection;
                  rdfs:range mp:MatrixProfile.
 
 ## MatrixProfile
