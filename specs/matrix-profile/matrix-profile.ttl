@@ -41,23 +41,17 @@ mp:belongsTo a rdf:Property;
 
 ## Result
 
-mp:Result a rdfs:Class;
-          rdfs:label "Result"@en;
-          rdfs:comment "A class to define the result of the matrix profile for a data point"@en.
+mp:distance a rdf:Property;
+            rdfs:label "Distance"@en;
+            rdfs:comment "Distance from itself to its nearest neighbor"@en;
+            rdfs:range xsd:decimal.
 
-mp:dataPoint a rdf:Property;
-             rdfs:label "Data point"@en;
-             rdfs:comment "Links to the corresponding object"@en;
-             rdfs:domain mp:Result.
+mp:normalisedDistance a rdf:Property;
+                      rdfs:label "Normalised distance"@en;
+                      rdfs:comment "Normalised distance from itself to its nearest neighbor"@en;
+                      rdfs:range xsd:decimal.
 
-mp:value a rdf:Property;
-         rdfs:label "Value"@en;
-         rdfs:comment "The value that corresonds to the matrix profile"@en;
-         rdfs:domain mp:Result;
-         rdfs:range xsd:decimal.
-
-mp:index a rdf:Property;
-         rdfs:label "Index"@en;
-         rdfs:comment "Contains the date of the nearest neighbor of the data point"@en;
-         rdfs:domain mp:Result;
-         rdfs:range xsd:dateTime. # TBD: We can also specify the URI of the appropriate data point
+mp:nearestNeighbor a rdf:Property;
+                   rdfs:label "Index"@en;
+                   rdfs:comment "Contains the date of the nearest neighbor"@en;
+                   rdfs:range xsd:dateTime.
