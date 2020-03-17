@@ -36,8 +36,7 @@ mp:windowSize a rdf:Property;
 mp:belongsTo a rdf:Property;
              rdfs:label "Belongs to collection"@en;
              rdfs:comment "A mp:belongsTo is used to link back to the collection"@en;
-             rdfs:domain mp:MatrixProfile;
-             rdfs:range hydra:Collection.
+             rdfs:domain mp:MatrixProfile.
 
 ## Result
 
