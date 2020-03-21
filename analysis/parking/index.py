@@ -2,9 +2,6 @@ import sys
 sys.path.append("..")
 
 import stumpy
-import hashlib
-import pandas as pd
-import matplotlib.pyplot as plt
 from utils import readParkingDataToDateFrame, plot, calculateMatrixProfile, checkNaNs, plotFluss
 
 title = "Parking P-Houtmarkt"
