@@ -1,3 +1,0 @@
-[submodule "analysis/seriesdistancematrix"]
-	path = analysis/seriesdistancematrix
-	url = git@github.com:IDLabResearch/seriesdistancematrix.git
