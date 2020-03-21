@@ -6,23 +6,38 @@ import { fetch, storeQuads, dateToString } from '../utils.mjs';
 const { namedNode } = N3.DataFactory;
 
 // Parameters:
-const baseUri = 'https://kortrijk.datapiloten.be/parking';
-const folder = './data/kortrijk';
+const baseUri = 'https://leuven.datapiloten.be/parking';
+const folder = './data/leuven';
 
 const parkings = {
-  'P-Veemarkt': undefined,
-  'P-Schouwburg': undefined,
-  'P-Broeltorens': undefined,
-  'P-Haven': undefined,
-  'P-P+R-Expo': undefined,
-  'P-Houtmarkt': undefined,
-  'P-Budabrug': undefined,
-  'P-K-in-Kortrijk': undefined,
-  'P-Kortrijk-Weide': undefined
+  Philipssite: undefined,
+  'De-Bond': undefined,
+  Kinepolis: undefined,
+  'Heilig-Hart': undefined,
+  Station: undefined,
+  Center: undefined,
+  // 'Shopping-Center': undefined,
+  'Sint-Jacob': undefined,
+  Ladeuze: undefined
 };
 
-let date = new Date(2019, 12 - 2, 10);
-const endDate = new Date(2020, 3 - 1, 20);
+// const baseUri = 'https://kortrijk.datapiloten.be/parking';
+// const folder = './data/kortrijk';
+
+// const parkings = {
+//   'P-Veemarkt': undefined,
+//   'P-Schouwburg': undefined,
+//   'P-Broeltorens': undefined,
+//   'P-Haven': undefined,
+//   'P-P+R-Expo': undefined,
+//   'P-Houtmarkt': undefined,
+//   'P-Budabrug': undefined,
+//   'P-K-in-Kortrijk': undefined,
+//   'P-Kortrijk-Weide': undefined
+// };
+
+let date = new Date(2019, 11 - 2, 10);
+const endDate = new Date(2020, 3 - 1, 22);
 
 // End parameters
 
