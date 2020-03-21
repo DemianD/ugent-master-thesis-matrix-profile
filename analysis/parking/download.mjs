@@ -1,11 +1,7 @@
 import N3 from 'n3';
 import fs from 'fs';
-import nodeFetch from 'node-fetch';
-import zeitFetch from '@zeit/fetch-retry';
 
-const fetch = zeitFetch(nodeFetch);
-
-import { pad, storeQuads, dateToString } from '../utils.mjs';
+import { fetch, storeQuads, dateToString } from '../utils.mjs';
 
 const { namedNode } = N3.DataFactory;
 

@@ -1,4 +1,8 @@
 import N3 from 'n3';
+import nodeFetch from 'node-fetch';
+import zeitFetch from '@zeit/fetch-retry';
+
+export const fetch = zeitFetch(nodeFetch);
 
 export const pad = n => {
   return n > 9 ? '' + n : '0' + n;
