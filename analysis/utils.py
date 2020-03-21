@@ -21,6 +21,21 @@ def readParkingDataToDateFrame(file):
     
     return df
 
+def readTelraamDataToDateFrame(file):
+    df = pd.read_csv(file, sep=";")
+
+    df = df.set_index('date')
+    df.index = pd.to_datetime(df.index)
+    df['total'] = df['pedestrian'] + df['bike'] + df['car'] + df['lorry']
+    df['total'] = df['total'].astype(float)
+    
+    # Some hours are missing, light the nights, so we set zero
+    df = df.reindex(pd.date_range(start=df.index[0], end=df.index[-1], freq="1H"), fill_value=0)
+
+    df = checkNaNs(df)
+    
+    return df
+
 def checkNaNs(df):
     print("Length of dataframe:", len(df))
     print("Number of NaNs:", len(df) - df.count())
