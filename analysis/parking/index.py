@@ -8,7 +8,7 @@ title = "Parking P-Houtmarkt"
 df = readParkingDataToDateFrame('./data/kortrijk/P-K-in-Kortrijk.csv')
 
 # Taking last X days, and hourly mean
-df = df.last('60D')
+df = df.last('90D')
 df = df.resample('H').mean()
 df = checkNaNs(df)
 
