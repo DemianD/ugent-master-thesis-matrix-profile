@@ -1,5 +1,6 @@
 @prefix mp: <http://www.example.com/TODO/>.
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix sosa: <http://www.w3.org/ns/sosa/>.
 @prefix tree: <https://w3id.org/tree#>.
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
@@ -30,7 +31,7 @@
 <A/matrix-profiles/1440> a mp:MatrixProfile, tree:Collection;
                          mp:belongsTo <A>;
                          mp:windowSize "1440"^^xsd:integer;
-                         tree:member <A/matrix-profiles/1440/2020-02-28T16:00:00>, <A/matrix-profiles/1440/2020-02-28T16:01:00>.
+                         tree:member <A/matrix-profiles/1440/2020-02-28T16:00:00>, <A/matrix-profiles/1440/2020-02-28T16:01:00>, ... .
 
 <A/matrix-profiles/1440/procedure> a sosa:Procedure;
     rdfs:comment "SCRIMP++ algorithm was used with the euclidean distance".
