@@ -26,8 +26,8 @@
 
 <A/matrix-profiles/1440> a mp:MatrixProfile, tree:Collection;
                          mp:belongsTo <A>;
-                         mp:windowSize "10080"^^xsd:integer;
-                         tree:member <A/matrix-profiles/1440/2020-02-28T16:00:00>, <A/matrix-profiles/1440/2020-02-28T16:01:00>.
+                         mp:windowSize "1440"^^xsd:integer;
+                         tree:member <A/matrix-profiles/1440/2020-02-28T16:00:00>, <A/matrix-profiles/1440/2020-02-28T16:01:00>, ... .
 ```
 
 Each member of a matrix profile should be a `sosa:Observation`. This `sosa:Observation` must contain a `sosa:hasResult` object. This object must contain the `mp:distance` or `mp:normalisedDistance` and must contain the index (date) of the nearest neighbor. The `sosa:Observation` must contain a `sosa:hasFeatureOfInterest` to identify the start of the window that was used from the original series.
