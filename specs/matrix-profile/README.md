@@ -2,51 +2,60 @@
 
 ## mp:matrixProfile
 
-A property to define on a `hydra:collection` to state that it has a matrix profile.
+`mp:matrixProfile` should be used to state that a series has a matrix profile. You may add multiple matrix profiles to the series. The link of the matrix profile should be followed when the client is interested. The value `mp:matrixProfile` should be a `mp:MatrixProfile`.
 
 ```turtle
-<A> a hydra:Collection;
-    hydra:totalItems "2";
-    hydra:member <A/2020-02-28T16:02:00>, <A/2020-02-28T16:03:00>;
-    mp:matrixProfile <A/matrix-profiles/10080>. # This link should be followed by the client, when the client is interested.
+@prefix tree: <https://w3id.org/tree#>. # You can use your own collection type
+@prefix mp: <http://www.example.com/TODO/>.
+
+<A> a tree:Collection;
+    tree:member <A/2020-02-28T16:00:00>, <A/2020-02-28T16:01:00>, ...;
+    mp:matrixProfile <A/matrix-profiles/1440>,
+                     <A/matrix-profiles/2880>.
 ```
 
 ## Classes
 
 ### mp:MatrixProfile
 
-```turtle
-<A/matrix-profiles/10080> a mp:MatrixProfile;
-                          mp:belongsTo <A>;
-                          mp:windowSize 10080;
-                          hydra:member <A/matrix-profiles/10080/2020-02-28T16:02:00>, <A/matrix-profiles/10080/2020-02-28T16:03:00>.
-```
-
-**Properties:**
-
-- mp:belongsTo: A mp:belongsTo is used to link back to the collection
-- mp:windowSize: size of the window
-
-### mp:Result
+`mp:MatrixProfile` defines a matrix profile. It should contain the used window size and series which was used for the calculation. A `mp:MatrixProfile` is a series and should be annotated with a collection.
 
 ```turtle
-<A/matrix-profiles/10080/2020-02-28T16:03:00> a mp:Result;
-                                              mp:matrixProfile <A/matrix-profiles/10080>;
-                                              mp:dataPoint <A/2020-02-28T16:03:00>;
-                                              mp:value 0.0;
-                                              mp:index "2020-02-28T16:02:00"^^xsd:dateTime.
+@prefix mp: <http://www.example.com/TODO/>.
+@prefix tree: <https://w3id.org/tree#>. # You can use your own collection type
+
+<A/matrix-profiles/1440> a mp:MatrixProfile, tree:Collection;
+                         mp:belongsTo <A>;
+                         mp:windowSize "10080"^^xsd:integer;
+                         tree:member <A/matrix-profiles/1440/2020-02-28T16:00:00>, <A/matrix-profiles/1440/2020-02-28T16:01:00>.
 ```
 
-**Properties:**
+Each member of a matrix profile should be a `sosa:Observation`. This `sosa:Observation` must contain a `sosa:hasResult` object. This object must contain the `mp:distance` or `mp:normalisedDistance` and must contain the index (date) of the nearest neighbor. The `sosa:Observation` must contain a `sosa:hasFeatureOfInterest` to identify the start of the window that was used from the original series.
 
-- mp:matrixProfile: links back to the matrix profile
-- mp:dataPoint: Links to the corresponding object. Or should we just define the date, similar to mp:index?
-- mp:value: The value that corresonds to the matrix profile
-- mp:index: Contains the date of the nearest neighbor of the data point
+Optionally, you can define a `sosa:procedure`.
 
-> Question: mp:dataPoint contains an object. This can for example be an `sosa:Observation`. Instead of using an object, we could also just define the date of the `sosa:Observation`.
+```turtle
+@prefix mp: <http://www.example.com/TODO/>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix sosa: <http://www.w3.org/ns/sosa/>.
+@prefix tree: <https://w3id.org/tree#>. # You can use your own collection type
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+
+<A/matrix-profiles/1440/procedure> a sosa:Procedure;
+    rdfs:comment "SCRIMP++ algorithm was used with the euclidean distance".
+
+<A/matrix-profiles/1440/2020-02-28T16:00:00> a sosa:observation;
+                                             sosa:hasFeatureOfInterest <A/2020-02-28T16:00:00>;
+                                             sosa:usedProcedure <A/matrix-profiles/1440/procedure>;
+                                             sosa:hasResult [
+                                                 mp:distance "0.0"^^xsd:decimal;
+                                                 # or mp:normalisedDistance "0.0"^^xsd:decimal;
+                                                 mp:nearestNeighbor "2020-02-30T16:00:00"^^xsd:decimal
+                                             ].
+```
+
+> TODO: sosa:observedProperty?
 
 ## Future work
 
 - Describe snippets
-- https://github.com/TREEcg/specification/issues/15
