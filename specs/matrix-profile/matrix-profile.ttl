@@ -46,7 +46,7 @@ mp:distance a rdf:Property;
 
 mp:normalisedDistance a rdf:Property;
          rdfs:label "Normalised distance"@en;
-         rdfs:comment "Normalised distance from a feature of interest to it's nearest neighbor"@en;
+         rdfs:comment "Normalised distance between [0,1] from a feature of interest to it's nearest neighbor"@en;
          rdfs:range xsd:decimal.
 
 mp:nearestNeighbor a rdf:Property;
