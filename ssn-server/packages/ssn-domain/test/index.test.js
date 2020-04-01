@@ -1,5 +1,5 @@
 import test from 'ava';
-import Domain from '../../index.js';
+import Domain from '../index.js';
 
 test('Empty Domain', t => {
   const domain = new Domain('https://www.example.com');
