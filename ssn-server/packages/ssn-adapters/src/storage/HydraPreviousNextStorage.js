@@ -31,7 +31,7 @@ class HydraPreviousNextStorage extends AbstractStorage {
     // On boot, find the latest file based on folder name
     const files = readDirectorySync(this.dataPath, '.ttl');
 
-    // If there were no files, create a new one
+    // If there were no files, create a new page
     if (files.length === 0) {
       this.createNewPage();
       return;
@@ -42,7 +42,7 @@ class HydraPreviousNextStorage extends AbstractStorage {
 
     this.pageNameNamed = namedNode(`${this.collectionSubject.value}/${pageName}`);
 
-    // There is a file, we count how many observations there are is this file
+    // Count how many observations there are in the file
     const content = fs.readFileSync(`${this.dataPath}/${fileName}`, 'utf-8');
 
     const numberOfObservations = content.split(SOSA('Observation').value).length - 1;
@@ -85,7 +85,7 @@ class HydraPreviousNextStorage extends AbstractStorage {
       end: false
     });
 
-    // Adding quads from feature of interest
+    // Adding quads from feature of interest and observable property
     newWriter.addQuads(this.featureOfInterest.getQuads());
     newWriter.addQuads(this.observableProperty.getQuads());
 
