@@ -1,5 +1,7 @@
-import SourceReader from './readers/SourceReader.js';
+import SourceReader from './src/readers/SourceReader.js';
 
 export default {
-  SourceReader: SourceReader
+  Readers: {
+    SourceReader: SourceReader
+  }
 };

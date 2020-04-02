@@ -6,7 +6,7 @@ import getLocalPart from './utils/getLocalPart.js';
 
 const { quad: newQuad, namedNode, literal } = N3.DataFactory;
 
-class ParkingGentSourceReader extends Adapters.SourceReader {
+class ParkingGentSourceReader extends Adapters.Readers.SourceReader {
   constructor(domain, sources, refreshInterval, mapping) {
     super(sources, refreshInterval, mapping);
 
