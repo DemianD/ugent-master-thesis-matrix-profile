@@ -1,5 +1,6 @@
 import N3 from 'n3';
 import ObservableProperty from './ObservableProperty.js';
+import { SOSA, RDF } from './vocs.js';
 
 const { quad, namedNode } = N3.DataFactory;
 
@@ -11,10 +12,7 @@ class FeatureOfInterest {
   constructor(subject, { quads = () => [] } = {}) {
     this.subject = subject;
 
-    this.quads = [
-      quad(subject, namedNode('rdf:type'), namedNode('sosa:FeatureOfInterest')),
-      ...quads(subject)
-    ];
+    this.quads = [quad(subject, RDF('type'), SOSA('FeatureOfInterest')), ...quads(subject)];
   }
 
   addObservableProperty(name, options) {
@@ -30,12 +28,7 @@ class FeatureOfInterest {
   }
 
   getQuads() {
-    return [
-      ...this.quads,
-      ...Object.values(this.observableProperties)
-        .map(observableProperty => observableProperty.getQuads())
-        .flat()
-    ];
+    return this.quads;
   }
 }
 

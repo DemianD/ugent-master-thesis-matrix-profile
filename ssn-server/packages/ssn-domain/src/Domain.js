@@ -35,8 +35,15 @@ class Domain {
   catalog() {
     return [
       ...Object.values(this.featuresOfInterest)
-        .map(featureOfInterest => featureOfInterest.getQuads())
-        .flat()
+        .map(featureOfInterest => {
+          return [
+            featureOfInterest.getQuads(),
+            ...Object.values(featureOfInterest.observableProperties).map(observableProperty => {
+              return observableProperty.getQuads();
+            })
+          ];
+        })
+        .flat(Infinity)
     ];
   }
 }
