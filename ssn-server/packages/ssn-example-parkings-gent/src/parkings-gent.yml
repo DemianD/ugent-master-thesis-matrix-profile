@@ -1,0 +1,37 @@
+prefixes:
+  datex: 'http://vocab.datex.org/terms#'
+  sosa: 'http://www.w3.org/ns/sosa/'
+  xsd: 'http://www.w3.org/2001/XMLSchema#'
+  owl: <http://www.w3.org/2002/07/owl#>.
+
+mappings:
+  ParkingStatus:
+    sources:
+      - [
+          'parkingsstatus.xml~xpath',
+          '/d2LogicalModel/payloadPublication/genericPublicationExtension/parkingStatusPublication/parkingRecordStatus',
+        ]
+    subject: 'https://example.com/$(parkingRecordReference/@id)'
+    predicateobjects:
+      - [a, sosa:Observation]
+      - [sosa:observedProperty, datex:numberOfVacantParkingSpaces]
+      - p: sosa:hasFeatureOfInterest
+        o:
+          mapping: Parking
+          condition:
+            function: equal
+            parameters:
+              - [str1, '$(parkingRecordReference/@id)']
+              - [str2, '$(@id)']
+      - p: sosa:hasSimpleResult
+        o:
+          value: '$(parkingOccupancy/parkingNumberOfVacantSpaces)'
+          datatype: xsd:integer
+
+  Parking:
+    sources:
+      - [
+          'parkings.xml~xpath',
+          '/d2LogicalModel/payloadPublication/genericPublicationExtension/parkingTablePublication/parkingTable/parkingRecord/parkingSite',
+        ]
+    subject: 'https://example.com/parkings/gent/$(parkingName/values/value)'

@@ -1,0 +1,12 @@
+{
+  "name": "ssn-example-parkings-gent",
+  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "dependencies": {
+    "n3": "^1.3.5",
+    "ssn-adapters": "^1.0.0",
+    "ssn-domain": "^1.0.0"
+  }
+}
