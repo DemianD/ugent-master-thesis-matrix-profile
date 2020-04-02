@@ -14,7 +14,7 @@ const domain = new Domain('https://www.example.com');
 const foi1 = domain.addFeatureOfInterest('Feature1');
 const op1 = foi1.addObservableProperty('ObservableProperty1');
 
-const currentDate = new Date(2020, 3, 1, 12, 30, 45, 909);
+const currentDate = new Date(Date.UTC(2020, 3, 1, 10, 30, 45, 909));
 
 test('it should create a new page if the directory does not exists', t => {
   const existsSyncMock = sinon.stub(fs, 'existsSync').returns(false);
