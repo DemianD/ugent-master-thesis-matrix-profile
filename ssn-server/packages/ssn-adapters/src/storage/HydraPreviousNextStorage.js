@@ -69,6 +69,8 @@ class HydraPreviousNextStorage extends AbstractStorage {
 
     if (this.remainingObservations == 0) {
       this.createNewPage();
+    } else {
+      this.flushWriter();
     }
   }
 
@@ -115,6 +117,16 @@ class HydraPreviousNextStorage extends AbstractStorage {
 
     this.remainingObservations = this.observationsPerPage;
     this.pageNameNamed = newPageNameNamed;
+
+    this.flushWriter();
+  }
+
+  flushWriter() {
+    // The writer keeps some quads in memory when the subject/predicate is the same.
+    // By doing this, the writer kan shorten some triples by omitting the subject/predicate.
+    // However, we want always a valid file after we added an observation, and thus flushes this.
+    this.writer._write(this.writer._inDefaultGraph ? '.\n' : '\n}\n');
+    this.writer._subject = null;
   }
 }
 

@@ -39,7 +39,7 @@ test('it should create a new page if the directory does not exists', t => {
     './hydra-storage-test/2020-04-01T10:30:45.909Z.ttl'
   );
 
-  t.is(streamSpy.callCount, 5);
+  t.is(streamSpy.callCount, 6);
 
   t.snapshot(
     streamSpy
