@@ -5,8 +5,7 @@
   "main": "./index.js",
   "type": "module",
   "scripts": {
-    "test": "ava -v",
-    "coverage": "nyc ava -v"
+    "test": "ava"
   },
   "dependencies": {
     "@rmlio/rmlmapper-java-wrapper": "^1.0.0",
