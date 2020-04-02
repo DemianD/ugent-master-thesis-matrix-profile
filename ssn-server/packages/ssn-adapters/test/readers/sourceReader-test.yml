@@ -1,0 +1,10 @@
+prefixes:
+  sosa: 'http://www.w3.org/ns/sosa/'
+
+mappings:
+  ParkingStatus:
+    sources:
+      - ['file1.xml~xpath']
+    subject: '$(@id)'
+    po:
+      - [a, sosa:Observation]
