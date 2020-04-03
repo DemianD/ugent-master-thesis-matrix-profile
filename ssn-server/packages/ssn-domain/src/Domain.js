@@ -6,13 +6,13 @@ const { namedNode } = N3.DataFactory;
 class Domain {
   featuresOfInterest = {};
 
-  constructor(baseUri) {
-    this.baseUri = baseUri;
+  constructor(baseIRI) {
+    this.baseIRI = baseIRI;
   }
 
   addFeatureOfInterest(name, options) {
     this.featuresOfInterest[name] = new FeatureOfInterest(
-      namedNode(`${this.baseUri}/${name}`),
+      namedNode(`${this.baseIRI}/${name}`),
       options
     );
 
