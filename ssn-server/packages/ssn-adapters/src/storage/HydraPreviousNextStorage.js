@@ -2,11 +2,11 @@ import fs from 'fs';
 import N3 from 'n3';
 
 import PaginationAbstractStorage from './PaginationAbstractStorage.js';
-import { RDF, HYDRA, SOSA } from '../utils/vocs.js';
+import { RDF, HYDRA } from '../utils/vocs.js';
 import isValidDate from '../utils/isValidDate.js';
 import { PageNotFoundException, InvalidDateException } from '../exceptions/index.js';
 
-const { namedNode, quad } = N3.DataFactory;
+const { quad } = N3.DataFactory;
 
 class HydraPreviousNextStorage extends PaginationAbstractStorage {
   constructor(options) {
@@ -20,7 +20,9 @@ class HydraPreviousNextStorage extends PaginationAbstractStorage {
     this.writer.addQuads(observationQuads);
 
     // Add a hydra:member to the collection
-    this.writer.addQuad(quad(this.collectionSubject, HYDRA('member'), observationQuads[0].subject));
+    this.writer.addQuad(
+      quad(this.getCollectionSubject(), HYDRA('member'), observationQuads[0].subject)
+    );
 
     this.remainingObservations -= 1;
 
@@ -53,13 +55,13 @@ class HydraPreviousNextStorage extends PaginationAbstractStorage {
     const hasPrevious = this.fileStream !== undefined;
 
     const newPageName = new Date().toISOString();
-    const newPageNameNamed = namedNode(`${this.collectionSubject.value}/${newPageName}`);
+    const newPageNameNamed = this.getCollectionSubject(newPageName);
 
     const { newWriter, newFileStream } = super.createNewPage(newPageName, newPageNameNamed);
 
     // Addings quads for collection
-    newWriter.addQuad(quad(this.collectionSubject, RDF('type'), HYDRA('collection')));
-    newWriter.addQuad(quad(this.collectionSubject, HYDRA('view'), newPageNameNamed));
+    newWriter.addQuad(quad(this.getCollectionSubject(), RDF('type'), HYDRA('collection')));
+    newWriter.addQuad(quad(this.getCollectionSubject(), HYDRA('view'), newPageNameNamed));
 
     // Adding quads for partial collection
     newWriter.addQuad(quad(newPageNameNamed, RDF('type'), HYDRA('PartialCollectionView')));

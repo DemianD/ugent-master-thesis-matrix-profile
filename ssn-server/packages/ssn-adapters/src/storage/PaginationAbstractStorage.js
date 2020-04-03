@@ -17,8 +17,6 @@ class PaginationAbstractStorage extends AbstractStorage {
 
     this.dataPath = dataPath;
     this.observationsPerPage = observationsPerPage;
-
-    this.collectionSubject = namedNode(`${observableProperty.subject.value}/collection`);
   }
 
   boot() {
@@ -26,27 +24,26 @@ class PaginationAbstractStorage extends AbstractStorage {
     createDirectoryIfNotExists(this.dataPath);
 
     // On boot, find the latest file based on folder name
-    const files = readDirectorySync(this.dataPath, '.ttl');
+    this.pages = readDirectorySync(this.dataPath, '.ttl').map(file => file.replace('.ttl', ''));
 
     // If there were no files, create a new page
-    if (files.length === 0) {
+    if (this.pages.length === 0) {
       this.createNewPage();
       return;
     }
 
-    const fileName = files[files.length - 1];
+    const pageName = this.pages[this.pages.length - 1];
 
-    this.pageName = fileName.replace('.ttl', '');
-    this.pageNameNamed = namedNode(`${this.collectionSubject.value}/${this.pageName}`);
+    this.pageNameNamed = this.getCollectionSubject(pageName);
 
     // Count how many observations there are in the file
-    const content = fs.readFileSync(`${this.dataPath}/${fileName}`, 'utf-8');
+    const content = fs.readFileSync(`${this.dataPath}/${pageName}.ttl`, 'utf-8');
 
     const numberOfObservations = content.split(SOSA('Observation').value).length - 1;
     this.remainingObservations = this.observationsPerPage - numberOfObservations;
 
     // Create the streams
-    this.fileStream = fs.createWriteStream(`${this.dataPath}/${fileName}`, {
+    this.fileStream = fs.createWriteStream(`${this.dataPath}/${pageName}.ttl`, {
       flags: 'a'
     });
 
@@ -68,6 +65,8 @@ class PaginationAbstractStorage extends AbstractStorage {
       end: false
     });
 
+    this.pages.push(newPageName);
+
     // Adding quads from feature of interest and observable property
     newWriter.addQuads(this.observableProperty.featureOfInterest.getQuads());
     newWriter.addQuads(this.observableProperty.getQuads());
@@ -78,6 +77,12 @@ class PaginationAbstractStorage extends AbstractStorage {
       newFileStream,
       newWriter
     };
+  }
+
+  getCollectionSubject(pageName) {
+    return namedNode(
+      `${this.observableProperty.subject.value}Series${pageName ? `/` + pageName : ''}`
+    );
   }
 
   flushWriter() {
