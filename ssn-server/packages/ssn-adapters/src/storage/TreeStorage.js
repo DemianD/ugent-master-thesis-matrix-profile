@@ -132,6 +132,8 @@ class TreeStorage extends PaginationAbstractStorage {
     this.pageNameNamed = newPageNameNamed;
 
     this.flushWriter();
+
+    this.tree = this.tree.insert(newPageName);
   }
 }
 

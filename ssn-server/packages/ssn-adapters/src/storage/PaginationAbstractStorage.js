@@ -34,7 +34,7 @@ class PaginationAbstractStorage extends AbstractStorage {
 
     const pageName = this.files[this.files.length - 1];
 
-    this.pageNameNamed = this.getCollectionSubject(this.pageName);
+    this.pageNameNamed = this.getCollectionSubject(pageName);
 
     // Count how many observations there are in the file
     const content = fs.readFileSync(`${this.dataPath}/${pageName}.ttl`, 'utf-8');
