@@ -1,4 +1,3 @@
-import { Stream } from 'stream';
 import { NotFoundException, InvalidDateException } from '../exceptions/index.js';
 
 import {
@@ -8,6 +7,7 @@ import {
 } from './routes/index.js';
 
 import streamQuads from './utils/streamQuads.js';
+import isReadableStream from '../utils/isReadableStream.js';
 
 class WebServer {
   constructor(domain, server) {
@@ -25,7 +25,7 @@ class WebServer {
         res.setHeader('Cache-Control', data.cache);
         res.setHeader('Content-Type', 'text');
 
-        if (this.isReadableStream(data.body)) {
+        if (isReadableStream(data.body)) {
           data.body.pipe(res);
         } else {
           streamQuads(data.body || [], res, 'application/trig');
@@ -41,14 +41,6 @@ class WebServer {
     this.server.get(
       '/:featureOfInterest/:observableProperty/collection/:pageName',
       handleQuads(observablePropertyHandler)
-    );
-  }
-
-  isReadableStream(obj) {
-    return (
-      obj instanceof Stream &&
-      typeof obj._read === 'function' &&
-      typeof obj._readableState === 'object'
     );
   }
 
