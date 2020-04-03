@@ -28,7 +28,11 @@ test('it should create a new page if the directory does not exists', t => {
 
   const clock = sinon.useFakeTimers(currentDate);
 
-  new HydraPreviousNextStorage(foi1, op1, './hydra-storage-test', 2);
+  new HydraPreviousNextStorage({
+    observableProperty: op1,
+    dataPath: './hydra-storage-test',
+    observationsPerPage: 2
+  });
 
   t.true(existsSyncMock.calledWith('./hydra-storage-test'));
   t.true(mkdirSyncMock.calledWith('./hydra-storage-test'));
@@ -67,7 +71,11 @@ test('it should reopen the latest file if a file exits and set the remaining obs
 
   const createWriteStreamMock = sinon.stub(fs, 'createWriteStream');
 
-  const storage = new HydraPreviousNextStorage(foi1, op1, './hydra-storage-test', 10);
+  const storage = new HydraPreviousNextStorage({
+    observableProperty: op1,
+    dataPath: './hydra-storage-test',
+    observationsPerPage: 10
+  });
 
   t.true(readFileSyncMock.calledWith('./hydra-storage-test/2020-04-01T09:30:45.909Z.ttl'));
 
@@ -102,7 +110,11 @@ test('it should create a new file when a new observation is added and the curren
     .onSecondCall()
     .returns(newPageStream);
 
-  const storage = new HydraPreviousNextStorage(foi1, op1, './hydra-storage-test', 2);
+  const storage = new HydraPreviousNextStorage({
+    observableProperty: op1,
+    dataPath: './hydra-storage-test',
+    observationsPerPage: 2
+  });
   const clock = sinon.useFakeTimers(new Date(currentDate.getTime() + 1000 * 60 * 60 + 91));
 
   const subject = namedNode(

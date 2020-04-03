@@ -9,10 +9,9 @@ import { RDF, HYDRA, SOSA } from '../utils/vocs.js';
 const { namedNode, quad } = N3.DataFactory;
 
 class HydraPreviousNextStorage extends AbstractStorage {
-  constructor(featureOfInterest, observableProperty, dataPath, observationsPerPage) {
+  constructor({ observableProperty, dataPath, observationsPerPage }) {
     super();
 
-    this.featureOfInterest = featureOfInterest;
     this.observableProperty = observableProperty;
 
     this.dataPath = dataPath;
@@ -88,7 +87,7 @@ class HydraPreviousNextStorage extends AbstractStorage {
     });
 
     // Adding quads from feature of interest and observable property
-    newWriter.addQuads(this.featureOfInterest.getQuads());
+    newWriter.addQuads(this.observableProperty.featureOfInterest.getQuads());
     newWriter.addQuads(this.observableProperty.getQuads());
 
     const newPageNameNamed = namedNode(`${this.collectionSubject.value}/${newPageName}`);
