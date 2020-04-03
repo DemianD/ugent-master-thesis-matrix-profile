@@ -39,9 +39,9 @@ class HydraPreviousNextStorage extends AbstractStorage {
     }
 
     const fileName = files[files.length - 1];
-    const pageName = fileName.replace('.ttl', '');
 
-    this.pageNameNamed = namedNode(`${this.collectionSubject.value}/${pageName}`);
+    this.pageName = fileName.replace('.ttl', '');
+    this.pageNameNamed = namedNode(`${this.collectionSubject.value}/${this.pageName}`);
 
     // Count how many observations there are in the file
     const content = fs.readFileSync(`${this.dataPath}/${fileName}`, 'utf-8');
@@ -87,7 +87,10 @@ class HydraPreviousNextStorage extends AbstractStorage {
       throw new PageNotFoundException();
     }
 
-    return fs.createReadStream(`${this.dataPath}/${pageDate.toISOString()}.ttl`);
+    return {
+      immutable: this.pageName === pageDate.toISOString(),
+      body: fs.createReadStream(`${this.dataPath}/${pageDate.toISOString()}.ttl`)
+    };
   }
 
   createNewPage() {
@@ -131,8 +134,9 @@ class HydraPreviousNextStorage extends AbstractStorage {
     this.fileStream = newFileStream;
     this.writer = newWriter;
 
-    this.remainingObservations = this.observationsPerPage;
+    this.pageName = newPageName;
     this.pageNameNamed = newPageNameNamed;
+    this.remainingObservations = this.observationsPerPage;
 
     this.flushWriter();
   }

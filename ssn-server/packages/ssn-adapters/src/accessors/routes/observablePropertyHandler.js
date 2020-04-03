@@ -3,6 +3,8 @@ import {
   ObservablePropertyNotFoundException
 } from '../../exceptions/index.js';
 
+import { IMMMUTABLE_CACHE, NO_CACHE } from '../constants.js';
+
 const validateParams = (domain, params) => {
   const featureOfInterest = domain.getFeatureOfInterest(params.featureOfInterest);
 
@@ -21,9 +23,10 @@ const validateParams = (domain, params) => {
 
 export const observablePropertyHandler = (domain, params) => {
   const observableProperty = validateParams(domain, params);
+  const { immutable, body } = observableProperty.getPage(params.pageName);
 
   return {
-    cache: 'no-cache, no-store, must-revalidate',
-    body: observableProperty.getPage(params.pageName)
+    cache: immutable ? IMMMUTABLE_CACHE : NO_CACHE,
+    body
   };
 };

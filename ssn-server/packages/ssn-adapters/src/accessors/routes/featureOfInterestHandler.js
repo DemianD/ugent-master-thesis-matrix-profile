@@ -1,4 +1,5 @@
 import { FeatureOfInterestNotFoundException } from '../../exceptions/index.js';
+import { NO_CACHE } from '../constants.js';
 
 export const featureOfInterestHandler = (domain, params) => {
   const featureOfInterest = domain.getFeatureOfInterest(params.featureOfInterest);
@@ -17,7 +18,7 @@ export const featureOfInterestHandler = (domain, params) => {
   ];
 
   return {
-    cache: 'no-cache, no-store, must-revalidate',
+    cache: NO_CACHE,
     body
   };
 };

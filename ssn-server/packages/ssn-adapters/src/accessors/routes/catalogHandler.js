@@ -1,6 +1,8 @@
+import { NO_CACHE } from '../constants';
+
 export const catalogHandler = domain => {
   return {
-    cache: 'no-cache, no-store, must-revalidate',
+    cache: NO_CACHE,
     body: domain.catalog()
   };
 };
