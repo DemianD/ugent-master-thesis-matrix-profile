@@ -19,7 +19,7 @@ class TreeStorage extends PaginationAbstractStorage {
 
     this.tree = createTree();
 
-    this.files.forEach(fileName => {
+    this.pages.forEach(fileName => {
       this.tree = this.tree.insert(fileName);
     });
   }

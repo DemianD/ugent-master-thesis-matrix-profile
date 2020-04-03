@@ -24,15 +24,15 @@ class PaginationAbstractStorage extends AbstractStorage {
     createDirectoryIfNotExists(this.dataPath);
 
     // On boot, find the latest file based on folder name
-    this.files = readDirectorySync(this.dataPath, '.ttl').map(file => file.replace('.ttl', ''));
+    this.pages = readDirectorySync(this.dataPath, '.ttl').map(file => file.replace('.ttl', ''));
 
     // If there were no files, create a new page
-    if (this.files.length === 0) {
+    if (this.pages.length === 0) {
       this.createNewPage();
       return;
     }
 
-    const pageName = this.files[this.files.length - 1];
+    const pageName = this.pages[this.pages.length - 1];
 
     this.pageNameNamed = this.getCollectionSubject(pageName);
 
@@ -65,7 +65,7 @@ class PaginationAbstractStorage extends AbstractStorage {
       end: false
     });
 
-    this.files.push(newPageName);
+    this.pages.push(newPageName);
 
     // Adding quads from feature of interest and observable property
     newWriter.addQuads(this.observableProperty.featureOfInterest.getQuads());
