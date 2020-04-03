@@ -1,4 +1,4 @@
-import { Readers } from 'ssn-adapters';
+import { Readers } from '@ssn/adapters';
 import { SOSA, RDF, XSD } from './vocs.js';
 
 class ParkingGentSourceReader extends Readers.SourceReader {

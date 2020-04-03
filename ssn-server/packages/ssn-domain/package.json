@@ -1,6 +1,5 @@
 {
-  "name": "ssn-domain",
-  "private": true,
+  "name": "@ssn/domain",
   "version": "1.0.0",
   "main": "./index.js",
   "type": "module",

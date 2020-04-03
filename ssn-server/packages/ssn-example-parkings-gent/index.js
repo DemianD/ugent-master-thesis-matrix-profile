@@ -1,6 +1,6 @@
 import restify from 'restify';
-import Domain from 'ssn-domain';
-import { Storage, Accessors } from 'ssn-adapters';
+import Domain from '@ssn/domain';
+import { Storage, Accessors } from '@ssn/adapters';
 
 import cors from './src/cors.js';
 import parkings from './src/parkings.js';
