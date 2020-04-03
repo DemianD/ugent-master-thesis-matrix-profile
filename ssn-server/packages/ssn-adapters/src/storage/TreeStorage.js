@@ -1,16 +1,27 @@
+import fs from 'fs';
 import N3 from 'n3';
+import createTree from 'functional-red-black-tree';
+import { PassThrough } from 'stream';
 
 import PaginationAbstractStorage from './PaginationAbstractStorage.js';
-import { TREE, RDF, VOID } from '../utils/vocs.js';
+import { TREE, RDF, VOID, SOSA, XSD } from '../utils/vocs.js';
 import { InvalidDateException, PageNotFoundException } from '../exceptions/index.js';
+import isValidDate from '../utils/isValidDate.js';
+import stringifyQuads from '../utils/stringifyQuads.js';
 
-const { namedNode, quad } = N3.DataFactory;
+const { namedNode, quad, blankNode, literal } = N3.DataFactory;
 
 class TreeStorage extends PaginationAbstractStorage {
   constructor(options) {
     super(options);
 
     this.boot();
+
+    this.tree = createTree();
+
+    this.files.forEach(fileName => {
+      this.tree = this.tree.insert(fileName);
+    });
   }
 
   addObservation(observationQuads) {
@@ -31,23 +42,65 @@ class TreeStorage extends PaginationAbstractStorage {
     }
   }
 
-  getPage(pageName) {
-    const pageDate = new Date(pageName);
+  getPage(originalPageName) {
+    const pageDate = new Date(originalPageName);
 
     // For security reasons
     if (!isValidDate(pageDate)) {
       throw new InvalidDateException();
     }
 
-    if (!fs.existsSync(`${this.dataPath}/${pageDate.toISOString()}.ttl`)) {
+    const pageName = pageDate.toISOString();
+
+    const it = this.tree.find(pageName);
+
+    if (it === null || it.node === null) {
       throw new PageNotFoundException();
     }
 
-    // TODO: add relations to the tree
+    const resultStream = new PassThrough();
+
+    const fileStream = fs.createReadStream(`${this.dataPath}/${pageName}.ttl`, 'utf-8');
+    fileStream.pipe(resultStream);
+
+    const leftNode = it.node.left;
+    const rightNode = it.node.right;
+
+    if (leftNode) {
+      const leftBlankNode = blankNode('tree-left');
+
+      resultStream.push(
+        stringifyQuads([
+          quad(this.getCollectionSubject(pageName), TREE('relation'), leftBlankNode),
+          quad(leftBlankNode, RDF('type'), TREE('LessThanRelation')),
+          quad(leftBlankNode, TREE('node'), this.getCollectionSubject(leftNode.key)),
+          quad(leftBlankNode, TREE('path'), SOSA('resultTime')),
+          quad(leftBlankNode, TREE('value'), literal(pageName, XSD('dateTime')))
+        ])
+      );
+    }
+
+    if (rightNode) {
+      const rightBlankNode = blankNode('tree-right');
+
+      // If it has a right node, it has definitly a successor
+      // This successor contains the first observation of the next page
+      it.next();
+
+      resultStream.push(
+        stringifyQuads([
+          quad(this.getCollectionSubject(pageName), TREE('relation'), rightBlankNode),
+          quad(rightBlankNode, RDF('type'), TREE('GreaterOrEqualThanRelation')),
+          quad(rightBlankNode, TREE('node'), this.getCollectionSubject(rightNode.key)),
+          quad(rightBlankNode, TREE('path'), SOSA('resultTime')),
+          quad(rightBlankNode, TREE('value'), literal(it.node.key, XSD('dateTime')))
+        ])
+      );
+    }
 
     return {
       immutable: false,
-      body: fs.createReadStream(`${this.dataPath}/${pageDate.toISOString()}.ttl`)
+      body: resultStream
     };
   }
 

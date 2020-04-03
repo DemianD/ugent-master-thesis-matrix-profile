@@ -24,27 +24,26 @@ class PaginationAbstractStorage extends AbstractStorage {
     createDirectoryIfNotExists(this.dataPath);
 
     // On boot, find the latest file based on folder name
-    const files = readDirectorySync(this.dataPath, '.ttl');
+    this.files = readDirectorySync(this.dataPath, '.ttl').map(file => file.replace('.ttl', ''));
 
     // If there were no files, create a new page
-    if (files.length === 0) {
+    if (this.files.length === 0) {
       this.createNewPage();
       return;
     }
 
-    const fileName = files[files.length - 1];
+    const pageName = this.files[this.files.length - 1];
 
-    this.pageName = fileName.replace('.ttl', '');
     this.pageNameNamed = this.getCollectionSubject(this.pageName);
 
     // Count how many observations there are in the file
-    const content = fs.readFileSync(`${this.dataPath}/${fileName}`, 'utf-8');
+    const content = fs.readFileSync(`${this.dataPath}/${pageName}.ttl`, 'utf-8');
 
     const numberOfObservations = content.split(SOSA('Observation').value).length - 1;
     this.remainingObservations = this.observationsPerPage - numberOfObservations;
 
     // Create the streams
-    this.fileStream = fs.createWriteStream(`${this.dataPath}/${fileName}`, {
+    this.fileStream = fs.createWriteStream(`${this.dataPath}/${pageName}.ttl`, {
       flags: 'a'
     });
 
@@ -65,6 +64,8 @@ class PaginationAbstractStorage extends AbstractStorage {
     const newWriter = new N3.Writer(newFileStream, {
       end: false
     });
+
+    this.files.push(newPageName);
 
     // Adding quads from feature of interest and observable property
     newWriter.addQuads(this.observableProperty.featureOfInterest.getQuads());
