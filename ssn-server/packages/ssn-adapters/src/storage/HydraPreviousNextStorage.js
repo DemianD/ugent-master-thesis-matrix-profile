@@ -5,6 +5,8 @@ import AbstractStorage from './AbstractStorage.js';
 import createDirectoryIfNotExistsSync from '../utils/createDirectoryIfNotExistsSync.js';
 import readDirectorySync from '../utils/readDirectorySync.js';
 import { RDF, HYDRA, SOSA } from '../utils/vocs.js';
+import isValidDate from '../utils/isValidDate.js';
+import { PageNotFoundException, InvalidDateException } from '../exceptions/index.js';
 
 const { namedNode, quad } = N3.DataFactory;
 
@@ -37,9 +39,9 @@ class HydraPreviousNextStorage extends AbstractStorage {
     }
 
     const fileName = files[files.length - 1];
-    const pageName = fileName.replace('.ttl', '');
 
-    this.pageNameNamed = namedNode(`${this.collectionSubject.value}/${pageName}`);
+    this.pageName = fileName.replace('.ttl', '');
+    this.pageNameNamed = namedNode(`${this.collectionSubject.value}/${this.pageName}`);
 
     // Count how many observations there are in the file
     const content = fs.readFileSync(`${this.dataPath}/${fileName}`, 'utf-8');
@@ -71,6 +73,24 @@ class HydraPreviousNextStorage extends AbstractStorage {
     } else {
       this.flushWriter();
     }
+  }
+
+  getPage(pageName) {
+    const pageDate = new Date(pageName);
+
+    // For security reasons
+    if (!isValidDate(pageDate)) {
+      throw new InvalidDateException();
+    }
+
+    if (!fs.existsSync(`${this.dataPath}/${pageDate.toISOString()}.ttl`)) {
+      throw new PageNotFoundException();
+    }
+
+    return {
+      immutable: this.pageName === pageDate.toISOString(),
+      body: fs.createReadStream(`${this.dataPath}/${pageDate.toISOString()}.ttl`)
+    };
   }
 
   createNewPage() {
@@ -114,8 +134,9 @@ class HydraPreviousNextStorage extends AbstractStorage {
     this.fileStream = newFileStream;
     this.writer = newWriter;
 
-    this.remainingObservations = this.observationsPerPage;
+    this.pageName = newPageName;
     this.pageNameNamed = newPageNameNamed;
+    this.remainingObservations = this.observationsPerPage;
 
     this.flushWriter();
   }

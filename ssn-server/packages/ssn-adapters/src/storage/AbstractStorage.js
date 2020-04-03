@@ -1,5 +1,6 @@
-class AbstractStorageInterface {
+class AbstractStorage {
   addObservation() {}
+  getPage() {}
 }
 
-export default AbstractStorageInterface;
+export default AbstractStorage;
