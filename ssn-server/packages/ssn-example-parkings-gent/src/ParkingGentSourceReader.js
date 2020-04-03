@@ -1,10 +1,5 @@
 import { Readers } from 'ssn-adapters';
-
-import N3 from 'n3';
-import { SOSA, RDF, XSD } from './utils/vocs.js';
-import getLocalPart from './utils/getLocalPart.js';
-
-const { quad: newQuad, namedNode, literal } = N3.DataFactory;
+import { SOSA, RDF, XSD } from './vocs.js';
 
 class ParkingGentSourceReader extends Readers.SourceReader {
   constructor(domain, sources, refreshInterval, mapping) {
@@ -43,7 +38,7 @@ class ParkingGentSourceReader extends Readers.SourceReader {
       }
 
       const observableProperty = featureOfInterest.getObservableProperty(
-        getLocalPart(rawObservedProperty.value)
+        this.getLocalPart(rawObservedProperty.value)
       );
 
       if (!observableProperty) {
@@ -54,6 +49,17 @@ class ParkingGentSourceReader extends Readers.SourceReader {
       const literalResult = store.getObjects(subject, SOSA('hasSimpleResult'))[0];
       observableProperty.addObservation(date, literalResult);
     });
+  }
+
+  getLocalPart(IRI) {
+    const lastSegment = IRI.substring(IRI.lastIndexOf('/') + 1);
+    const hashIndex = lastSegment.lastIndexOf('#');
+
+    if (hashIndex == -1) {
+      return lastSegment;
+    }
+
+    return lastSegment.substring(hashIndex + 1);
   }
 }
 

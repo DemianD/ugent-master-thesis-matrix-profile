@@ -6,6 +6,7 @@
   "type": "module",
   "dependencies": {
     "n3": "^1.3.5",
+    "restify": "^8.5.1",
     "ssn-adapters": "^1.0.0",
     "ssn-domain": "^1.0.0"
   }
