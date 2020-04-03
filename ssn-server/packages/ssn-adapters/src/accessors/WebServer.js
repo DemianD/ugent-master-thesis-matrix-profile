@@ -52,6 +52,8 @@ class WebServer {
       return 400;
     }
 
+    console.error(exception);
+
     return 500;
   }
 }
