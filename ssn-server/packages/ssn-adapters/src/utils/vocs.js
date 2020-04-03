@@ -17,3 +17,11 @@ export const XSD = name => {
 export const HYDRA = name => {
   return namedNode(`http://www.w3.org/ns/hydra/core#${name}`);
 };
+
+export const TREE = name => {
+  return namedNode(`https://w3id.org/tree#${name}`);
+};
+
+export const VOID = name => {
+  return namedNode(`http://rdfs.org/ns/void#${name}`);
+};
