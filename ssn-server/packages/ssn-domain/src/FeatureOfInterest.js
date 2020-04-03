@@ -17,9 +17,11 @@ class FeatureOfInterest {
 
   addObservableProperty(name, options) {
     this.observableProperties[name] = new ObservableProperty(
+      this,
       namedNode(`${this.subject.value}/${name}`),
       options
     );
+
     return this.observableProperties[name];
   }
 
