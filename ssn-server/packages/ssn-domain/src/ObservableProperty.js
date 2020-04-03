@@ -44,7 +44,9 @@ class ObservableProperty extends EventEmitter {
     super.emit('observation', observationQuads);
   }
 
-  getPage() {}
+  getPage(pageName) {
+    return this.storageInterface.getPage(pageName);
+  }
 
   emit() {
     throw new Error('Emit not supported. Use `addObservation`');

@@ -5,6 +5,8 @@ import AbstractStorage from './AbstractStorage.js';
 import createDirectoryIfNotExistsSync from '../utils/createDirectoryIfNotExistsSync.js';
 import readDirectorySync from '../utils/readDirectorySync.js';
 import { RDF, HYDRA, SOSA } from '../utils/vocs.js';
+import isValidDate from '../utils/isValidDate.js';
+import { PageNotFoundException, InvalidDateException } from '../exceptions/index.js';
 
 const { namedNode, quad } = N3.DataFactory;
 
@@ -71,6 +73,21 @@ class HydraPreviousNextStorage extends AbstractStorage {
     } else {
       this.flushWriter();
     }
+  }
+
+  getPage(pageName) {
+    const pageDate = new Date(pageName);
+
+    // For security reasons
+    if (!isValidDate(pageDate)) {
+      throw new InvalidDateException();
+    }
+
+    if (!fs.existsSync(`${this.dataPath}/${pageDate.toISOString()}.ttl`)) {
+      throw new PageNotFoundException();
+    }
+
+    return fs.createReadStream(`${this.dataPath}/${pageDate.toISOString()}.ttl`);
   }
 
   createNewPage() {
