@@ -17,8 +17,6 @@ class PaginationAbstractStorage extends AbstractStorage {
 
     this.dataPath = dataPath;
     this.observationsPerPage = observationsPerPage;
-
-    this.collectionSubject = namedNode(`${observableProperty.subject.value}/collection`);
   }
 
   boot() {
@@ -37,7 +35,7 @@ class PaginationAbstractStorage extends AbstractStorage {
     const fileName = files[files.length - 1];
 
     this.pageName = fileName.replace('.ttl', '');
-    this.pageNameNamed = namedNode(`${this.collectionSubject.value}/${this.pageName}`);
+    this.pageNameNamed = this.getCollectionSubject(this.pageName);
 
     // Count how many observations there are in the file
     const content = fs.readFileSync(`${this.dataPath}/${fileName}`, 'utf-8');
@@ -78,6 +76,12 @@ class PaginationAbstractStorage extends AbstractStorage {
       newFileStream,
       newWriter
     };
+  }
+
+  getCollectionSubject(pageName) {
+    return namedNode(
+      `${this.observableProperty.subject.value}Series${pageName ? `/` + pageName : ''}`
+    );
   }
 
   flushWriter() {
