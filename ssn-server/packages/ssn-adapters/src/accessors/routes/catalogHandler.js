@@ -1,4 +1,4 @@
-import { NO_CACHE } from '../constants';
+import { NO_CACHE } from '../constants.js';
 
 export const catalogHandler = domain => {
   return {
