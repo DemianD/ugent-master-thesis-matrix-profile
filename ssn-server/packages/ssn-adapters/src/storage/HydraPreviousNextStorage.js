@@ -15,7 +15,9 @@ class HydraPreviousNextStorage extends PaginationAbstractStorage {
     this.boot();
   }
 
-  addObservation(observationQuads) {
+  addObservation(observationStorage) {
+    const observationQuads = observationStorage.getQuads();
+
     // Add the quads for the Observation
     this.writer.addQuads(observationQuads);
 

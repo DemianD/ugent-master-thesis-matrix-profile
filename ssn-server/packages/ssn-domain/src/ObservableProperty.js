@@ -26,22 +26,27 @@ class ObservableProperty extends EventEmitter {
   }
 
   addObservation(date, literalResult) {
-    const observationQuads = [];
-
+    const observationStore = new N3.Store();
     const observationSubject = namedNode(`${this.subject.value}/member/${date.toISOString()}`);
 
-    observationQuads.push(quad(observationSubject, RDF('type'), SOSA('Observation')));
-    observationQuads.push(quad(observationSubject, SOSA('observedProperty'), this.subject));
-    observationQuads.push(quad(observationSubject, SOSA('hasSimpleResult'), literalResult));
-    observationQuads.push(
-      quad(observationSubject, SOSA('hasFeatureOfInterest'), this.featureOfInterest.subject)
-    );
-    observationQuads.push(
-      quad(observationSubject, SOSA('resultTime'), literal(date.toISOString(), XSD('dateTime')))
+    observationStore.addQuad(observationSubject, RDF('type'), SOSA('Observation'));
+    observationStore.addQuad(observationSubject, SOSA('observedProperty'), this.subject);
+    observationStore.addQuad(observationSubject, SOSA('hasSimpleResult'), literalResult);
+
+    observationStore.addQuad(
+      observationSubject,
+      SOSA('hasFeatureOfInterest'),
+      this.featureOfInterest.subject
     );
 
-    this.storageInterface && this.storageInterface.addObservation(observationQuads);
-    super.emit('observation', observationQuads);
+    observationStore.addQuad(
+      observationSubject,
+      SOSA('resultTime'),
+      literal(date.toISOString(), XSD('dateTime'))
+    );
+
+    this.storageInterface && this.storageInterface.addObservation(observationStore);
+    super.emit('observation', observationStore);
   }
 
   getPage(pageName) {

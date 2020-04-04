@@ -121,10 +121,12 @@ test('it should create a new file when a new observation is added and the curren
     'https://www.example.com/Feature1/ObservableProperty1/member/2020-04-01T11:30:45.909Z.ttl'
   );
 
-  storage.addObservation([
+  const store = new N3.Store([
     quad(subject, RDF('type'), SOSA('Observation')),
     quad(subject, SOSA('hasSimpleResult'), literal(123, XSD('integer')))
   ]);
+
+  storage.addObservation(store);
 
   t.is(
     createWriteStreamMock.getCall(1).args[0],

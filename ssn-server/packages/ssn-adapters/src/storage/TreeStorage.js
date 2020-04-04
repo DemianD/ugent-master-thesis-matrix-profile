@@ -24,7 +24,9 @@ class TreeStorage extends PaginationAbstractStorage {
     });
   }
 
-  addObservation(observationQuads) {
+  addObservation(observationStorage) {
+    const observationQuads = observationStorage.getQuads();
+
     // Add the quads for the Observation
     this.writer.addQuads(observationQuads);
 
