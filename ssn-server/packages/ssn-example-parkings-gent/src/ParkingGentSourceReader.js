@@ -1,4 +1,4 @@
-import { Readers } from '@ssn/adapters';
+import { Readers } from '@ssn/core';
 import { SOSA, RDF, XSD } from './vocs.js';
 
 class ParkingGentSourceReader extends Readers.SourceReader {
@@ -25,10 +25,7 @@ class ParkingGentSourceReader extends Readers.SourceReader {
       const rawObservedProperty = store.getObjects(subject, SOSA('observedProperty'))[0];
 
       // rawFeatureOfInterest contains an IRI where the last segment contains PXX%20Name
-      const [key, name] = rawFeatureOfInterest.value
-        .split('/')
-        .pop()
-        .split('%20');
+      const [key, name] = rawFeatureOfInterest.value.split('/').pop().split('%20');
 
       const featureOfInterest = this.domain.getFeatureOfInterest(key);
 
