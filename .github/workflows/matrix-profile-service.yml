@@ -1,0 +1,19 @@
+name: matrix-profile-service CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./matrix-profile-service
+
+    strategy:
+      matrix:
+        python-version: [3.7]
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Checkout
+        uses: ./matrix-profile-service

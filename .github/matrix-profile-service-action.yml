@@ -1,0 +1,6 @@
+name: 'matrix-profile-service-action'
+description: 'Dockerfile to run the matrix-profile-service'
+
+runs:
+  using: 'docker'
+  image: '../matrix-profile-service/Dockerfile'
