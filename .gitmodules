@@ -1,0 +1,3 @@
+[submodule "matrix-profile-service/seriesdistancematrix"]
+	path = matrix-profile-service/seriesdistancematrix
+	url = git@github.com:IDLabResearch/seriesdistancematrix.git
