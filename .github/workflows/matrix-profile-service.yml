@@ -14,6 +14,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+        with:
+          submodules: true
 
       - name: Checkout
         uses: ./matrix-profile-service
+        env:
+          CI: true
