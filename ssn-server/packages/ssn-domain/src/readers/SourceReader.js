@@ -5,7 +5,7 @@ import { promisify } from 'util';
 import syncRequest from 'request';
 
 import RMLMapperWrapper from '@rmlio/rmlmapper-java-wrapper';
-import convertYarrrmlToRML from '../utils/convertYarrrmlToRML.js';
+import convertYarrrmlToRML from './utils/convertYarrrmlToRML.js';
 
 const request = promisify(syncRequest.get);
 

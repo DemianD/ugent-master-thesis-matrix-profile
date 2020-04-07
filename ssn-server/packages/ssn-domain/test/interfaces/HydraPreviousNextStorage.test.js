@@ -2,13 +2,12 @@ import fs from 'fs';
 import N3 from 'n3';
 import test from 'ava';
 import sinon from 'sinon';
-import Domain from '@ssn/domain';
 
-import { Storage } from '../../index.js';
+import { Domain, Interfaces } from '../../index.js';
 import { SOSA, RDF, XSD } from '../../src/utils/vocs.js';
 
 const { quad, namedNode, literal } = N3.DataFactory;
-const HydraPreviousNextStorage = Storage.HydraPreviousNextStorage;
+const HydraPreviousNextStorage = Interfaces.HydraPreviousNextStorage;
 
 const domain = new Domain('https://www.example.com');
 const foi1 = domain.addFeatureOfInterest('Feature1');

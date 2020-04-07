@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import N3 from 'n3';
-import { RDF, SOSA, XSD } from './vocs.js';
+import { RDF, SOSA, XSD } from '../utils/vocs.js';
 const { quad, literal, namedNode } = N3.DataFactory;
 
 class ObservableProperty extends EventEmitter {

@@ -1,6 +1,6 @@
 import N3 from 'n3';
 import ObservableProperty from './ObservableProperty.js';
-import { SOSA, RDF } from './vocs.js';
+import { SOSA, RDF } from '../utils/vocs.js';
 
 const { quad, namedNode } = N3.DataFactory;
 
