@@ -1,4 +1,4 @@
-import yarrrml from '@rmlio/yarrrml-parser/lib/rml-generator.js';
+import yarrrml from '@rmlio/yarrrml-parser/lib/rml-generator';
 import stringifyQuads from '../../utils/stringifyQuads.js';
 
 const convertYarrrmlToRML = content => {
