@@ -9,14 +9,14 @@ import { PageNotFoundException, InvalidDateException } from '../exceptions/index
 const { quad } = N3.DataFactory;
 
 class HydraPreviousNextStorage extends PaginationAbstractStorage {
-  constructor(options) {
+  constructor(communicationManager, options) {
     super(options);
 
-    this.boot();
+    this.boot(communicationManager);
   }
 
-  addObservation(observationStorage) {
-    const observationQuads = observationStorage.getQuads();
+  addObservation(observationStore) {
+    const observationQuads = observationStore.getQuads();
 
     // Add the quads for the Observation
     this.writer.addQuads(observationQuads);
@@ -28,11 +28,18 @@ class HydraPreviousNextStorage extends PaginationAbstractStorage {
 
     this.remainingObservations -= 1;
 
-    if (this.remainingObservations == 0) {
+    if (this.remainingObservations <= 0) {
       this.createNewPage();
     } else {
       this.flushWriter();
     }
+  }
+
+  getLatestPage() {
+    return {
+      immutable: false,
+      body: fs.createReadStream(`${this.dataPath}/${this.pageName}.ttl`)
+    };
   }
 
   getPage(pageName) {

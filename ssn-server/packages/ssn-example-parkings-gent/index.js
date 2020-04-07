@@ -1,35 +1,34 @@
-import restify from 'restify';
-import { Domain, Interfaces } from '@ssn/core';
+import { Domain, Interfaces, CommunicationManager } from '@ssn/core';
 
-import cors from './src/cors.js';
 import parkings from './src/parkings.js';
 import ParkingGentSourceReader from './src/ParkingGentSourceReader.js';
 
 // Create a new domain
 const domain = new Domain('http://127.0.0.1:8080');
 
+// Create a configuration manager
+const communicationManager = new CommunicationManager();
+
 // Config: Add feature of interest and observable properties to the domain
 Object.entries(parkings).map(([parkingKey, options]) => {
   const featureOfInterest = domain.addFeatureOfInterest(parkingKey, options);
   const observableProperty = featureOfInterest.addObservableProperty('numberOfVacantParkingSpaces');
 
-  const storage = new Interfaces.HydraPreviousNextStorage({
+  const storage = new Interfaces.TreeStorage(communicationManager, {
     observableProperty,
     dataPath: `./data/${parkingKey}`,
     observationsPerPage: 3
   });
 
-  observableProperty.setStorageInterface(storage);
-
-  observableProperty.on('observation', () =>
-    console.log('New observation for parking', parkingKey)
-  );
+  observableProperty.on('observation', observationStore => {
+    console.log('New observation');
+    storage.addObservation(observationStore);
+  });
 });
 
 // Fetching
 const sources = {
-  'parkingsstatus.xml':
-    'https://opendataportaalmobiliteitsbedrijf.stad.gent/datex2/v2/parkingsstatus',
+  'parkingsstatus.xml': 'https://opendataportaalmobiliteitsbedrijf.stad.gent/datex2/v2/parkingsstatus',
   'parkings.xml': 'https://opendataportaalmobiliteitsbedrijf.stad.gent/datex2/v2/parkings'
 };
 
@@ -40,12 +39,4 @@ new ParkingGentSourceReader(domain, sources, '*/5 * * * * *', {
   removeTempFolders: true
 });
 
-// Publishing the files through a Restify webserver
-// const server = restify.createServer();
-// server.use(cors);
-
-// Setting the endpoints on the server, with the domain
-// new Accessors.WebServer(domain, server);
-
-// Start the server
-// server.listen(8080, '127.0.0.1');
+communicationManager.listen(8080, '127.0.0.1');

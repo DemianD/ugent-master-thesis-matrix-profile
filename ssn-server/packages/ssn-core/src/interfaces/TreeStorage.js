@@ -12,20 +12,20 @@ import stringifyQuads from '../utils/stringifyQuads.js';
 const { namedNode, quad, blankNode, literal } = N3.DataFactory;
 
 class TreeStorage extends PaginationAbstractStorage {
-  constructor(options) {
+  constructor(communicationManager, options) {
     super(options);
 
     this.tree = createTree();
 
-    this.boot();
+    this.boot(communicationManager);
 
     this.pages.forEach(fileName => {
       this.tree = this.tree.insert(fileName);
     });
   }
 
-  addObservation(observationStorage) {
-    const observationQuads = observationStorage.getQuads();
+  addObservation(observationStore) {
+    const observationQuads = observationStore.getQuads();
 
     // Add the quads for the Observation
     this.writer.addQuads(observationQuads);
@@ -37,11 +37,15 @@ class TreeStorage extends PaginationAbstractStorage {
 
     this.remainingObservations -= 1;
 
-    if (this.remainingObservations == 0) {
+    if (this.remainingObservations <= 0) {
       this.createNewPage();
     } else {
       this.flushWriter();
     }
+  }
+
+  getLatestPage() {
+    return this.getPage(this.pageName);
   }
 
   getPage(originalPageName) {

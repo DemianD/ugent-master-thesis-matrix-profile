@@ -1,11 +1,13 @@
-import DomainD from './src/domain/Domain.js';
+import DomainX from './src/domain/Domain.js';
+import CommunicationManagerX from './src/communication/CommunicationManager.js';
 import SourceReader from './src/readers/SourceReader.js';
 import HydraPreviousNextStorage from './src/interfaces/HydraPreviousNextStorage.js';
 import TreeStorage from './src/interfaces/TreeStorage.js';
 
 import * as exceptions from './src/exceptions/index.js';
 
-export const Domain = DomainD;
+export const Domain = DomainX;
+export const CommunicationManager = CommunicationManagerX;
 
 export const Readers = {
   SourceReader
@@ -24,5 +26,6 @@ export default {
   Domain,
   Readers,
   Interfaces,
-  Exceptions
+  Exceptions,
+  CommunicationManager
 };

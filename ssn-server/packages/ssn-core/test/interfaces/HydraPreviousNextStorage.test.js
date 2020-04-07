@@ -3,7 +3,7 @@ import N3 from 'n3';
 import test from 'ava';
 import sinon from 'sinon';
 
-import { Domain, Interfaces } from '../../index.js';
+import { Domain, Interfaces, CommunicationManager } from '../../index.js';
 import { SOSA, RDF, XSD } from '../../src/utils/vocs.js';
 
 const { quad, namedNode, literal } = N3.DataFactory;
@@ -16,6 +16,8 @@ const op1 = foi1.addObservableProperty('ObservableProperty1');
 const currentDate = new Date(Date.UTC(2020, 3, 1, 10, 30, 45, 909));
 
 test('it should create a new page if the directory does not exists', t => {
+  const communicationManager = new CommunicationManager();
+
   const existsSyncMock = sinon.stub(fs, 'existsSync').returns(false);
   const mkdirSyncMock = sinon.stub(fs, 'mkdirSync');
   const readdirSyncMock = sinon.stub(fs, 'readdirSync').returns([]);
@@ -27,7 +29,7 @@ test('it should create a new page if the directory does not exists', t => {
 
   const clock = sinon.useFakeTimers(currentDate);
 
-  new HydraPreviousNextStorage({
+  new HydraPreviousNextStorage(communicationManager, {
     observableProperty: op1,
     dataPath: './hydra-storage-test',
     observationsPerPage: 2
@@ -60,6 +62,8 @@ test('it should create a new page if the directory does not exists', t => {
 });
 
 test('it should reopen the latest file if a file exits and set the remaining observations', t => {
+  const communicationManager = new CommunicationManager();
+
   const existsSyncMock = sinon.stub(fs, 'existsSync').returns(true);
   const readdirSyncMock = sinon.stub(fs, 'readdirSync').returns(['2020-04-01T09:30:45.909Z.ttl']);
   const readFileSyncMock = sinon
@@ -70,7 +74,7 @@ test('it should reopen the latest file if a file exits and set the remaining obs
 
   const createWriteStreamMock = sinon.stub(fs, 'createWriteStream');
 
-  const storage = new HydraPreviousNextStorage({
+  const storage = new HydraPreviousNextStorage(communicationManager, {
     observableProperty: op1,
     dataPath: './hydra-storage-test',
     observationsPerPage: 10
@@ -92,6 +96,8 @@ test('it should reopen the latest file if a file exits and set the remaining obs
 });
 
 test('it should create a new file when a new observation is added and the current file is full', t => {
+  const communicationManager = new CommunicationManager();
+
   const existsSyncMock = sinon.stub(fs, 'existsSync').returns(true);
   const readdirSyncMock = sinon.stub(fs, 'readdirSync').returns(['2020-04-01T09:30:45.909Z.ttl']);
   const readFileSyncMock = sinon.stub(fs, 'readFileSync').returns(SOSA('Observation').value);
@@ -109,7 +115,7 @@ test('it should create a new file when a new observation is added and the curren
     .onSecondCall()
     .returns(newPageStream);
 
-  const storage = new HydraPreviousNextStorage({
+  const storage = new HydraPreviousNextStorage(communicationManager, {
     observableProperty: op1,
     dataPath: './hydra-storage-test',
     observationsPerPage: 2

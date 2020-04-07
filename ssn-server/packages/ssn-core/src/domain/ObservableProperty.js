@@ -6,7 +6,6 @@ const { quad, literal, namedNode } = N3.DataFactory;
 class ObservableProperty extends EventEmitter {
   subject;
   quads = [];
-  storageInterface;
 
   constructor(featureOfInterest, subject, { quads = [] } = {}) {
     super();
@@ -19,10 +18,6 @@ class ObservableProperty extends EventEmitter {
 
   getQuads() {
     return this.quads;
-  }
-
-  setStorageInterface(storageInterface) {
-    this.storageInterface = storageInterface;
   }
 
   addObservation(date, literalResult) {
@@ -45,12 +40,7 @@ class ObservableProperty extends EventEmitter {
       literal(date.toISOString(), XSD('dateTime'))
     );
 
-    this.storageInterface && this.storageInterface.addObservation(observationStore);
     super.emit('observation', observationStore);
-  }
-
-  getPage(pageName) {
-    return this.storageInterface.getPage(pageName);
   }
 
   emit() {

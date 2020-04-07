@@ -6,6 +6,7 @@ import AbstractStorage from './AbstractStorage.js';
 import createDirectoryIfNotExists from '../utils/createDirectoryIfNotExistsSync.js';
 import readDirectorySync from '../utils/readDirectorySync.js';
 import { SOSA } from '../utils/vocs.js';
+import getRelativeURI from '../utils/getRelativeURI.js';
 
 const { namedNode, quad } = N3.DataFactory;
 
@@ -19,7 +20,7 @@ class PaginationAbstractStorage extends AbstractStorage {
     this.observationsPerPage = observationsPerPage;
   }
 
-  boot() {
+  boot(communicationManager) {
     // Create directory if it does not exists
     createDirectoryIfNotExists(this.dataPath);
 
@@ -32,28 +33,30 @@ class PaginationAbstractStorage extends AbstractStorage {
       return;
     }
 
-    const pageName = this.pages[this.pages.length - 1];
-
-    this.pageNameNamed = this.getCollectionSubject(pageName);
+    this.pageName = this.pages[this.pages.length - 1];
+    this.pageNameNamed = this.getCollectionSubject(this.pageName);
 
     // Count how many observations there are in the file
-    const content = fs.readFileSync(`${this.dataPath}/${pageName}.ttl`, 'utf-8');
+    const content = fs.readFileSync(`${this.dataPath}/${this.pageName}.ttl`, 'utf-8');
 
     const numberOfObservations = content.split(SOSA('Observation').value).length - 1;
     this.remainingObservations = this.observationsPerPage - numberOfObservations;
 
     // Create the streams
-    this.fileStream = fs.createWriteStream(`${this.dataPath}/${pageName}.ttl`, {
+    this.fileStream = fs.createWriteStream(`${this.dataPath}/${this.pageName}.ttl`, {
       flags: 'a'
     });
 
     this.writer = new N3.Writer(this.fileStream, {
       end: false
     });
+
+    this.registerEndpoints(communicationManager);
   }
 
   addObservation() {}
   getPage() {}
+  getLatestPage() {}
 
   createNewPage(newPageName) {
     // Create write stream for appending the file
@@ -83,6 +86,15 @@ class PaginationAbstractStorage extends AbstractStorage {
     return namedNode(
       `${this.observableProperty.subject.value}Series${pageName ? `/` + pageName : ''}`
     );
+  }
+
+  registerEndpoints(communicationManager) {
+    const relativeURI = getRelativeURI(this.getCollectionSubject().id);
+
+    communicationManager.addEndpoints({
+      [relativeURI]: params => this.getLatestPage(params),
+      [`${relativeURI}/:pageName`]: params => this.getPage(params)
+    });
   }
 
   flushWriter() {
