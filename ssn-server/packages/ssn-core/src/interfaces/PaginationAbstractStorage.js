@@ -52,6 +52,7 @@ class PaginationAbstractStorage extends AbstractStorage {
     });
 
     this.registerEndpoints(communicationManager);
+    this.observableProperty.featureOfInterest.addQuads(this.getCollectionQuads());
   }
 
   listen() {
@@ -62,7 +63,9 @@ class PaginationAbstractStorage extends AbstractStorage {
 
   addObservation() {}
   getPage() {}
+  getIndexPage() {}
   getLatestPage() {}
+  getCollectionQuads() {}
 
   createNewPage(newPageName) {
     // Create write stream for appending the file
@@ -98,7 +101,8 @@ class PaginationAbstractStorage extends AbstractStorage {
     const relativeURI = getRelativeURI(this.getCollectionSubject().id);
 
     communicationManager.addEndpoints({
-      [relativeURI]: params => this.getLatestPage(params),
+      [`${relativeURI}`]: params => this.getIndexPage(params),
+      [`${relativeURI}/latest`]: params => this.getLatestPage(params),
       [`${relativeURI}/:pageName`]: params => this.getPage(params)
     });
   }

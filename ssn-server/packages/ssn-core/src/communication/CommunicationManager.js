@@ -3,6 +3,7 @@ import restify from 'restify';
 import cors from './cors.js';
 import { IMMMUTABLE_CACHE, NO_CACHE } from './constants.js';
 import isReadableStream from './utils/isReadableStream.js';
+import streamQuads from './utils/streamQuads.js';
 import { NotFoundException, InvalidDateException } from '../exceptions/index.js';
 
 class CommunicationManager {

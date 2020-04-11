@@ -37,6 +37,10 @@ class HydraPreviousNextStorage extends PaginationAbstractStorage {
     }
   }
 
+  getIndexPage() {
+    return this.getLatestPage();
+  }
+
   getLatestPage() {
     return {
       immutable: false,
@@ -71,7 +75,7 @@ class HydraPreviousNextStorage extends PaginationAbstractStorage {
     const { newWriter, newFileStream } = super.createNewPage(newPageName, newPageNameNamed);
 
     // Addings quads for collection
-    newWriter.addQuad(quad(this.getCollectionSubject(), RDF('type'), HYDRA('collection')));
+    newWriter.addQuads(this.getCollectionQuads());
     newWriter.addQuad(quad(this.getCollectionSubject(), HYDRA('view'), newPageNameNamed));
 
     // Adding quads for partial collection
@@ -96,6 +100,10 @@ class HydraPreviousNextStorage extends PaginationAbstractStorage {
     this.pageNameNamed = newPageNameNamed;
 
     this.flushWriter();
+  }
+
+  getCollectionQuads() {
+    return [quad(this.getCollectionSubject(), RDF('type'), HYDRA('collection'))];
   }
 }
 

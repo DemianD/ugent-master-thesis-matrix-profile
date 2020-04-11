@@ -3,6 +3,7 @@ import CommunicationManagerX from './src/communication/CommunicationManager.js';
 import SourceReader from './src/readers/SourceReader.js';
 import HydraPreviousNextStorage from './src/interfaces/HydraPreviousNextStorage.js';
 import TreeStorage from './src/interfaces/TreeStorage.js';
+import CatalogInterface from './src/interfaces/CatalogInterface.js';
 
 import * as exceptions from './src/exceptions/index.js';
 
@@ -14,6 +15,7 @@ export const Readers = {
 };
 
 export const Interfaces = {
+  CatalogInterface,
   HydraPreviousNextStorage,
   TreeStorage
 };

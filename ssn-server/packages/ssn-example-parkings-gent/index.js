@@ -21,6 +21,8 @@ Object.entries(parkings).map(([parkingKey, options]) => {
   });
 });
 
+new Interfaces.CatalogInterface(communicationManager, domain);
+
 // Fetching
 const sources = {
   'parkingsstatus.xml': 'https://opendataportaalmobiliteitsbedrijf.stad.gent/datex2/v2/parkingsstatus',

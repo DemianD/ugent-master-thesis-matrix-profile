@@ -31,21 +31,6 @@ class Domain {
       xsd: 'http://www.w3.org/2001/XMLSchema#'
     };
   }
-
-  catalog() {
-    return [
-      ...Object.values(this.featuresOfInterest)
-        .map(featureOfInterest => {
-          return [
-            featureOfInterest.getQuads(),
-            ...Object.values(featureOfInterest.observableProperties).map(observableProperty => {
-              return observableProperty.getQuads();
-            })
-          ];
-        })
-        .flat(Infinity)
-    ];
-  }
 }
 
 export default Domain;

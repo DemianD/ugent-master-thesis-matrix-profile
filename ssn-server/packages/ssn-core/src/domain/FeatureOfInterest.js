@@ -32,6 +32,10 @@ class FeatureOfInterest {
   getQuads() {
     return this.quads;
   }
+
+  addQuads(newQuads) {
+    this.quads = [...this.quads, ...newQuads];
+  }
 }
 
 export default FeatureOfInterest;

@@ -46,11 +46,15 @@ class TreeStorage extends PaginationAbstractStorage {
     }
   }
 
-  getLatestPage() {
-    return this.getPage(this.pageName);
+  getIndexPage() {
+    return this.getPage({ pageName: this.tree.root.key });
   }
 
-  getPage(originalPageName) {
+  getLatestPage() {
+    return this.getPage({ pageName: this.pageName });
+  }
+
+  getPage({ pageName: originalPageName }) {
     const pageDate = new Date(originalPageName);
 
     // For security reasons
@@ -121,7 +125,7 @@ class TreeStorage extends PaginationAbstractStorage {
     const { newWriter, newFileStream } = super.createNewPage(newPageName, newPageNameNamed);
 
     // Addings quads for collection
-    newWriter.addQuad(quad(this.getCollectionSubject(), RDF('type'), TREE('collection')));
+    newWriter.addQuads(this.getCollectionQuads());
     newWriter.addQuad(quad(this.getCollectionSubject(), VOID('subset'), newPageNameNamed));
 
     // Adding quads for partial collection
@@ -142,6 +146,10 @@ class TreeStorage extends PaginationAbstractStorage {
     this.flushWriter();
 
     this.tree = this.tree.insert(newPageName);
+  }
+
+  getCollectionQuads() {
+    return [quad(this.getCollectionSubject(), RDF('type'), TREE('collection'))];
   }
 }
 
