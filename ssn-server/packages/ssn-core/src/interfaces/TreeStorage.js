@@ -22,6 +22,8 @@ class TreeStorage extends PaginationAbstractStorage {
     this.pages.forEach(fileName => {
       this.tree = this.tree.insert(fileName);
     });
+
+    this.listen();
   }
 
   addObservation(observationStore) {

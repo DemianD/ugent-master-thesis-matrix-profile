@@ -14,15 +14,10 @@ Object.entries(parkings).map(([parkingKey, options]) => {
   const featureOfInterest = domain.addFeatureOfInterest(parkingKey, options);
   const observableProperty = featureOfInterest.addObservableProperty('numberOfVacantParkingSpaces');
 
-  const storage = new Interfaces.TreeStorage(communicationManager, {
+  new Interfaces.TreeStorage(communicationManager, {
     observableProperty,
     dataPath: `./data/${parkingKey}`,
     observationsPerPage: 3
-  });
-
-  observableProperty.on('observation', observationStore => {
-    console.log('New observation');
-    storage.addObservation(observationStore);
   });
 });
 

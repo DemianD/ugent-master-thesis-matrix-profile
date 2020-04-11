@@ -54,6 +54,12 @@ class PaginationAbstractStorage extends AbstractStorage {
     this.registerEndpoints(communicationManager);
   }
 
+  listen() {
+    this.observableProperty.on('observation', observationStore => {
+      this.addObservation(observationStore);
+    });
+  }
+
   addObservation() {}
   getPage() {}
   getLatestPage() {}

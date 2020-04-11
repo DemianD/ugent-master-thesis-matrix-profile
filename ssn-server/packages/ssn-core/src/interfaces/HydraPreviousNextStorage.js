@@ -13,6 +13,8 @@ class HydraPreviousNextStorage extends PaginationAbstractStorage {
     super(options);
 
     this.boot(communicationManager);
+
+    this.listen();
   }
 
   addObservation(observationStore) {
