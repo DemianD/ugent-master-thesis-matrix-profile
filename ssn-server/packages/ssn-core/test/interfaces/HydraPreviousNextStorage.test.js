@@ -96,6 +96,10 @@ test('it should reopen the latest file if a file exits and set the remaining obs
 });
 
 test('it should create a new file when a new observation is added and the current file is full', t => {
+  const domain = new Domain('https://www.example.com');
+  const foi1 = domain.addFeatureOfInterest('Feature1');
+  const op1 = foi1.addObservableProperty('ObservableProperty1');
+
   const communicationManager = new CommunicationManager();
 
   const existsSyncMock = sinon.stub(fs, 'existsSync').returns(true);
