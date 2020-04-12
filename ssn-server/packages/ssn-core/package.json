@@ -13,10 +13,12 @@
   },
   "devDependencies": {
     "ava": "^3.5.2",
+    "c8": "^7.1.0",
     "nock": "^12.0.3",
     "sinon": "^9.0.1"
   },
   "scripts": {
-    "test": "ava"
+    "test": "ava",
+    "coverage": "c8 --reporter=html --reporter=text ava"
   }
 }
