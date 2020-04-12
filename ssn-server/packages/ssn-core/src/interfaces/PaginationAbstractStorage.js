@@ -21,6 +21,9 @@ class PaginationAbstractStorage extends AbstractStorage {
   }
 
   boot(communicationManager) {
+    // Addings quads for the collection to the feature of interest
+    this.observableProperty.featureOfInterest.addQuads(this.getCollectionQuads());
+
     // Create directory if it does not exists
     createDirectoryIfNotExists(this.dataPath);
 
@@ -52,7 +55,6 @@ class PaginationAbstractStorage extends AbstractStorage {
     });
 
     this.registerEndpoints(communicationManager);
-    this.observableProperty.featureOfInterest.addQuads(this.getCollectionQuads());
   }
 
   listen() {

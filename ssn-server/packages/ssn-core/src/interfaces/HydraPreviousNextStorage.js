@@ -74,11 +74,8 @@ class HydraPreviousNextStorage extends PaginationAbstractStorage {
 
     const { newWriter, newFileStream } = super.createNewPage(newPageName, newPageNameNamed);
 
-    // Addings quads for collection
-    newWriter.addQuads(this.getCollectionQuads());
-    newWriter.addQuad(quad(this.getCollectionSubject(), HYDRA('view'), newPageNameNamed));
-
     // Adding quads for partial collection
+    newWriter.addQuad(quad(this.getCollectionSubject(), HYDRA('view'), newPageNameNamed));
     newWriter.addQuad(quad(newPageNameNamed, RDF('type'), HYDRA('PartialCollectionView')));
 
     if (hasPrevious) {
