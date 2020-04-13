@@ -1,10 +1,9 @@
 import test from 'ava';
 import nock from 'nock';
 
-import { Readers } from '../../index.js';
+import { SourceReader } from '../../index.js';
 
 const interval = '*/5 * * * * *';
-const SourceReader = Readers.SourceReader;
 
 const sources = {
   'file1.xml': 'https://example.com/file1.xml',

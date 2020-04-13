@@ -3,15 +3,14 @@ import N3 from 'n3';
 import test from 'ava';
 import sinon from 'sinon';
 
-import { Domain, Interfaces, CommunicationManager } from '../../index.js';
+import { Domain, HydraStorage, CommunicationManager } from '../../index.js';
 import { SOSA, RDF, XSD } from '../../src/utils/vocs.js';
 
 const { quad, namedNode, literal } = N3.DataFactory;
-const HydraPreviousNextStorage = Interfaces.HydraPreviousNextStorage;
 
 const domain = new Domain('https://www.example.com');
 const foi1 = domain.addFeatureOfInterest('Feature1');
-const op1 = foi1.addObservableProperty('ObservableProperty1');
+const op1 = foi1.addObservableProperty(namedNode('ObservableProperty1'));
 
 const currentDate = new Date(Date.UTC(2020, 3, 1, 10, 30, 45, 909));
 
@@ -29,8 +28,7 @@ test('it should create a new page if the directory does not exists', t => {
 
   const clock = sinon.useFakeTimers(currentDate);
 
-  new HydraPreviousNextStorage(communicationManager, {
-    observableProperty: op1,
+  const storage = new HydraStorage(op1, communicationManager, {
     dataPath: './hydra-storage-test',
     observationsPerPage: 2
   });
@@ -43,8 +41,6 @@ test('it should create a new page if the directory does not exists', t => {
     createWriteStreamMock.getCall(0).firstArg,
     './hydra-storage-test/2020-04-01T10:30:45.909Z.ttl'
   );
-
-  t.is(streamSpy.callCount, 6);
 
   t.snapshot(
     streamSpy
@@ -74,8 +70,7 @@ test('it should reopen the latest file if a file exits and set the remaining obs
 
   const createWriteStreamMock = sinon.stub(fs, 'createWriteStream');
 
-  const storage = new HydraPreviousNextStorage(communicationManager, {
-    observableProperty: op1,
+  const storage = new HydraStorage(op1, communicationManager, {
     dataPath: './hydra-storage-test',
     observationsPerPage: 10
   });
@@ -98,7 +93,7 @@ test('it should reopen the latest file if a file exits and set the remaining obs
 test('it should create a new file when a new observation is added and the current file is full', t => {
   const domain = new Domain('https://www.example.com');
   const foi1 = domain.addFeatureOfInterest('Feature1');
-  const op1 = foi1.addObservableProperty('ObservableProperty1');
+  const op1 = foi1.addObservableProperty(namedNode('ObservableProperty1'));
 
   const communicationManager = new CommunicationManager();
 
@@ -119,8 +114,7 @@ test('it should create a new file when a new observation is added and the curren
     .onSecondCall()
     .returns(newPageStream);
 
-  const storage = new HydraPreviousNextStorage(communicationManager, {
-    observableProperty: op1,
+  const storage = new HydraStorage(op1, communicationManager, {
     dataPath: './hydra-storage-test',
     observationsPerPage: 2
   });

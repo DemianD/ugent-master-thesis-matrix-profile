@@ -11,12 +11,7 @@ class CatalogInterface {
   catalogHandler() {
     const quads = Object.values(this.domain.featuresOfInterest)
       .map(featureOfInterest => {
-        return [
-          featureOfInterest.getQuads(),
-          ...Object.values(featureOfInterest.observableProperties).map(observableProperty => {
-            return observableProperty.getQuads();
-          })
-        ];
+        return featureOfInterest.getQuads();
       })
       .flat(Infinity);
 
@@ -33,17 +28,8 @@ class CatalogInterface {
       throw new FeatureOfInterestNotFoundException();
     }
 
-    const quads = [
-      ...featureOfInterest.getQuads(),
-      ...Object.values(featureOfInterest.observableProperties)
-        .map(observableProperty => {
-          return observableProperty.getQuads();
-        })
-        .flat()
-    ];
-
     return {
-      body: quads,
+      body: featureOfInterest.getQuads(),
       immutable: false
     };
   }

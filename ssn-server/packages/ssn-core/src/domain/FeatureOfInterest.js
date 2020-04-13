@@ -4,37 +4,26 @@ import { SOSA, RDF } from '../utils/vocs.js';
 
 const { quad, namedNode } = N3.DataFactory;
 
-class FeatureOfInterest {
+class FeatureOfInterest extends N3.Store {
   subject;
-  quads = [];
   observableProperties = {};
 
   constructor(subject, { quads = () => [] } = {}) {
+    super();
+
     this.subject = subject;
 
-    this.quads = [quad(subject, RDF('type'), SOSA('FeatureOfInterest')), ...quads(subject)];
+    this.addQuads([quad(subject, RDF('type'), SOSA('FeatureOfInterest')), ...quads(subject)]);
   }
 
-  addObservableProperty(name, options) {
-    this.observableProperties[name] = new ObservableProperty(
-      this,
-      namedNode(`${this.subject.value}/${name}`),
-      options
-    );
+  addObservableProperty(namedNode) {
+    this.observableProperties[namedNode.value] = new ObservableProperty(this, namedNode);
 
-    return this.observableProperties[name];
+    return this.observableProperties[namedNode.value];
   }
 
   getObservableProperty(observablePropertyName) {
     return this.observableProperties[observablePropertyName];
-  }
-
-  getQuads() {
-    return this.quads;
-  }
-
-  addQuads(newQuads) {
-    this.quads = [...this.quads, ...newQuads];
   }
 }
 

@@ -22,15 +22,6 @@ class Domain {
   getFeatureOfInterest(featureOfInterestName) {
     return this.featuresOfInterest[featureOfInterestName];
   }
-
-  prefixes() {
-    return {
-      rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-      datex: 'http://vocab.datex.org/terms#',
-      sosa: 'http://www.w3.org/ns/sosa/',
-      xsd: 'http://www.w3.org/2001/XMLSchema#'
-    };
-  }
 }
 
 export default Domain;

@@ -1,7 +1,7 @@
-import { Readers } from '@ssn/core';
-import { SOSA, RDF, XSD } from './vocs.js';
+import { SourceReader } from '@ssn/core';
+import { SOSA, RDF } from './vocs.js';
 
-class ParkingGentSourceReader extends Readers.SourceReader {
+class ParkingGentSourceReader extends SourceReader {
   constructor(domain, sources, refreshInterval, mapping) {
     super(sources, refreshInterval, mapping);
 
@@ -24,7 +24,6 @@ class ParkingGentSourceReader extends Readers.SourceReader {
       const rawFeatureOfInterest = store.getObjects(subject, SOSA('hasFeatureOfInterest'))[0];
       const rawObservedProperty = store.getObjects(subject, SOSA('observedProperty'))[0];
 
-      // rawFeatureOfInterest contains an IRI where the last segment contains PXX%20Name
       const [key, name] = rawFeatureOfInterest.value.split('/').pop().split('%20');
 
       const featureOfInterest = this.domain.getFeatureOfInterest(key);
@@ -34,9 +33,7 @@ class ParkingGentSourceReader extends Readers.SourceReader {
         return;
       }
 
-      const observableProperty = featureOfInterest.getObservableProperty(
-        this.getLocalPart(rawObservedProperty.value)
-      );
+      const observableProperty = featureOfInterest.getObservableProperty(rawObservedProperty.value);
 
       if (!observableProperty) {
         console.error('No observableProperty found for ', rawObservedProperty.value);
@@ -46,17 +43,6 @@ class ParkingGentSourceReader extends Readers.SourceReader {
       const literalResult = store.getObjects(subject, SOSA('hasSimpleResult'))[0];
       observableProperty.addObservation(date, literalResult);
     });
-  }
-
-  getLocalPart(IRI) {
-    const lastSegment = IRI.substring(IRI.lastIndexOf('/') + 1);
-    const hashIndex = lastSegment.lastIndexOf('#');
-
-    if (hashIndex == -1) {
-      return lastSegment;
-    }
-
-    return lastSegment.substring(hashIndex + 1);
   }
 }
 

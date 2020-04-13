@@ -1,23 +1,18 @@
 import EventEmitter from 'events';
 import N3 from 'n3';
 import { RDF, SOSA, XSD } from '../utils/vocs.js';
+import getNameVoc from '../utils/getNameVoc.js';
 const { quad, literal, namedNode } = N3.DataFactory;
 
 class ObservableProperty extends EventEmitter {
   subject;
-  quads = [];
 
-  constructor(featureOfInterest, subject, { quads = [] } = {}) {
+  constructor(featureOfInterest, subject) {
     super();
 
     this.subject = subject;
+    this.name = getNameVoc(subject.value);
     this.featureOfInterest = featureOfInterest;
-
-    this.quads = [quad(subject, RDF('type'), SOSA('ObservableProperty')), ...quads];
-  }
-
-  getQuads() {
-    return this.quads;
   }
 
   addObservation(date, literalResult) {

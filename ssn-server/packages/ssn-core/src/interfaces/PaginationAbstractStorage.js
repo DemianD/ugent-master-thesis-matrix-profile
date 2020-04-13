@@ -8,24 +8,22 @@ import readDirectorySync from '../utils/readDirectorySync.js';
 import { SOSA } from '../utils/vocs.js';
 import getRelativeURI from '../utils/getRelativeURI.js';
 
-const { namedNode, quad } = N3.DataFactory;
-
 class PaginationAbstractStorage extends AbstractStorage {
-  constructor({ observableProperty, dataPath, observationsPerPage }) {
+  constructor(communicationManager, options) {
     super();
 
-    this.observableProperty = observableProperty;
+    this.communicationManager = communicationManager;
 
-    this.dataPath = dataPath;
-    this.observationsPerPage = observationsPerPage;
+    this.dataPath = options.dataPath;
+    this.observationsPerPage = options.observationsPerPage;
   }
 
   boot(communicationManager) {
-    // Addings quads for the collection to the feature of interest
-    this.observableProperty.featureOfInterest.addQuads(this.getCollectionQuads());
-
     // Create directory if it does not exists
     createDirectoryIfNotExists(this.dataPath);
+
+    // Registering the endpoints
+    this.registerEndpoints(communicationManager);
 
     // On boot, find the latest file based on folder name
     this.pages = readDirectorySync(this.dataPath, '.ttl').map(file => file.replace('.ttl', ''));
@@ -37,11 +35,12 @@ class PaginationAbstractStorage extends AbstractStorage {
     }
 
     this.pageName = this.pages[this.pages.length - 1];
-    this.pageNameNamed = this.getCollectionSubject(this.pageName);
+    this.pageNameNamed = this.collection.getSubject(this.pageName);
 
     // Count how many observations there are in the file
     const content = fs.readFileSync(`${this.dataPath}/${this.pageName}.ttl`, 'utf-8');
 
+    // Calculate the remaining observations we can add to the file
     const numberOfObservations = content.split(SOSA('Observation').value).length - 1;
     this.remainingObservations = this.observationsPerPage - numberOfObservations;
 
@@ -53,21 +52,22 @@ class PaginationAbstractStorage extends AbstractStorage {
     this.writer = new N3.Writer(this.fileStream, {
       end: false
     });
-
-    this.registerEndpoints(communicationManager);
   }
 
   listen() {
-    this.observableProperty.on('observation', observationStore => {
+    this.collection.observableProperty.on('observation', observationStore => {
       this.addObservation(observationStore);
     });
+  }
+
+  getCollection() {
+    return this.collection;
   }
 
   addObservation() {}
   getPage() {}
   getIndexPage() {}
   getLatestPage() {}
-  getCollectionQuads() {}
 
   createNewPage(newPageName) {
     // Create write stream for appending the file
@@ -81,9 +81,9 @@ class PaginationAbstractStorage extends AbstractStorage {
 
     this.pages.push(newPageName);
 
-    // Adding quads from feature of interest and observable property
-    newWriter.addQuads(this.observableProperty.featureOfInterest.getQuads());
-    newWriter.addQuads(this.observableProperty.getQuads());
+    // Adding quads from feature of interest.
+    // The feature of interest also contains the collection quads
+    newWriter.addQuads(this.collection.observableProperty.featureOfInterest.getQuads());
 
     this.remainingObservations = this.observationsPerPage;
 
@@ -93,16 +93,10 @@ class PaginationAbstractStorage extends AbstractStorage {
     };
   }
 
-  getCollectionSubject(pageName) {
-    return namedNode(
-      `${this.observableProperty.subject.value}Series${pageName ? `/` + pageName : ''}`
-    );
-  }
+  registerEndpoints() {
+    const relativeURI = getRelativeURI(this.collection.getSubject().id);
 
-  registerEndpoints(communicationManager) {
-    const relativeURI = getRelativeURI(this.getCollectionSubject().id);
-
-    communicationManager.addEndpoints({
+    this.communicationManager.addEndpoints({
       [`${relativeURI}`]: params => this.getIndexPage(params),
       [`${relativeURI}/latest`]: params => this.getLatestPage(params),
       [`${relativeURI}/:pageName`]: params => this.getPage(params)

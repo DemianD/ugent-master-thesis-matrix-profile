@@ -1,7 +1,14 @@
-import { Domain, Interfaces, CommunicationManager } from '@ssn/core';
+import {
+  Domain,
+  CatalogInterface,
+  HydraStorage,
+  TreeStorage,
+  CommunicationManager
+} from '@ssn/core';
 
 import parkings from './src/parkings.js';
 import ParkingGentSourceReader from './src/ParkingGentSourceReader.js';
+import { DATEX } from './src/vocs.js';
 
 // Create a new domain
 const domain = new Domain('http://127.0.0.1:8080');
@@ -12,16 +19,17 @@ const communicationManager = new CommunicationManager();
 // Config: Add feature of interest and observable properties to the domain
 Object.entries(parkings).map(([parkingKey, options]) => {
   const featureOfInterest = domain.addFeatureOfInterest(parkingKey, options);
-  const observableProperty = featureOfInterest.addObservableProperty('numberOfVacantParkingSpaces');
+  const observableProperty = featureOfInterest.addObservableProperty(
+    DATEX('numberOfVacantParkingSpaces')
+  );
 
-  new Interfaces.TreeStorage(communicationManager, {
-    observableProperty,
+  const storageInterface = new TreeStorage(observableProperty, communicationManager, {
     dataPath: `./data/${parkingKey}`,
     observationsPerPage: 3
   });
 });
 
-new Interfaces.CatalogInterface(communicationManager, domain);
+new CatalogInterface(communicationManager, domain);
 
 // Fetching
 const sources = {

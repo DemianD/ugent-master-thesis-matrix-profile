@@ -8,14 +8,16 @@ import { TREE, RDF, VOID, SOSA, XSD } from '../utils/vocs.js';
 import { InvalidDateException, PageNotFoundException } from '../exceptions/index.js';
 import isValidDate from '../utils/isValidDate.js';
 import stringifyQuads from '../utils/stringifyQuads.js';
+import TreeCollection from '../collections/TreeCollection.js';
 
-const { namedNode, quad, blankNode, literal } = N3.DataFactory;
+const { quad, blankNode, literal } = N3.DataFactory;
 
 class TreeStorage extends PaginationAbstractStorage {
-  constructor(communicationManager, options) {
-    super(options);
+  constructor(observableProperty, communicationManager, options) {
+    super(communicationManager, options);
 
     this.tree = createTree();
+    this.collection = new TreeCollection(observableProperty);
 
     this.boot(communicationManager);
 
@@ -32,9 +34,9 @@ class TreeStorage extends PaginationAbstractStorage {
     // Add the quads for the Observation
     this.writer.addQuads(observationQuads);
 
-    // Add a hydra:member to the collection
+    // Add a tree:member to the collection
     this.writer.addQuad(
-      quad(this.getCollectionSubject(), TREE('member'), observationQuads[0].subject)
+      quad(this.collection.getSubject(), TREE('member'), observationQuads[0].subject)
     );
 
     this.remainingObservations -= 1;
@@ -83,9 +85,9 @@ class TreeStorage extends PaginationAbstractStorage {
 
       resultStream.push(
         stringifyQuads([
-          quad(this.getCollectionSubject(pageName), TREE('relation'), leftBlankNode),
+          quad(this.collection.getSubject(pageName), TREE('relation'), leftBlankNode),
           quad(leftBlankNode, RDF('type'), TREE('LessThanRelation')),
-          quad(leftBlankNode, TREE('node'), this.getCollectionSubject(leftNode.key)),
+          quad(leftBlankNode, TREE('node'), this.collection.getSubject(leftNode.key)),
           quad(leftBlankNode, TREE('path'), SOSA('resultTime')),
           quad(leftBlankNode, TREE('value'), literal(pageName, XSD('dateTime')))
         ])
@@ -101,9 +103,9 @@ class TreeStorage extends PaginationAbstractStorage {
 
       resultStream.push(
         stringifyQuads([
-          quad(this.getCollectionSubject(pageName), TREE('relation'), rightBlankNode),
+          quad(this.collection.getSubject(pageName), TREE('relation'), rightBlankNode),
           quad(rightBlankNode, RDF('type'), TREE('GreaterOrEqualThanRelation')),
-          quad(rightBlankNode, TREE('node'), this.getCollectionSubject(rightNode.key)),
+          quad(rightBlankNode, TREE('node'), this.collection.getSubject(rightNode.key)),
           quad(rightBlankNode, TREE('path'), SOSA('resultTime')),
           quad(rightBlankNode, TREE('value'), literal(it.node.key, XSD('dateTime')))
         ])
@@ -120,13 +122,12 @@ class TreeStorage extends PaginationAbstractStorage {
     const hasPrevious = this.fileStream !== undefined;
 
     const newPageName = new Date().toISOString();
-    const newPageNameNamed = this.getCollectionSubject(newPageName);
+    const newPageNameNamed = this.collection.getSubject(newPageName);
 
     const { newWriter, newFileStream } = super.createNewPage(newPageName, newPageNameNamed);
 
-    // Addings quads for collection
-    newWriter.addQuads(this.getCollectionQuads());
-    newWriter.addQuad(quad(this.getCollectionSubject(), VOID('subset'), newPageNameNamed));
+    // TODO: on the root page, it's not a subset.
+    newWriter.addQuad(quad(this.collection.getSubject(), VOID('subset'), newPageNameNamed));
 
     // Adding quads for partial collection
     // We don't define the relations here so we can make the tree balanced
@@ -146,10 +147,6 @@ class TreeStorage extends PaginationAbstractStorage {
     this.flushWriter();
 
     this.tree = this.tree.insert(newPageName);
-  }
-
-  getCollectionQuads() {
-    return [quad(this.getCollectionSubject(), RDF('type'), TREE('collection'))];
   }
 }
 

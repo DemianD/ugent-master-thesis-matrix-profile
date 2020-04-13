@@ -1,19 +1,22 @@
 import fs from 'fs';
 import N3 from 'n3';
 
-import PaginationAbstractStorage from './PaginationAbstractStorage.js';
 import { RDF, HYDRA } from '../utils/vocs.js';
 import isValidDate from '../utils/isValidDate.js';
+
+import PaginationAbstractStorage from './PaginationAbstractStorage.js';
 import { PageNotFoundException, InvalidDateException } from '../exceptions/index.js';
+import HydraCollection from '../collections/HydraCollection.js';
 
 const { quad } = N3.DataFactory;
 
-class HydraPreviousNextStorage extends PaginationAbstractStorage {
-  constructor(communicationManager, options) {
-    super(options);
+class HydraStorage extends PaginationAbstractStorage {
+  constructor(observableProperty, communicationManager, options) {
+    super(communicationManager, options);
 
-    this.boot(communicationManager);
+    this.collection = new HydraCollection(observableProperty);
 
+    this.boot();
     this.listen();
   }
 
@@ -25,7 +28,7 @@ class HydraPreviousNextStorage extends PaginationAbstractStorage {
 
     // Add a hydra:member to the collection
     this.writer.addQuad(
-      quad(this.getCollectionSubject(), HYDRA('member'), observationQuads[0].subject)
+      quad(this.collection.getSubject(), HYDRA('member'), observationQuads[0].subject)
     );
 
     this.remainingObservations -= 1;
@@ -70,12 +73,12 @@ class HydraPreviousNextStorage extends PaginationAbstractStorage {
     const hasPrevious = this.fileStream !== undefined;
 
     const newPageName = new Date().toISOString();
-    const newPageNameNamed = this.getCollectionSubject(newPageName);
+    const newPageNameNamed = this.collection.getSubject(newPageName);
 
     const { newWriter, newFileStream } = super.createNewPage(newPageName, newPageNameNamed);
 
     // Adding quads for partial collection
-    newWriter.addQuad(quad(this.getCollectionSubject(), HYDRA('view'), newPageNameNamed));
+    newWriter.addQuad(quad(this.collection.getSubject(), HYDRA('view'), newPageNameNamed));
     newWriter.addQuad(quad(newPageNameNamed, RDF('type'), HYDRA('PartialCollectionView')));
 
     if (hasPrevious) {
@@ -98,10 +101,6 @@ class HydraPreviousNextStorage extends PaginationAbstractStorage {
 
     this.flushWriter();
   }
-
-  getCollectionQuads() {
-    return [quad(this.getCollectionSubject(), RDF('type'), HYDRA('collection'))];
-  }
 }
 
-export default HydraPreviousNextStorage;
+export default HydraStorage;

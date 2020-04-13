@@ -1,7 +1,9 @@
+import N3 from 'n3';
 import test from 'ava';
 
-import { Domain, Interfaces } from '../../index.js';
-const CatalogInterface = Interfaces.CatalogInterface;
+import { Domain, CatalogInterface } from '../../index.js';
+
+const { quad, namedNode, literal } = N3.DataFactory;
 
 const dummyCommunicationManager = {
   addEndpoints: () => {}
@@ -30,8 +32,8 @@ test('it should contain the observed properties', t => {
 
   const featureOfInterest = domain.addFeatureOfInterest('Feature1');
 
-  featureOfInterest.addObservableProperty('Property1');
-  featureOfInterest.addObservableProperty('Property2');
+  featureOfInterest.addObservableProperty(namedNode('Property1'));
+  featureOfInterest.addObservableProperty(namedNode('Property2'));
 
   t.snapshot(catalogInterface.catalogHandler().body);
 });
