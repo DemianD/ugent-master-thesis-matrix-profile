@@ -22,11 +22,9 @@ class TreeStorage extends PaginationAbstractStorage {
     this.boot(communicationManager);
 
     // Prevents inserting the first page twice
-    if (this.pages.length > 1) {
-      this.pages.forEach(fileName => {
-        this.tree = this.tree.insert(fileName);
-      });
-    }
+    this.pages.forEach(fileName => {
+      this.tree = this.tree.insert(fileName);
+    });
 
     this.listen();
   }
@@ -149,7 +147,9 @@ class TreeStorage extends PaginationAbstractStorage {
 
     this.flushWriter();
 
-    this.tree = this.tree.insert(newPageName);
+    if (hasPrevious) {
+      this.tree = this.tree.insert(newPageName);
+    }
   }
 }
 

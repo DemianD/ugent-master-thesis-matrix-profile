@@ -21,7 +21,7 @@ class CommunicationManager {
 
         // Currently, only trig is supported
         // res.setHeader('Content-Type', 'application/trig');
-        res.setHeader('Content-Type', 'text');
+        res.setHeader('Content-Type', 'text/plain');
 
         if (isReadableStream(body)) {
           body.pipe(res);
