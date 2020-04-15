@@ -5,7 +5,9 @@ const createDirectoryIfNotExists = directoryName => {
     return;
   }
 
-  fs.mkdirSync(directoryName);
+  fs.mkdirSync(directoryName, {
+    recursive: true
+  });
 };
 
 export default createDirectoryIfNotExists;

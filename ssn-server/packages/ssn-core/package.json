@@ -18,7 +18,7 @@
     "sinon": "^9.0.1"
   },
   "scripts": {
-    "test": "ava",
-    "coverage": "c8 --reporter=html --reporter=text ava"
+    "test": "ava --serial",
+    "coverage": "c8 --reporter=html --reporter=text ava --serial"
   }
 }
