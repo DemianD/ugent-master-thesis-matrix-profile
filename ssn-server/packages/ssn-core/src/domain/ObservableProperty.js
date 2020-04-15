@@ -17,7 +17,9 @@ class ObservableProperty extends EventEmitter {
 
   addObservation(date, literalResult) {
     const observationStore = new N3.Store();
-    const observationSubject = namedNode(`${this.subject.value}/member/${date.toISOString()}`);
+    const observationSubject = namedNode(
+      `${this.featureOfInterest.subject.value}/${this.name}/member/${date.toISOString()}`
+    );
 
     observationStore.addQuad(observationSubject, RDF('type'), SOSA('Observation'));
     observationStore.addQuad(observationSubject, SOSA('observedProperty'), this.subject);
