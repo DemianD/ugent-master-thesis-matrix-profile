@@ -115,8 +115,6 @@ class TreeStorage extends PaginationAbstractStorage {
       );
     }
 
-    resultStream.end();
-
     return {
       immutable: false,
       body: resultStream

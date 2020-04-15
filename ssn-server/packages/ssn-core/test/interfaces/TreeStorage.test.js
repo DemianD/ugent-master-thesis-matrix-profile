@@ -66,6 +66,8 @@ const createMocks = (exists = false, readdirFiles = []) => {
 };
 
 const streamToString = stream => {
+  stream.end();
+
   const chunks = [];
 
   return new Promise(resolve => {
