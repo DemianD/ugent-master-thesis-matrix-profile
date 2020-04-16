@@ -76,42 +76,45 @@ class TreeStorage extends PaginationAbstractStorage {
     const resultStream = new PassThrough();
 
     const fileStream = fs.createReadStream(`${this.dataPath}/${pageName}.ttl`, 'utf-8');
+
+    fileStream.on('end', () => {
+      const leftNode = it.node.left;
+      const rightNode = it.node.right;
+
+      if (leftNode) {
+        const leftBlankNode = blankNode('tree-left');
+
+        resultStream.push(
+          stringifyQuads([
+            quad(this.collection.getSubject(pageName), TREE('relation'), leftBlankNode),
+            quad(leftBlankNode, RDF('type'), TREE('LessThanRelation')),
+            quad(leftBlankNode, TREE('Node'), this.collection.getSubject(leftNode.key)),
+            quad(leftBlankNode, TREE('path'), SOSA('resultTime')),
+            quad(leftBlankNode, TREE('value'), literal(pageName, XSD('dateTime')))
+          ])
+        );
+      }
+
+      if (rightNode) {
+        const rightBlankNode = blankNode('tree-right');
+
+        // If it has a right node, it has definitly a successor
+        // This successor contains the first observation of the next page
+        it.next();
+
+        resultStream.push(
+          stringifyQuads([
+            quad(this.collection.getSubject(pageName), TREE('relation'), rightBlankNode),
+            quad(rightBlankNode, RDF('type'), TREE('GreaterOrEqualThanRelation')),
+            quad(rightBlankNode, TREE('Node'), this.collection.getSubject(rightNode.key)),
+            quad(rightBlankNode, TREE('path'), SOSA('resultTime')),
+            quad(rightBlankNode, TREE('value'), literal(it.node.key, XSD('dateTime')))
+          ])
+        );
+      }
+    });
+
     fileStream.pipe(resultStream);
-
-    const leftNode = it.node.left;
-    const rightNode = it.node.right;
-
-    if (leftNode) {
-      const leftBlankNode = blankNode('tree-left');
-
-      resultStream.push(
-        stringifyQuads([
-          quad(this.collection.getSubject(pageName), TREE('relation'), leftBlankNode),
-          quad(leftBlankNode, RDF('type'), TREE('LessThanRelation')),
-          quad(leftBlankNode, TREE('node'), this.collection.getSubject(leftNode.key)),
-          quad(leftBlankNode, TREE('path'), SOSA('resultTime')),
-          quad(leftBlankNode, TREE('value'), literal(pageName, XSD('dateTime')))
-        ])
-      );
-    }
-
-    if (rightNode) {
-      const rightBlankNode = blankNode('tree-right');
-
-      // If it has a right node, it has definitly a successor
-      // This successor contains the first observation of the next page
-      it.next();
-
-      resultStream.push(
-        stringifyQuads([
-          quad(this.collection.getSubject(pageName), TREE('relation'), rightBlankNode),
-          quad(rightBlankNode, RDF('type'), TREE('GreaterOrEqualThanRelation')),
-          quad(rightBlankNode, TREE('node'), this.collection.getSubject(rightNode.key)),
-          quad(rightBlankNode, TREE('path'), SOSA('resultTime')),
-          quad(rightBlankNode, TREE('value'), literal(it.node.key, XSD('dateTime')))
-        ])
-      );
-    }
 
     return {
       immutable: false,
@@ -132,7 +135,7 @@ class TreeStorage extends PaginationAbstractStorage {
 
     // Adding quads for partial collection
     // We don't define the relations here so we can make the tree balanced
-    newWriter.addQuad(quad(newPageNameNamed, RDF('type'), TREE('node')));
+    newWriter.addQuad(quad(newPageNameNamed, RDF('type'), TREE('Node')));
 
     if (hasPrevious) {
       this.writer.end();
