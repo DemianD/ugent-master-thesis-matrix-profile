@@ -21,3 +21,7 @@ export const OWL = name => {
 export const DATEX = name => {
   return namedNode(`http://vocab.datex.org/terms#${name}`);
 };
+
+export const RDFS = name => {
+  return namedNode(`http://www.w3.org/2000/01/rdf-schema#${name}`);
+};
