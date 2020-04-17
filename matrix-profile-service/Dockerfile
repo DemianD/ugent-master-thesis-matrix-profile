@@ -8,4 +8,4 @@ WORKDIR /app
 
 RUN cd seriesdistancematrix && python setup.py clean build install && cd ..
 
-CMD if [ -z "$GITHUB_ACTION" ]; then cd src && python3 ./index.py; else ls && cd matrix-profile-service && python3 -m unittest discover; fi
+CMD if [ -z "$GITHUB_ACTION" ]; then python3 ./src/index.py; else cd matrix-profile-service && python3 -m unittest discover; fi
