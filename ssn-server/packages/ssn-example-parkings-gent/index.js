@@ -1,10 +1,5 @@
-import {
-  Domain,
-  CatalogInterface,
-  HydraStorage,
-  TreeStorage,
-  CommunicationManager
-} from '@ssn/core';
+import { Domain, CatalogInterface, TreeStorage, CommunicationManager } from '@ssn/core';
+import MatrixProfileInterface from '@ssn/matrix-profile-interface';
 
 import parkings from './src/parkings.js';
 import ParkingGentSourceReader from './src/ParkingGentSourceReader.js';
@@ -23,9 +18,20 @@ Object.entries(parkings).map(([parkingKey, options]) => {
     DATEX('numberOfVacantParkingSpaces')
   );
 
+  // Add the tree storage interface
   const storageInterface = new TreeStorage(observableProperty, communicationManager, {
     dataPath: `./data/${parkingKey}`,
     observationsPerPage: 3
+  });
+
+  const collection = storageInterface.getCollection();
+
+  // Add the matrix profile storage interface
+  new MatrixProfileInterface(communicationManager, collection, {
+    resultsFolder: `./matrix-profiles/${parkingKey}`,
+    queueFolder: '../../../matrix-profile-service/queue',
+    seriesWindow: 1000,
+    windowSizes: [10, 20, 30]
   });
 });
 
