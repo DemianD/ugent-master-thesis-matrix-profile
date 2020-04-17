@@ -9,12 +9,11 @@ const streamQuads = (quads, outputStream, end = true, format = 'application/trig
   if (end) {
     streamWriter.end();
   } else {
-    // streamWriter.end() will also close the outputstream.
-    // If we don't want this, we just flush the remaining data from the streamWriter and
-    // only close the streamWriter.
-
+    // streamWriter.end() will close the outputStream. This is something that we don't
+    // always want to happen. To fix this, we just flush the remaining data and
+    // close only the streamWriter.
     if (streamWriter._writer._subject !== null) {
-      streamWriter._writer._write('.\n');
+      streamWriter._writer._write(streamWriter._writer._inDefaultGraph ? '.\n' : '\n}\n');
       streamWriter._writer._subject = null;
     }
 
