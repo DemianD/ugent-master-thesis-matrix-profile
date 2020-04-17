@@ -1,0 +1,11 @@
+{
+  "name": "@ssn/matrix-profile-interface",
+  "version": "1.0.0",
+  "main": "./index.js",
+  "type": "module",
+  "dependencies": {
+    "ava": "^3.5.2",
+    "n3": "^1.3.5",
+    "slugify": "^1.4.0"
+  }
+}
