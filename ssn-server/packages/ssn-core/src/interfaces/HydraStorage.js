@@ -77,6 +77,10 @@ class HydraStorage extends PaginationAbstractStorage {
 
     const { newWriter, newFileStream } = super.createNewPage(newPageName, newPageNameNamed);
 
+    // Adding quads from feature of interest.
+    // The feature of interest also contains the collection quads
+    newWriter.addQuads(this.collection.observableProperty.featureOfInterest.getQuads());
+
     // Adding quads for partial collection
     newWriter.addQuad(quad(this.collection.getSubject(), HYDRA('view'), newPageNameNamed));
     newWriter.addQuad(quad(newPageNameNamed, RDF('type'), HYDRA('PartialCollectionView')));

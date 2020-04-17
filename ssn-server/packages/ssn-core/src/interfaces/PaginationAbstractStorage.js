@@ -81,10 +81,6 @@ class PaginationAbstractStorage extends AbstractStorage {
 
     this.pages.push(newPageName);
 
-    // Adding quads from feature of interest.
-    // The feature of interest also contains the collection quads
-    newWriter.addQuads(this.collection.observableProperty.featureOfInterest.getQuads());
-
     this.remainingObservations = this.observationsPerPage;
 
     return {

@@ -98,7 +98,7 @@ it('should create an intial page when the are no files in the data folder', asyn
   t.is(immutable, false);
 
   // It should not contain any relations
-  t.is(await streamToString(body), '');
+  t.snapshot(await streamToString(body));
 
   restore();
 });
@@ -125,11 +125,11 @@ it('should load the existing files from the folder in the tree', async t => {
 
   // Should not contain any relations
   const { body: page1 } = storage.getPage({ pageName: '2020-04-01T10:20:45.909Z' });
-  t.is(await streamToString(page1), '');
+  t.snapshot(await streamToString(page1));
 
   // Should not contain any relations
   const { body: page4 } = storage.getPage({ pageName: '2020-04-01T10:27:45.909Z' });
-  t.is(await streamToString(page4), '');
+  t.snapshot(await streamToString(page4));
 
   // Should be the root and have two relations: one to page 1, and one to page 3
   const { body: page2 } = storage.getPage({ pageName: '2020-04-01T10:22:45.909Z' });

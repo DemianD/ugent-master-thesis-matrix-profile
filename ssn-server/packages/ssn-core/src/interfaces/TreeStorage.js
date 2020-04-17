@@ -9,6 +9,7 @@ import { InvalidDateException, PageNotFoundException } from '../exceptions/index
 import isValidDate from '../utils/isValidDate.js';
 import stringifyQuads from '../utils/stringifyQuads.js';
 import TreeCollection from '../collections/TreeCollection.js';
+import streamQuads from '../communication/utils/streamQuads.js';
 
 const { quad, blankNode, literal } = N3.DataFactory;
 
@@ -66,54 +67,56 @@ class TreeStorage extends PaginationAbstractStorage {
     }
 
     const pageName = pageDate.toISOString();
-
     const it = this.tree.find(pageName);
 
     if (it === null || it.node === null) {
       throw new PageNotFoundException();
     }
 
+    const isRoot = it.node.key === this.tree.root.key;
+    const nodeSubject = this.collection.getSubject(it.node.key);
+
+    let quads = [
+      ...this.collection.observableProperty.featureOfInterest.getQuads(),
+      quad(this.collection.getSubject(), isRoot ? TREE('view') : VOID('subset'), nodeSubject),
+      quad(nodeSubject, RDF('type'), TREE('Node'))
+    ];
+
+    const leftNode = it.node.left;
+    const rightNode = it.node.right;
+
+    if (leftNode) {
+      const leftBlankNode = blankNode('tree-left');
+
+      quads = quads.concat([
+        quad(this.collection.getSubject(pageName), TREE('relation'), leftBlankNode),
+        quad(leftBlankNode, RDF('type'), TREE('LessThanRelation')),
+        quad(leftBlankNode, TREE('Node'), this.collection.getSubject(leftNode.key)),
+        quad(leftBlankNode, TREE('path'), SOSA('resultTime')),
+        quad(leftBlankNode, TREE('value'), literal(pageName, XSD('dateTime')))
+      ]);
+    }
+
+    if (rightNode) {
+      const rightBlankNode = blankNode('tree-right');
+
+      // If it has a right node, it has definitly a successor
+      // This successor contains the first observation of the next page
+      it.next();
+
+      quads = quads.concat([
+        quad(this.collection.getSubject(pageName), TREE('relation'), rightBlankNode),
+        quad(rightBlankNode, RDF('type'), TREE('GreaterOrEqualThanRelation')),
+        quad(rightBlankNode, TREE('Node'), this.collection.getSubject(rightNode.key)),
+        quad(rightBlankNode, TREE('path'), SOSA('resultTime')),
+        quad(rightBlankNode, TREE('value'), literal(it.node.key, XSD('dateTime')))
+      ]);
+    }
     const resultStream = new PassThrough();
 
+    streamQuads(quads, resultStream, false);
+
     const fileStream = fs.createReadStream(`${this.dataPath}/${pageName}.ttl`, 'utf-8');
-
-    fileStream.on('end', () => {
-      const leftNode = it.node.left;
-      const rightNode = it.node.right;
-
-      if (leftNode) {
-        const leftBlankNode = blankNode('tree-left');
-
-        resultStream.push(
-          stringifyQuads([
-            quad(this.collection.getSubject(pageName), TREE('relation'), leftBlankNode),
-            quad(leftBlankNode, RDF('type'), TREE('LessThanRelation')),
-            quad(leftBlankNode, TREE('Node'), this.collection.getSubject(leftNode.key)),
-            quad(leftBlankNode, TREE('path'), SOSA('resultTime')),
-            quad(leftBlankNode, TREE('value'), literal(pageName, XSD('dateTime')))
-          ])
-        );
-      }
-
-      if (rightNode) {
-        const rightBlankNode = blankNode('tree-right');
-
-        // If it has a right node, it has definitly a successor
-        // This successor contains the first observation of the next page
-        it.next();
-
-        resultStream.push(
-          stringifyQuads([
-            quad(this.collection.getSubject(pageName), TREE('relation'), rightBlankNode),
-            quad(rightBlankNode, RDF('type'), TREE('GreaterOrEqualThanRelation')),
-            quad(rightBlankNode, TREE('Node'), this.collection.getSubject(rightNode.key)),
-            quad(rightBlankNode, TREE('path'), SOSA('resultTime')),
-            quad(rightBlankNode, TREE('value'), literal(it.node.key, XSD('dateTime')))
-          ])
-        );
-      }
-    });
-
     fileStream.pipe(resultStream);
 
     return {
@@ -129,13 +132,6 @@ class TreeStorage extends PaginationAbstractStorage {
     const newPageNameNamed = this.collection.getSubject(newPageName);
 
     const { newWriter, newFileStream } = super.createNewPage(newPageName, newPageNameNamed);
-
-    // TODO: on the root page, it's not a subset.
-    newWriter.addQuad(quad(this.collection.getSubject(), VOID('subset'), newPageNameNamed));
-
-    // Adding quads for partial collection
-    // We don't define the relations here so we can make the tree balanced
-    newWriter.addQuad(quad(newPageNameNamed, RDF('type'), TREE('Node')));
 
     if (hasPrevious) {
       this.writer.end();

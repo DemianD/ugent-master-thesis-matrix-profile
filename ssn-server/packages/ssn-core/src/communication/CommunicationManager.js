@@ -26,7 +26,7 @@ class CommunicationManager {
         if (isReadableStream(body)) {
           body.pipe(res);
         } else {
-          streamQuads(body || [], res, 'application/trig');
+          streamQuads(body || [], res);
         }
       } catch (exception) {
         res.send(this.getStatusCode(exception));
