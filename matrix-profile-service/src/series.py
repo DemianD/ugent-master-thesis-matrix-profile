@@ -38,7 +38,7 @@ class Series:
             # Left matrix profile
             # the first distance will be calculated when there are 1 + exclusion_zone + m observations
             if self.number_of_values < 1 + exclusion_zone + m:
-                return
+                continue
         
             self.streamingCalculators[m]['calculator'].calculate_columns()
 
@@ -47,15 +47,16 @@ class Series:
             if self.series_window - self.number_of_values >= 0:
                 # The rolling hasn't started 
                 distance = self.streamingCalculators[m]['consumer'].matrix_profile_left[self.number_of_values - m]
+                index = self.streamingCalculators[m]['consumer'].profile_index_left[self.number_of_values - m]
             else:
                 # The rolling has now started, and the new value is at the back
                 distance = self.streamingCalculators[m]['consumer'].matrix_profile_left[-1]
+                index = self.streamingCalculators[m]['consumer'].profile_index_left[-1]
 
-            self.writeLine(m, dateForDistance, distance)
+            self.writeLine(m, dateForDistance, distance, self.dates[index])
 
-    def writeLine(self, m, date, distance):
-        # print(self.key + ': ' + date + '\t' + str(distance))
-        self.files[m].write(date + '\t' + str(distance) + '\n')
+    def writeLine(self, m, date, distance, index):
+        self.files[m].write(date + '\t' + str(distance) + '\t' + str(index) + '\n')
         self.files[m].flush()
 
     def openFiles(self):

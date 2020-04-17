@@ -22,7 +22,7 @@ calculator.calculate_diagonals()
 
 # The matrix profile
 left_matrix_profile = consumer.matrix_profile_left
-right_matrix_profile = consumer.matrix_profile_right
+profile_index_left = consumer.profile_index_left
 
 class TestSeries(TestCase):
 
@@ -30,29 +30,28 @@ class TestSeries(TestCase):
         mock = mock_open()
 
         with patch('builtins.open', mock):
-            series = Series('key', m, 1000, 'test.csv')
+            series = Series('key', [m], 1000, './test')
 
-        mock.assert_called_once_with('test.csv', 'a')
+        mock.assert_called_once_with('./test/10.txt', 'a')
 
     def test_it_should_write_the_correct_values_when_the_series_window_has_not_been_reached(self):
         mock = mock_open()
 
         with patch('builtins.open', mock):
-            series = Series('key', m, 1000, 'test.csv')
+            series = Series('key', [m], 1000, './test')
 
             for i in range(0, 100):
                 series.add(str(i), data[i])
-
-        mock.assert_called_once_with('test.csv', 'a')
 
         # The first distance for the LMP will be at index 1 + exclusion_zone (which is default m//2)
         currentIndex = 1 + m//2
 
         for call in mock().write.call_args_list:
             args, kwargs = call
-            index, distance = args[0].split('\t')
+            date, distance, index = args[0].split('\t')
             
-            self.assertEqual(currentIndex, int(index))
+            self.assertEqual(currentIndex, int(date))
             self.assertAlmostEqual(left_matrix_profile[currentIndex], float(distance))
+            self.assertEqual(profile_index_left[currentIndex], int(index))
 
             currentIndex += 1
