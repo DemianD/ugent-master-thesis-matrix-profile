@@ -2,11 +2,12 @@ import fs from 'fs';
 import N3 from 'n3';
 import path from 'path';
 import slugify from 'slugify';
-import { MP, SOSA } from './src/vocs.js';
+import { MP, SOSA, RDF, XSD } from './src/vocs.js';
 import getRelativeURI from '../ssn-core/src/utils/getRelativeURI.js';
 import createDirectoryIfNotExists from '../ssn-core/src/utils/createDirectoryIfNotExistsSync.js';
+import createMatrixProfileLiterals from './src/createMatrixProfileLiterals.js';
 
-const { namedNode, quad } = N3.DataFactory;
+const { namedNode, quad, literal } = N3.DataFactory;
 
 class MatrixProfileInterface {
   constructor(communicationManager, collection, options) {
@@ -71,6 +72,24 @@ class MatrixProfileInterface {
     );
   }
 
+  async getMatrixProfile(windowSize) {
+    const subject = this.getMatrixProfileSubject(windowSize);
+    const literals = await createMatrixProfileLiterals(`${this.resultsFolder}/${windowSize}.txt`);
+
+    const quads = [
+      quad(subject, RDF('type'), MP('MatrixProfile')),
+      quad(subject, MP('windowSize'), literal(windowSize, XSD('integer'))),
+      quad(subject, MP('dates'), literal(literals.dates, MP('array'))),
+      quad(subject, MP('distances'), literal(literals.distances, MP('array'))),
+      quad(subject, MP('indexes'), literal(literals.indexes, MP('array')))
+    ];
+
+    return {
+      immutable: false,
+      body: quads
+    };
+  }
+
   registerEndpoints() {
     for (let windowSize of this.windowSizes) {
       const matrixProfileSubject = this.getMatrixProfileSubject(windowSize);
@@ -83,9 +102,11 @@ class MatrixProfileInterface {
 
       // Add a new endpoint for the matrix profile
       this.communicationManager.addEndpoints({
-        [relativeURI]: params => console.log('Not yet implemented')
+        [relativeURI]: params => this.getMatrixProfile(windowSize)
       });
     }
+
+    this.getMatrixProfile(10);
   }
 }
 

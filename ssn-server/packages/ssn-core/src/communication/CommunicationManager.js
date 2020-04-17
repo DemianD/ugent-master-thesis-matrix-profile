@@ -13,14 +13,19 @@ class CommunicationManager {
   }
 
   handleResponse(req, res) {
-    return handler => {
+    return async handler => {
       try {
-        const { immutable, body } = handler(req.params);
+        let promiseOrObject = handler(req.params);
+
+        if (promiseOrObject instanceof Promise) {
+          promiseOrObject = await promiseOrObject;
+        }
+
+        const { immutable, body } = promiseOrObject;
 
         res.setHeader('Cache-Control', immutable ? IMMMUTABLE_CACHE : NO_CACHE);
 
         // Currently, only trig is supported
-        // res.setHeader('Content-Type', 'application/trig');
         res.setHeader('Content-Type', 'application/trig');
 
         if (isReadableStream(body)) {
