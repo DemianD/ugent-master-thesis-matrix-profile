@@ -44,7 +44,7 @@ class MatrixProfileInterface {
     const value = observationStore.getQuads(undefined, SOSA('hasSimpleResult'), undefined)[0].object
       .value;
 
-    const index = observationStore.getQuads(undefined, SOSA('resultTime'), undefined)[0].object
+    const date = observationStore.getQuads(undefined, SOSA('resultTime'), undefined)[0].object
       .value;
 
     const body = {
@@ -53,7 +53,7 @@ class MatrixProfileInterface {
       series_window: this.seriesWindow,
       results_folder: this.resultsFolder,
       value: value,
-      index: index
+      date: date
     };
 
     fs.writeFile(

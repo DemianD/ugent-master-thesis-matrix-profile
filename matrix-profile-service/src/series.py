@@ -3,68 +3,80 @@ from distancematrix.generator.znorm_euclidean import ZNormEuclidean
 from distancematrix.consumer.matrix_profile_lr import ShiftingMatrixProfileLR
 
 class Series:
-    def __init__(self, key, m, series_window, result_path):
-        self.m = m
+    def __init__(self, key, window_sizes, series_window, results_folder):
         self.key = key
         self.dates = []
+        self.window_sizes = window_sizes
+        self.series_window = series_window
+        self.results_folder = results_folder
 
         self.number_of_values = 0
-        self.exclusion_zone = m // 2
-        self.series_window = series_window
 
-        self.calculator = StreamingCalculator(self.m, self.series_window)
+        self.streamingCalculators = {} 
 
-        self.generator = self.calculator.add_generator(0, ZNormEuclidean(noise_std=0.))
-        self.consumer = self.calculator.add_consumer([0], ShiftingMatrixProfileLR())
+        for m in window_sizes:
+            calculator = StreamingCalculator(m, series_window)
+            generator = calculator.add_generator(0, ZNormEuclidean(noise_std=0.))
+            consumer = calculator.add_consumer([0], ShiftingMatrixProfileLR())
 
-        self.result_path = result_path
-        self.openFile()
+            self.streamingCalculators[m] = {
+                'calculator': calculator,
+                'consumer': consumer,
+                'resultsFile': results_folder + '/' + str(m) + '.txt'
+            }
+
+        self.openFiles()
 
     def add(self, date, value):
         self.number_of_values += 1
-
-        self.calculator.append_series([value])
         self.dates.append(date)
 
-        # Left matrix profile
-        # the first distance will be calculated when there are 1 + exclusion_zone + m observations
-        if self.number_of_values < 1 + self.exclusion_zone + self.m:
-            return
+        for m in self.window_sizes:
+            exclusion_zone = m // 2
+            self.streamingCalculators[m]['calculator'].append_series([value])
+
+            # Left matrix profile
+            # the first distance will be calculated when there are 1 + exclusion_zone + m observations
+            if self.number_of_values < 1 + exclusion_zone + m:
+                return
         
-        self.calculator.calculate_columns()
+            self.streamingCalculators[m]['calculator'].calculate_columns()
 
-        dateForDistance = self.dates[self.number_of_values - self.m]
+            dateForDistance = self.dates[self.number_of_values - m]
 
-        if self.series_window - self.number_of_values >= 0:
-            # The rolling hasn't started 
-            distance = self.consumer.matrix_profile_left[self.number_of_values - self.m]
-        else:
-            # The rolling has now started, and the new value is at the back
-            distance = self.consumer.matrix_profile_left[-1]
+            if self.series_window - self.number_of_values >= 0:
+                # The rolling hasn't started 
+                distance = self.streamingCalculators[m]['consumer'].matrix_profile_left[self.number_of_values - m]
+            else:
+                # The rolling has now started, and the new value is at the back
+                distance = self.streamingCalculators[m]['consumer'].matrix_profile_left[-1]
 
-        self.writeLine(dateForDistance, distance)
+            self.writeLine(m, dateForDistance, distance)
 
-    def writeLine(self, date, distance):
+    def writeLine(self, m, date, distance):
         # print(self.key + ': ' + date + '\t' + str(distance))
+        self.files[m].write(date + '\t' + str(distance) + '\n')
+        self.files[m].flush()
 
-        self.result_file.write(date + '\t' + str(distance) + '\n')
-        self.result_file.flush()
+    def openFiles(self):
+        self.files = {}
 
-    def openFile(self):
-        self.result_file = open(self.result_path, 'a')
+        for m in self.window_sizes:
+            self.files[m] = open(self.streamingCalculators[m]['resultsFile'], 'a')
 
     def __del__(self):
-        if hasattr(self, 'result_file'):
-            self.result_file.close()
+        if hasattr(self, 'files'):
+            for m in self.window_sizes:
+                self.files[m].close()
 
     def __getstate__(self):
         state = self.__dict__.copy()
 
         # Remove the result file as it is not pickable
-        del state['result_file']
+        del state['files']
 
         return state
 
     def __setstate__(self, state):
         self.__dict__.update(state)
-        self.openFile()
+        self.openFiles()
