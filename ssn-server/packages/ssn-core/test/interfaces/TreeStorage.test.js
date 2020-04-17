@@ -28,7 +28,13 @@ const createMocks = (exists = false, readdirFiles = []) => {
   const mkdirSyncMock = sinon.stub(fs, 'mkdirSync');
   const readdirSyncMock = sinon.stub(fs, 'readdirSync').returns(readdirFiles);
 
-  const readStream = { read: () => {}, pipe: () => {} };
+  const readStream = {
+    read: () => {},
+    pipe: () => {},
+    on: (event, cb) => {
+      cb();
+    }
+  };
   const readStreamSpy = sinon.spy(readStream, 'read');
 
   const writeStream = { write: () => {}, end: () => {} };
