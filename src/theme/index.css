@@ -1,21 +1,19 @@
 @tailwind base;
-
 @tailwind components;
-
 @tailwind utilities;
 
-@import url('https://rsms.me/inter/inter.css');
+@import url( 'https://rsms.me/inter/inter.css');
 
+#root,
 body,
-html,
-#root {
+html {
   height: 100%;
 }
 
-input,
-textarea,
 button,
+button:active,
 button:focus,
-button:active {
+input,
+textarea {
   outline: none;
 }

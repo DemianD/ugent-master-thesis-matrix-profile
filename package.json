@@ -3,15 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@comunica/actor-init-sparql": "^1.10.0",
+    "@comunica/actor-init-sparql": "^1.12.0",
     "@reach/router": "^1.3.3",
     "highcharts": "^8.0.1",
     "highcharts-react-official": "^3.0.0",
+    "n3": "^1.3.5",
     "purgecss": "^2.1.0",
+    "rdf-literal": "^1.1.0",
+    "rdflib": "^1.1.0",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-scripts": "3.4.0",
-    "tailwindcss": "^1.2.0"
+    "tailwindcss": "^1.2.0",
+    "use-debounce": "^3.4.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.1.1",

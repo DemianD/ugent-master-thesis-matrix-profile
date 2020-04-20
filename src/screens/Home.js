@@ -5,10 +5,9 @@ import Content from '../components/Content';
 const Home = () => {
   return (
     <>
-      <div className="mt-16 text-center">
-        <H1 className="sm:text-5xl md:text-6xl">
-          time-series published <br />
-          on the linked, semantic web
+      <div className="mt-16 text-center max-w-screen-md">
+        <H1 className="sm:text-5xl md:text-5xl">
+          Publishing and analysing time series on the Semantic Web with Matrix Profile techniques
         </H1>
       </div>
       <Content className="mt-16 flex flex-col md:flex-row">

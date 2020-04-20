@@ -1,0 +1,19 @@
+<https://mp-server.dem.be/P01> a <http://www.w3.org/ns/sosa/FeatureOfInterest>, <http://vocab.datex.org/terms#UrbanParkingSite>;
+    <http://www.w3.org/2002/07/owl#sameAs> <https://stad.gent/id/parking/P1>;
+    <http://vocab.datex.org/terms#parkingName> "Vrijdagmarkt";
+    <http://vocab.datex.org/terms#parkingNumberOfSpaces> "648"^^<http://www.w3.org/2001/XMLSchema#integer>.
+<https://www.example.com> a <https://w3id.org/tree#collection>;
+    <http://rdfs.org/ns/void#subset> <https://www.example.com/2020-04-15T18:46:34.035Z>.
+<https://www.example.com/2020-04-15T18:46:34.035Z> a <https://w3id.org/tree#node>.
+
+<https://www.example.com/2020-04-15T18:46:34.035Z> <https://w3id.org/tree#relation> _:tree-left .
+_:tree-left <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/tree#LessThanRelation> .
+_:tree-left <https://w3id.org/tree#Node> <https://www.example.com/2020-04-15T15:26:34.035Z> .
+_:tree-left <https://w3id.org/tree#path> <http://www.w3.org/ns/sosa/resultTime> .
+_:tree-left <https://w3id.org/tree#value> "2020-04-15T18:46:34.035Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+
+<https://www.example.com/2020-04-15T18:46:34.035Z> <https://w3id.org/tree#relation> _:tree-right .
+_:tree-right <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/tree#GreaterOrEqualThanRelation> .
+_:tree-right <https://w3id.org/tree#Node> <https://www.example.com/2020-04-15T22:06:33.680Z> .
+_:tree-right <https://w3id.org/tree#path> <http://www.w3.org/ns/sosa/resultTime> .
+_:tree-right <https://w3id.org/tree#value> "2020-04-15T19:11:33.695Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .

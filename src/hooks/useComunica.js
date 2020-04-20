@@ -1,9 +1,11 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { newEngine } from '@comunica/actor-init-sparql';
 
 let engine = newEngine();
 
-const Comunica = ({ execute, datasource, query, onData, onEnd }) => {
+const useComunica = (datasources, query, execute) => {
+  const [data, setData] = useState([]);
+
   useEffect(() => {
     let iterator;
     let ignore = false;
@@ -11,14 +13,15 @@ const Comunica = ({ execute, datasource, query, onData, onEnd }) => {
     if (execute) {
       engine
         .query(query, {
-          sources: [datasource]
+          sources: Array.isArray(datasources) ? datasources : [datasources],
         })
-        .then(comunicaResult => {
+        .then((comunicaResult) => {
           if (!ignore) {
             iterator = comunicaResult.bindingsStream;
 
-            iterator.on('data', data => onData(data));
-            iterator.on('end', () => onEnd());
+            iterator.on('data', (data) => {
+              setData((d) => [...d, data]);
+            });
           } else {
             comunicaResult.bindingsStream.destroy();
           }
@@ -29,14 +32,9 @@ const Comunica = ({ execute, datasource, query, onData, onEnd }) => {
       ignore = true;
       iterator && iterator.destroy();
     };
-  }, [execute, datasource, query, onData, onEnd]);
+  }, [datasources, execute, query]);
 
-  return null;
+  return [data];
 };
 
-Comunica.defaultProps = {
-  onData: () => {},
-  onEnd: () => {}
-};
-
-export default Comunica;
+export default useComunica;
