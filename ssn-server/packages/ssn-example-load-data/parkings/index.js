@@ -52,7 +52,8 @@ const parkings = {
 const communicationManager = new CommunicationManager();
 
 Object.entries(parkings).map(async ([city, p]) => {
-  const domain = new Domain(`http://127.0.0.1:8080/${city}`);
+  // TODO: env variable
+  const domain = new Domain(`https://mp-server.dem.be/${city}`);
 
   // console.log('Downloading...');
   // const parkingDownloader = new Download(p, fromDate, toDate);
