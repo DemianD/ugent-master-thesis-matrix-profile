@@ -29,9 +29,37 @@ class Download {
       const store = new N3.Store();
 
       await fetch(page)
-        .then(response => response.text())
+        .then(async response => {
+          if (response.status === 404) {
+            // Sometimes the next link is broken
+            // so we fix this by searching manually for the next link
+            console.error('err:', page);
+            console.log('Trying to recover');
+
+            const datetimeString = page.match(/(.*)?page=(.*)/)[2];
+            const [date, time] = datetimeString.split('T');
+            const [year, month, day] = date.split('-');
+            const [hour, minute, second] = time.split(':');
+
+            const utcDate = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+
+            while (true) {
+              utcDate.setUTCHours(utcDate.getUTCHours() + 1);
+
+              page = `${this.baseUri}?page=${datetimeToString(utcDate, '-')}`;
+
+              const response = await fetch(page);
+
+              if (response.status !== 404) {
+                console.log('recovered');
+                return response.text();
+              }
+            }
+          }
+          return response.text();
+        })
         .then(data => storeQuads(store, data))
-        .catch(err => console.error(page, err));
+        .catch(err => console.error(err, page));
 
       await new Promise(resolve => {
         const matches = store.match(
