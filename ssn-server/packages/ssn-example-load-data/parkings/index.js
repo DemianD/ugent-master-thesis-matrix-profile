@@ -55,9 +55,9 @@ Object.entries(parkings).map(async ([city, p]) => {
   // TODO: env variable
   const domain = new Domain(`https://mp-server.dem.be/${city}`);
 
-  // console.log('Downloading...');
-  // const parkingDownloader = new Download(p, fromDate, toDate);
-  // await parkingDownloader.download();
+  console.log('Downloading...');
+  const parkingDownloader = new Download(p, fromDate, toDate);
+  await parkingDownloader.download();
 
   console.log('Grouping...');
   await Promise.all(
