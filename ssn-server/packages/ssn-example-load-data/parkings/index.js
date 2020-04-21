@@ -15,7 +15,7 @@ const sleep = () => new Promise(resolve => setTimeout(() => resolve(), 1000));
 import { DATEX } from '../../ssn-example-parkings-gent/src/vocs.js';
 
 const fromDate = new Date(Date.UTC(2017, 7 - 1, 20, 14));
-const toDate = new Date(Date.UTC(2020, 3 - 1, 22));
+const toDate = new Date();
 
 const parkings = {
   leuven: {
