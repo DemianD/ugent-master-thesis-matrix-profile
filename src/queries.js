@@ -27,15 +27,6 @@ WHERE {
     <${subject}> rdfs:label ?label.
 }`;
 
-export const getObservations = `
-PREFIX sosa: <http://www.w3.org/ns/sosa/>
-
-SELECT ?s ?simpleResult ?resultTime
-WHERE {
-    ?s sosa:hasSimpleResult ?simpleResult.
-    ?s sosa:resultTime ?resultTime.
-}`;
-
 export const getNodes = `
 PREFIX tree: <https://w3id.org/tree#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>

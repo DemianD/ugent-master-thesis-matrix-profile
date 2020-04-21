@@ -1,29 +1,30 @@
 import { useState, useEffect } from 'react';
 
-import TreeQuery from '../query/tree';
+import TreeQuery from '../query/TreeQuery';
 
-const useTreeQuery = (datasource, query, f = [], execute = true) => {
+const useTreeQuery = (initialDatasource, filters = [], execute = true) => {
   const [results, setResults] = useState([]);
 
   useEffect(() => {
     let ignore = false;
     let treeQuery = undefined;
+    setResults([]);
 
     if (execute) {
-      treeQuery = new TreeQuery(query, f, (newResults) => {
+      treeQuery = new TreeQuery(filters, (newResults) => {
         if (!ignore) {
           setResults((r) => r.concat(newResults));
         }
       });
 
-      treeQuery.execute(datasource);
+      treeQuery.execute(initialDatasource);
     }
 
     return () => {
       treeQuery && treeQuery.cancel();
       ignore = true;
     };
-  }, [datasource, execute, f, query]);
+  }, [execute, filters, initialDatasource]);
 
   return results;
 };

@@ -3,7 +3,6 @@ import { Router } from '@reach/router';
 import Header from './components/Header';
 import Home from './screens/Home';
 import Explore from './screens/Explore';
-import Query from './screens/Query';
 import Analyse from './screens/Analyse';
 
 function App() {
@@ -15,7 +14,6 @@ function App() {
           <Home path="/" />
           <Analyse path="/analyse" />
           <Explore path="/explore" />
-          <Query path="/query" />
         </Router>
       </div>
       <footer className="text-xs text-blue-1100 mb-2 flex-shrink-0">
