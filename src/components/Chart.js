@@ -7,6 +7,9 @@ HighchartsBoost(Highcharts);
 
 const Chart = ({ className, dataPoints }) => {
   const [options, setOptions] = useState({
+    time: {
+      useUTC: false,
+    },
     boost: {
       enabled: true,
       useGPUTranslations: true,
