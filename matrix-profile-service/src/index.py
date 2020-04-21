@@ -24,6 +24,8 @@ while True:
             continue
 
         # Open the file and parse to json
+        print(fileName)
+
         file = open(fileName, "r")
         content = json.loads(file.read())
 

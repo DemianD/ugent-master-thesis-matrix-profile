@@ -30,26 +30,6 @@ class TreeStorage extends PaginationAbstractStorage {
     this.listen();
   }
 
-  addObservation(observationStore) {
-    const observationQuads = observationStore.getQuads();
-
-    // Add the quads for the Observation
-    this.writer.addQuads(observationQuads);
-
-    // Add a tree:member to the collection
-    this.writer.addQuad(
-      quad(this.collection.getSubject(), TREE('member'), observationQuads[0].subject)
-    );
-
-    this.remainingObservations -= 1;
-
-    if (this.remainingObservations <= 0) {
-      this.createNewPage();
-    } else {
-      this.flushWriter();
-    }
-  }
-
   getIndexPage() {
     return this.getPage({ pageName: this.tree.root.key });
   }
@@ -125,10 +105,31 @@ class TreeStorage extends PaginationAbstractStorage {
     };
   }
 
-  createNewPage() {
+  addObservation(observationStore) {
+    const observationQuads = observationStore.getQuads();
+
+    this.remainingObservations -= 1;
+
+    if (this.remainingObservations <= 0) {
+      const ISOString = observationStore.getObjects(null, SOSA('resultTime'))[0].value;
+
+      this.createNewPage(ISOString);
+    }
+
+    // Add the quads for the Observation
+    this.writer.addQuads(observationQuads);
+
+    // Add a tree:member to the collection
+    this.writer.addQuad(
+      quad(this.collection.getSubject(), TREE('member'), observationQuads[0].subject)
+    );
+
+    this.flushWriter();
+  }
+
+  createNewPage(newPageName) {
     const hasPrevious = this.fileStream !== undefined;
 
-    const newPageName = new Date().toISOString();
     const newPageNameNamed = this.collection.getSubject(newPageName);
 
     const { newWriter, newFileStream } = super.createNewPage(newPageName, newPageNameNamed);
@@ -143,8 +144,6 @@ class TreeStorage extends PaginationAbstractStorage {
 
     this.pageName = newPageName;
     this.pageNameNamed = newPageNameNamed;
-
-    this.flushWriter();
 
     if (hasPrevious) {
       this.tree = this.tree.insert(newPageName);

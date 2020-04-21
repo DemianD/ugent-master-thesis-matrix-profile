@@ -1,0 +1,13 @@
+{
+  "name": "ssn-example-load-data",
+  "private": true,
+  "version": "1.0.0",
+  "main": "./index.js",
+  "type": "module",
+  "dependencies": {
+    "@zeit/fetch-retry": "^5.0.0",
+    "@ssn/core": "^1.0.0",
+    "@ssn/matrix-profile-interface": "^1.0.0",
+    "n3": "^1.3.5"
+  }
+}

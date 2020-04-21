@@ -57,13 +57,7 @@ class MatrixProfileInterface {
       date: date
     };
 
-    fs.writeFile(
-      `${this.queueFolder}/${body.key}-${Date.now()}.json`,
-      JSON.stringify(body),
-      error => {
-        error && console.error(error);
-      }
-    );
+    fs.writeFileSync(`${this.queueFolder}/${body.key}-${Date.now()}.json`, JSON.stringify(body));
   }
 
   getMatrixProfileSubject(windowSize) {
@@ -105,8 +99,6 @@ class MatrixProfileInterface {
         [relativeURI]: params => this.getMatrixProfile(windowSize)
       });
     }
-
-    this.getMatrixProfile(10);
   }
 }
 

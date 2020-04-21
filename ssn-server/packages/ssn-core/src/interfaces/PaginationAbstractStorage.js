@@ -16,6 +16,7 @@ class PaginationAbstractStorage extends AbstractStorage {
 
     this.dataPath = options.dataPath;
     this.observationsPerPage = options.observationsPerPage;
+    this.initialPageName = options.initialPageName;
   }
 
   boot(communicationManager) {
@@ -30,7 +31,7 @@ class PaginationAbstractStorage extends AbstractStorage {
 
     // If there were no files, create a new page
     if (this.pages.length === 0) {
-      this.createNewPage();
+      this.createNewPage(this.initialPageName);
       return;
     }
 
