@@ -22,7 +22,7 @@ const NavLink = ({ children, ...props }) => {
       {...props}
       getProps={({ isCurrent }) => {
         return {
-          className: c('ml-6 mr-6 text-sm font-medium hover:underline', isCurrent && 'underline')
+          className: c('ml-6 mr-6 text-sm font-medium hover:underline', isCurrent && 'underline'),
         };
       }}
     >
@@ -40,7 +40,6 @@ const Header = () => {
       <nav className="hidden sm:block">
         <NavLink to="/">Home</NavLink>
         <NavLink to="/explore">Explore</NavLink>
-        <NavLink to="/query">Query</NavLink>
         <NavLink href="https://github.com/DemianD/masterproef">GitHub</NavLink>
       </nav>
       <div className="w-10"></div>
