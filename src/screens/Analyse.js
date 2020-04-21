@@ -19,6 +19,10 @@ const pad = (x) => {
 };
 
 const format = (date) => {
+  if (!date) {
+    return '';
+  }
+
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(
     date.getHours()
   )}:${pad(date.getMinutes())}`;
@@ -80,7 +84,7 @@ const Analyse = ({ location }) => {
                 placeholder="from"
                 className="mr-2"
                 value={format(fromDate)}
-                onChange={(e) => setFromDate(new Date(e.target.value))}
+                onChange={(e) => setFromDate(e.target.value ? new Date(e.target.value) : undefined)}
               />
             </div>
             <div>
@@ -90,29 +94,31 @@ const Analyse = ({ location }) => {
                 placeholder="to"
                 className="ml-2"
                 value={format(toDate)}
-                onChange={(e) => setToDate(new Date(e.target.value))}
+                onChange={(e) => setToDate(e.target.value ? new Date(e.target.value) : undefined)}
               />
             </div>
           </div>
         </section>
         <section className="mt-10">
           <H2>Visualize</H2>
-          {filteredCollections.map((subject) => (
-            <ObservationsChart
-              key={subject}
-              subject={subject}
-              filters={[
-                {
-                  relationType: GREATER_THAN_OR_EQUAL_TO,
-                  value: fromDate,
-                },
-                {
-                  relationType: LESS_THAN_OR_EQUAL_TO,
-                  value: toDate,
-                },
-              ]}
-            />
-          ))}
+          {fromDate &&
+            toDate &&
+            filteredCollections.map((subject) => (
+              <ObservationsChart
+                key={subject}
+                subject={subject}
+                filters={[
+                  {
+                    relationType: GREATER_THAN_OR_EQUAL_TO,
+                    value: fromDate,
+                  },
+                  {
+                    relationType: LESS_THAN_OR_EQUAL_TO,
+                    value: toDate,
+                  },
+                ]}
+              />
+            ))}
         </section>
       </Content>
     </>
