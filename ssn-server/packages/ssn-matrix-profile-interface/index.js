@@ -57,7 +57,9 @@ class MatrixProfileInterface {
       date: date
     };
 
-    fs.writeFileSync(`${this.queueFolder}/${body.key}-${Date.now()}.json`, JSON.stringify(body));
+    const safeDate = date.split(':').join('-').replace('.', '-');
+
+    fs.writeFileSync(`${this.queueFolder}/${body.key}-${safeDate}.json`, JSON.stringify(body));
   }
 
   getMatrixProfileSubject(windowSize) {
