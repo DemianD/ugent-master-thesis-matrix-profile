@@ -71,8 +71,6 @@ const Analyse = ({ location }) => {
     ];
   }, [fromDate, toDate]);
 
-  console.log(fromDate, toDate);
-
   return (
     <>
       <H1 className="mt-8">

@@ -35,25 +35,22 @@ const Explore = () => {
             Parkings {city} <ComunicaLink datasource={datasource} query={getParkingsQuery} />
           </H3>
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4">
-            {data.map(
-              (parking) =>
-                console.log(parking) || (
-                  <Link
-                    key={parking.get('?parkingName').value}
-                    to={`/analyse?query=${encodeURIComponent(parking.get('?s').value)}`}
-                  >
-                    <div
-                      className="flex flex-col cursor-pointer p-3"
-                      style={{ backgroundColor: '#ffecec' }}
-                    >
-                      <span className="text-4xl font-black tracking-tighter leading-tight text-blue-1000">
-                        {parking.get('?parkingNumberOfSpaces').value}
-                      </span>
-                      <span className="text-xs">{parking.get('?parkingName').value}</span>
-                    </div>
-                  </Link>
-                )
-            )}
+            {data.map((parking) => (
+              <Link
+                key={parking.get('?parkingName').value}
+                to={`/analyse?query=${encodeURIComponent(parking.get('?s').value)}`}
+              >
+                <div
+                  className="flex flex-col cursor-pointer p-3"
+                  style={{ backgroundColor: '#ffecec' }}
+                >
+                  <span className="text-4xl font-black tracking-tighter leading-tight text-blue-1000">
+                    {parking.get('?parkingNumberOfSpaces').value}
+                  </span>
+                  <span className="text-xs">{parking.get('?parkingName').value}</span>
+                </div>
+              </Link>
+            ))}
           </div>
         </section>
       ))}
