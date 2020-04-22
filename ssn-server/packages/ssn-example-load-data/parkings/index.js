@@ -67,7 +67,7 @@ const store = async (folder, city, parking) => {
   // TODO: env variable
   const domain = new Domain(`https://mp-server.dem.be/parkings/${city}`);
 
-  const fromDateStore = new Date(Date.UTC(2018, 12, 1, 1));
+  const fromDateStore = new Date(Date.UTC(2018, 12 - 1, 1, 1));
 
   console.log('Storing in tree...');
   // Configure domain:
