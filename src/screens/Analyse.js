@@ -43,9 +43,14 @@ const Analyse = ({ location }) => {
   const collections = {};
 
   collectionsWithMatrixProfile.forEach((c) => {
-    collections[c.get('?url').value] = (collections[c.get('?url').value] || []).concat(
-      c.get('?matrixProfile').value
-    );
+    if (!collections[c.get('?url').value]) {
+      collections[c.get('?url').value] = [];
+    }
+
+    // ?matrixProfile is optional
+    if (c.get('?matrixProfile')) {
+      collections[c.get('?url').value].push(c.get('?matrixProfile').value);
+    }
   });
 
   const filteredCollections = Object.entries(checkedCollections)

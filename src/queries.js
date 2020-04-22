@@ -17,7 +17,9 @@ PREFIX mp: <http://www.example.com/matrix-profile#>
 SELECT ?url ?matrixProfile
 WHERE {
     ?url rdf:type tree:collection.
-    ?url mp:matrixProfile ?matrixProfile.
+  	OPTIONAL {
+    	?url mp:matrixProfile ?matrixProfile.
+  	}
 }`;
 
 export const getMatrixProfile = `
