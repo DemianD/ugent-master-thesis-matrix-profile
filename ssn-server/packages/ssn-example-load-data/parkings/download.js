@@ -16,7 +16,10 @@ class Download {
     createDirectoryIfNotExists(this.folder);
 
     Object.keys(this.parkings).forEach(parking => {
-      this.parkings[parking] = fs.createWriteStream(`${this.folder}/${parking}.csv`);
+      this.parkings[parking] = fs.createWriteStream(`${this.folder}/${parking}.csv`, {
+        flags: 'wx'
+      });
+
       this.parkings[parking].write('date;value\n');
     });
   }
@@ -82,7 +85,7 @@ class Download {
           }
         });
 
-        page = next.value;
+        page = next && next.value;
 
         matches.on('end', () => resolve());
       });
