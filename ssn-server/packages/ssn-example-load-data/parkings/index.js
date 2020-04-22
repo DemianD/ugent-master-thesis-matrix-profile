@@ -106,20 +106,19 @@ const store = async (folder, city, parking) => {
   let i = 0;
 
   for (let line of lines) {
-    i++;
-
-    if (i % 100 === 0) {
-      await sleep();
-    }
-
     const [dateString, number] = line.split(';');
-
     const date = new Date(dateString);
 
     if (date > fromDateStore) {
       observableProperty.addObservation(date, literal(number));
+
+      i++;
+
+      if (i % 1000 === 0) {
+        await sleep();
+      }
     }
   }
 };
 
-store(parkings.leuven.folder, 'leuven', 'Center');
+store(parkings.leuven.folder, 'leuven', 'Philipssite');
