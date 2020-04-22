@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import { useDebounce } from 'use-debounce';
 import useTreeQuery from '../hooks/useTreeQuery';
-import ExampleChart from './Chart';
+import Chart from './Chart';
 import { SOSA } from '../utils/vocs';
 
-const ObservationsChart = ({ subject, filters }) => {
+const ObservationsChart = ({ name, subject, filters }) => {
   const observations = useTreeQuery(subject, filters);
 
   const [debouncedObservations] = useDebounce(observations, 1000);
@@ -23,7 +23,7 @@ const ObservationsChart = ({ subject, filters }) => {
   return (
     <>
       <div>Number of observations: {observations.length}</div>
-      {datapoints.length > 0 && <ExampleChart className="mt-4" dataPoints={datapoints} />}
+      {datapoints.length > 0 && <Chart className="mt-4" dataPoints={datapoints} name={name} />}
     </>
   );
 };

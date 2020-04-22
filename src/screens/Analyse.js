@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { H1, H2 } from '../components/Heading';
 import useComunica from '../hooks/useComunica';
 import { getTreeCollections, getLabelForSubject } from '../queries';
@@ -6,6 +6,7 @@ import ComunicaLink from '../components/ComunicaLink';
 import Content from '../components/Content';
 import Checkbox from '../components/Checkbox';
 import ObservationsChart from '../components/ObservationsChart';
+import MatrixProfileChart from '../components/MatrixProfileChart';
 import Input from '../components/Input';
 import Label from '../components/Label';
 import { GREATER_THAN_OR_EQUAL_TO, LESS_THAN_OR_EQUAL_TO } from '../query/TreeQuery';
@@ -30,19 +31,47 @@ const format = (date) => {
 
 const Analyse = ({ location }) => {
   const [checkedCollections, setCheckedCollections] = useState([]);
+  const [checkedMatrixProfiles, setCheckedMatrixProfiles] = useState([]);
   const subject = decodeURIComponent(location.search).replace('?query=', '');
 
   const [labels] = useComunica(subject, getLabelForSubject(subject), true);
-  const [collections] = useComunica(subject, getTreeCollections, true);
+  const [collectionsWithMatrixProfile] = useComunica(subject, getTreeCollections, true);
 
   const [fromDate, setFromDate] = useState(yesterday);
   const [toDate, setToDate] = useState(today);
+
+  const collections = {};
+
+  collectionsWithMatrixProfile.forEach((c) => {
+    collections[c.get('?url').value] = (collections[c.get('?url').value] || []).concat(
+      c.get('?matrixProfile').value
+    );
+  });
 
   const filteredCollections = Object.entries(checkedCollections)
     .filter(([s, checked]) => !!checked)
     .map(([s]) => s);
 
+  const filteredMatrixProfiles = Object.entries(checkedMatrixProfiles)
+    .filter(([s, checked]) => !!checked)
+    .map(([s]) => s);
+
   const label = labels[0] && labels[0].get('?label').value;
+
+  const filters = useMemo(() => {
+    return [
+      {
+        relationType: GREATER_THAN_OR_EQUAL_TO,
+        value: new Date(fromDate),
+      },
+      {
+        relationType: LESS_THAN_OR_EQUAL_TO,
+        value: new Date(toDate),
+      },
+    ];
+  }, [fromDate, toDate]);
+
+  console.log(fromDate, toDate);
 
   return (
     <>
@@ -56,19 +85,31 @@ const Analyse = ({ location }) => {
             Available collections <ComunicaLink datasource={subject} query={getTreeCollections} />
           </H2>
           <ul>
-            {collections.map((collection) => {
-              const subject = collection.get('?s').value;
-
+            {Object.entries(collections).map(([collection, matrixProfiles]) => {
               return (
-                <li key={subject}>
+                <li key={collection}>
                   <Checkbox
-                    id={subject}
-                    onClick={(e, isChecked) =>
-                      setCheckedCollections((c) => ({ ...c, [subject]: isChecked }))
+                    id={collection}
+                    onClick={(_, isChecked) =>
+                      setCheckedCollections((c) => ({ ...c, [collection]: isChecked }))
                     }
                   >
-                    {subject}
+                    {collection}
                   </Checkbox>
+                  <ul className="ml-3">
+                    {matrixProfiles.map((mp) => (
+                      <li key={mp}>
+                        <Checkbox
+                          id={mp}
+                          onClick={(_, isChecked) =>
+                            setCheckedMatrixProfiles((c) => ({ ...c, [mp]: isChecked }))
+                          }
+                        >
+                          {mp}
+                        </Checkbox>
+                      </li>
+                    ))}
+                  </ul>
                 </li>
               );
             })}
@@ -83,8 +124,8 @@ const Analyse = ({ location }) => {
                 type="datetime-local"
                 placeholder="from"
                 className="mr-2"
-                value={format(fromDate)}
-                onChange={(e) => setFromDate(e.target.value ? new Date(e.target.value) : undefined)}
+                defaultValue={fromDate && format(new Date(fromDate))}
+                onChange={(e) => setFromDate(e.target.value)}
               />
             </div>
             <div>
@@ -93,8 +134,8 @@ const Analyse = ({ location }) => {
                 type="datetime-local"
                 placeholder="to"
                 className="ml-2"
-                value={format(toDate)}
-                onChange={(e) => setToDate(e.target.value ? new Date(e.target.value) : undefined)}
+                defaultValue={toDate && format(new Date(toDate))}
+                onChange={(e) => setToDate(e.target.value)}
               />
             </div>
           </div>
@@ -104,19 +145,16 @@ const Analyse = ({ location }) => {
           {fromDate &&
             toDate &&
             filteredCollections.map((subject) => (
-              <ObservationsChart
+              <ObservationsChart name={label} key={subject} subject={subject} filters={filters} />
+            ))}
+          {fromDate &&
+            toDate &&
+            filteredMatrixProfiles.map((subject) => (
+              <MatrixProfileChart
                 key={subject}
                 subject={subject}
-                filters={[
-                  {
-                    relationType: GREATER_THAN_OR_EQUAL_TO,
-                    value: fromDate,
-                  },
-                  {
-                    relationType: LESS_THAN_OR_EQUAL_TO,
-                    value: toDate,
-                  },
-                ]}
+                fromDate={new Date(fromDate)}
+                toDate={new Date(toDate)}
               />
             ))}
         </section>

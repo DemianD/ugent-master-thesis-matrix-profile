@@ -12,10 +12,25 @@ WHERE {
 export const getTreeCollections = `
 PREFIX tree: <https://w3id.org/tree#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX mp: <http://www.example.com/matrix-profile#>
 
-SELECT ?s
+SELECT ?url ?matrixProfile
 WHERE {
-    ?s rdf:type tree:collection.
+    ?url rdf:type tree:collection.
+    ?url mp:matrixProfile ?matrixProfile.
+}`;
+
+export const getMatrixProfile = `
+PREFIX tree: <https://w3id.org/tree#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX mp: <http://www.example.com/matrix-profile#>
+
+SELECT ?dates ?distances ?indexes ?windowSize
+WHERE {
+  ?s mp:dates ?dates;
+     mp:distances ?distances;
+     mp:indexes ?indexes;
+     mp:windowSize ?windowSize.
 }`;
 
 export const getLabelForSubject = (subject) => `

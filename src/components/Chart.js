@@ -5,10 +5,14 @@ import HighchartsReact from 'highcharts-react-official';
 
 HighchartsBoost(Highcharts);
 
-const Chart = ({ className, dataPoints }) => {
+const Chart = ({ className, dataPoints, name, min, max }) => {
   const [options, setOptions] = useState({
     time: {
       useUTC: false,
+    },
+    xAxis: {
+      min,
+      max,
     },
     boost: {
       enabled: true,
@@ -18,6 +22,7 @@ const Chart = ({ className, dataPoints }) => {
         timeSeriesProcessing: true,
       },
     },
+    legend: { enabled: true },
     rangeSelector: {
       enabled: true,
       inputEnabled: false,
@@ -55,6 +60,7 @@ const Chart = ({ className, dataPoints }) => {
     },
     series: [
       {
+        name,
         data: [],
         color: '#032b86',
         lineWidth: 1,
@@ -65,9 +71,13 @@ const Chart = ({ className, dataPoints }) => {
   useEffect(() => {
     console.log('Updating chart');
     setOptions((o) => ({
+      xAxis: {
+        min,
+        max,
+      },
       series: { data: dataPoints },
     }));
-  }, [dataPoints]);
+  }, [dataPoints, max, min]);
 
   return (
     <div className={className}>
