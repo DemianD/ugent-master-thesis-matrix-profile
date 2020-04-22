@@ -53,21 +53,22 @@ const communicationManager = new CommunicationManager();
 
 Object.entries(parkings).map(async ([city, p]) => {
   // TODO: env variable
-  const domain = new Domain(`https://mp-server.dem.be/${city}`);
+  const domain = new Domain(`https://mp-server.dem.be/parkings/${city}`);
 
   console.log('Downloading...');
   const parkingDownloader = new Download(p, fromDate, toDate);
   await parkingDownloader.download();
 
+  const parkingNames = Object.keys(p.parkings);
+
   console.log('Grouping...');
-  await Promise.all(
-    Object.keys(p.parkings).map(parking => {
-      return exec(`python3 group.py ${p.folder}/${parking}.csv`);
-    })
-  );
+  for (let parkingName of parkingNames) {
+    // Doing this sync because of memory issues
+    await exec(`python3 group.py ${p.folder}/${parkingName}.csv`);
+  }
 
   console.log('Storing in tree...');
-  Object.keys(p.parkings).forEach(async parking => {
+  parkingNames.forEach(async parking => {
     // Configure domain:
     const featureOfInterest = domain.addFeatureOfInterest(parking);
 
