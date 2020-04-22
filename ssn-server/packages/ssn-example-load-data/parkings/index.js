@@ -52,66 +52,74 @@ const parkings = {
 const communicationManager = new CommunicationManager();
 
 Object.entries(parkings).map(async ([city, p]) => {
+  // console.log('Downloading...');
+  // const parkingDownloader = new Download(p, fromDate, toDate);
+  // await parkingDownloader.download();
+  // const parkingNames = Object.keys(p.parkings);
+  // console.log('Grouping...');
+  // for (let parkingName of parkingNames) {
+  //   // Doing this sync because of memory issues
+  //   await exec(`python3 group.py ${p.folder}/${parkingName}.csv`);
+  // }
+});
+
+const store = async (folder, city, parking) => {
   // TODO: env variable
   const domain = new Domain(`https://mp-server.dem.be/parkings/${city}`);
 
-  console.log('Downloading...');
-  const parkingDownloader = new Download(p, fromDate, toDate);
-  await parkingDownloader.download();
-
-  const parkingNames = Object.keys(p.parkings);
-
-  console.log('Grouping...');
-  for (let parkingName of parkingNames) {
-    // Doing this sync because of memory issues
-    await exec(`python3 group.py ${p.folder}/${parkingName}.csv`);
-  }
+  const fromDateStore = new Date(Date.UTC(2018, 12, 1, 1));
 
   console.log('Storing in tree...');
-  for (let parking of parkingNames) {
-    // Configure domain:
-    const featureOfInterest = domain.addFeatureOfInterest(parking);
+  // Configure domain:
+  const featureOfInterest = domain.addFeatureOfInterest(parking);
 
-    const observableProperty = featureOfInterest.addObservableProperty(
-      DATEX('numberOfVacantParkingSpaces')
-    );
+  const observableProperty = featureOfInterest.addObservableProperty(
+    DATEX('numberOfVacantParkingSpaces')
+  );
 
-    rimraf.sync(`../../ssn-example-parkings-gent/data/${city}/${parking}`);
-    rimraf.sync(`../../ssn-example-parkings-gent/matrix-profiles/${city}/${parking}`);
+  rimraf.sync(`../../ssn-example-parkings-gent/data/${city}/${parking}`);
+  rimraf.sync(`../../ssn-example-parkings-gent/matrix-profiles/${city}/${parking}`);
 
-    const storageInterface = new TreeStorage(observableProperty, communicationManager, {
-      dataPath: `../../ssn-example-parkings-gent/data/${city}/${parking}`,
-      observationsPerPage: 720,
-      initialPageName: fromDate.toISOString()
-    });
+  const storageInterface = new TreeStorage(observableProperty, communicationManager, {
+    dataPath: `../../ssn-example-parkings-gent/data/${city}/${parking}`,
+    observationsPerPage: 720,
+    initialPageName: fromDateStore.toISOString()
+  });
 
-    const collection = storageInterface.getCollection();
+  const collection = storageInterface.getCollection();
 
-    new MatrixProfileInterface(communicationManager, collection, {
-      resultsFolder: `./matrix-profiles/${city}/${parking}`,
-      queueFolder: '../../../../matrix-profile-service/queue',
-      seriesWindow: 1 * 60 * 24 * 365,
-      windowSizes: [1 * 60 * 24, 1 * 60 * 24 * 7, 1 * 60 * 24 * 30]
-    });
+  new MatrixProfileInterface(communicationManager, collection, {
+    resultsFolder: `./matrix-profiles/${city}/${parking}`,
+    queueFolder: '../../../../matrix-profile-service/queue',
+    seriesWindow: 1 * 60 * 24 * 365,
+    windowSizes: [1 * 60 * 24, 1 * 60 * 24 * 7, 1 * 60 * 24 * 30]
+  });
 
-    // Add observations
-    const file = fs.readFileSync(`${p.folder}/${parking}-grouped.csv`, 'utf8');
-    const lines = file.split('\n');
+  // Add observations
+  console.log('Reading', `${folder}/${parking}-grouped.csv`);
+  const file = fs.readFileSync(`${folder}/${parking}-grouped.csv`, 'utf8');
+  const lines = file.split('\n');
 
-    lines.shift();
-    lines.pop();
+  lines.shift();
+  lines.pop();
 
-    let i = 0;
+  let i = 0;
 
-    for (let line of lines) {
-      i++;
+  for (let line of lines) {
+    i++;
 
-      if (i % 100 === 0) {
-        await sleep();
-      }
+    if (i % 100 === 0) {
+      await sleep();
+    }
 
-      const [dateString, number] = line.split(';');
-      observableProperty.addObservation(new Date(dateString), literal(number));
+    const [dateString, number] = line.split(';');
+
+    const date = new Date(dateString);
+
+    if (date > fromDateStore) {
+      observableProperty.addObservation(date, literal(number));
     }
   }
-});
+};
+
+store(parkings.leuven.folder, 'leuven', 'Center');
