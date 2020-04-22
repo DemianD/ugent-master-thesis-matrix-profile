@@ -1,4 +1,5 @@
 import { FeatureOfInterestNotFoundException } from '../exceptions/index.js';
+import getRelativeURI from '../utils/getRelativeURI.js';
 
 class CatalogInterface {
   constructor(communicationManager, domain) {
@@ -35,9 +36,11 @@ class CatalogInterface {
   }
 
   registerEndpoints() {
+    const prefix = getRelativeURI(`${this.domain.baseIRI}`);
+
     this.communicationManager.addEndpoints({
-      ['/catalog']: params => this.catalogHandler(params),
-      ['/:feature_of_interest']: params => this.featureOfInterestCatalogHandler(params)
+      [`${prefix}/catalog`]: params => this.catalogHandler(params),
+      [`${prefix}/:feature_of_interest`]: params => this.featureOfInterestCatalogHandler(params)
     });
   }
 }

@@ -1,53 +1,65 @@
-import { Domain, CatalogInterface, TreeStorage, CommunicationManager } from '@ssn/core';
+import N3 from 'n3';
 import MatrixProfileInterface from '@ssn/matrix-profile-interface';
+import { Domain, CatalogInterface, TreeStorage, CommunicationManager } from '@ssn/core';
 
 import parkings from './src/parkings.js';
-import ParkingGentSourceReader from './src/ParkingGentSourceReader.js';
-import { DATEX } from './src/vocs.js';
+import { RDF, DATEX, RDFS } from './src/vocs.js';
+
+const { quad, literal } = N3.DataFactory;
 
 // Create a new domain
-const domain = new Domain('http://127.0.0.1:8080');
+const domainGent = new Domain('https://mp-server.dem.be');
 
 // Create a configuration manager
 const communicationManager = new CommunicationManager();
 
 // Config: Add feature of interest and observable properties to the domain
 Object.entries(parkings).map(([parkingKey, options]) => {
-  const featureOfInterest = domain.addFeatureOfInterest(parkingKey, options);
+  const featureOfInterest = domainGent.addFeatureOfInterest(parkingKey, options);
+
   const observableProperty = featureOfInterest.addObservableProperty(
     DATEX('numberOfVacantParkingSpaces')
   );
 
   // Add the tree storage interface
-  const storageInterface = new TreeStorage(observableProperty, communicationManager, {
+  new TreeStorage(observableProperty, communicationManager, {
     dataPath: `./data/${parkingKey}`,
-    observationsPerPage: 3
-  });
-
-  const collection = storageInterface.getCollection();
-
-  // Add the matrix profile storage interface
-  new MatrixProfileInterface(communicationManager, collection, {
-    resultsFolder: `./matrix-profiles/${parkingKey}`,
-    queueFolder: '../../../matrix-profile-service/queue',
-    seriesWindow: 1000,
-    windowSizes: [10, 20, 30]
+    observationsPerPage: 720,
+    initialPageName: '2019-11-10T01:00:00.000Z'
   });
 });
 
-new CatalogInterface(communicationManager, domain);
+// Leuven
+const domainLeuven = new Domain('https://mp-server.dem.be/leuven');
 
-// Fetching
-const sources = {
-  'parkingsstatus.xml': 'https://opendataportaalmobiliteitsbedrijf.stad.gent/datex2/v2/parkingsstatus',
-  'parkings.xml': 'https://opendataportaalmobiliteitsbedrijf.stad.gent/datex2/v2/parkings'
-};
-
-new ParkingGentSourceReader(domain, sources, '*/5 * * * * *', {
-  file: './src/mapping.yml',
-  jar: './rmlmapper.jar',
-  tempFolder: './rmlmapper-temp',
-  removeTempFolders: true
+const philipssite = domainLeuven.addFeatureOfInterest('Philipssite', {
+  quads: subject => [
+    quad(subject, RDF('type'), DATEX('UrbanParkingSite')),
+    quad(subject, RDFS('label'), literal('Philipssite')),
+    quad(subject, DATEX('parkingName'), literal('Philipssite')),
+    quad(subject, DATEX('parkingNumberOfSpaces'), literal(1125))
+  ]
 });
 
+const philipssiteObservableProperty = philipssite.addObservableProperty(
+  DATEX('numberOfVacantParkingSpaces')
+);
+
+const storageInterface = new TreeStorage(philipssiteObservableProperty, communicationManager, {
+  dataPath: `./data/leuven/Philipssite`,
+  observationsPerPage: 720
+});
+
+new MatrixProfileInterface(communicationManager, storageInterface.getCollection(), {
+  resultsFolder: `./matrix-profiles/leuven/Philipssite`,
+  queueFolder: '../../../matrix-profile-service/queue',
+  seriesWindow: 5 * 12 * 24 * 365,
+  windowSizes: [1 * 12 * 24, 1 * 12 * 24 * 7, 1 * 12 * 24 * 30]
+});
+
+// Catalogs
+new CatalogInterface(communicationManager, domainGent);
+new CatalogInterface(communicationManager, domainLeuven);
+
+// Start the server
 communicationManager.listen(8080, '127.0.0.1');
