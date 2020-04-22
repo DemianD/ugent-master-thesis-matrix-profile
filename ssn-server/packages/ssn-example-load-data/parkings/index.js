@@ -68,7 +68,7 @@ Object.entries(parkings).map(async ([city, p]) => {
   }
 
   console.log('Storing in tree...');
-  parkingNames.forEach(async parking => {
+  for (let parking of parkingNames) {
     // Configure domain:
     const featureOfInterest = domain.addFeatureOfInterest(parking);
 
@@ -113,5 +113,5 @@ Object.entries(parkings).map(async ([city, p]) => {
       const [dateString, number] = line.split(';');
       observableProperty.addObservation(new Date(dateString), literal(number));
     }
-  });
+  }
 });

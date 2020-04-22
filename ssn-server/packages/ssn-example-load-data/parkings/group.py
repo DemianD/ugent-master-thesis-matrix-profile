@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 def readParkingDataToDateFrame(file):
-    df = pd.read_csv(file, sep=";", dtype={'value': np.int16})
+    df = pd.read_csv(file, sep=";", dtype={'value': 'Int16'})
 
     df = df.set_index('date')
     df.index = pd.to_datetime(df.index, utc=True)
