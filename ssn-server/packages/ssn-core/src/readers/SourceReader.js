@@ -20,7 +20,7 @@ class SourceReader {
     // Create a cronjob
     this.cron = new cron.CronJob({
       cronTime: refreshInterval,
-      runOnInit: true,
+      runOnInit: false,
       onTick: () => this.run()
     });
   }

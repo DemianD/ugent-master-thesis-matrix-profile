@@ -16,7 +16,7 @@ class PaginationAbstractStorage extends AbstractStorage {
 
     this.dataPath = options.dataPath;
     this.observationsPerPage = options.observationsPerPage;
-    this.initialPageName = options.initialPageName;
+    this.initialPageName = options.initialPageName || new Date().toISOString();
   }
 
   boot(communicationManager) {

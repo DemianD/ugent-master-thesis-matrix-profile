@@ -4,7 +4,7 @@ import AbstractCollection from './AbstractCollection.js';
 
 const { quad } = N3.DataFactory;
 
-class HydraCollection extends AbstractCollection {
+class TreeCollection extends AbstractCollection {
   constructor(observableProperty) {
     super();
 
@@ -19,4 +19,4 @@ class HydraCollection extends AbstractCollection {
   }
 }
 
-export default HydraCollection;
+export default TreeCollection;
