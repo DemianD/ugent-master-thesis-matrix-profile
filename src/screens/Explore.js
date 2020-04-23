@@ -6,7 +6,11 @@ import ComunicaLink from '../components/ComunicaLink';
 import { Link } from '@reach/router';
 
 const Explore = () => {
-  const [parkingsGhent] = useComunica('https://mp-server.dem.be/catalog', getParkingsQuery, true);
+  const [parkingsGhent] = useComunica(
+    'https://mp-server.dem.be/gent/catalog',
+    getParkingsQuery,
+    true
+  );
   const [parkingsLeuven] = useComunica(
     'https://mp-server.dem.be/leuven/catalog',
     getParkingsQuery,
