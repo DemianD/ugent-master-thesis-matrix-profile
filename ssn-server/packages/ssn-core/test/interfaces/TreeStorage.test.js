@@ -299,7 +299,8 @@ it('should create a new page when adding a new observation', t => {
   storage.addObservation(
     new N3.Store([
       quad(subject, RDF('type'), SOSA('Observation')),
-      quad(subject, SOSA('hasSimpleResult'), literal(123, XSD('integer')))
+      quad(subject, SOSA('hasSimpleResult'), literal(123, XSD('integer'))),
+      quad(subject, SOSA('resultTime'), literal(new Date().toISOString(), XSD('dateTime')))
     ])
   );
 
@@ -312,14 +313,14 @@ it('should create a new page when adding a new observation', t => {
     './tree-storage-test/2020-04-01T10:30:45.909Z.ttl'
   );
 
-  t.snapshot(
-    newWriteStreamSpy
-      .getCalls()
-      .map(call => call.firstArg)
-      .join('\n')
-  );
+  const x = newWriteStreamSpy
+    .getCalls()
+    .map(call => call.firstArg)
+    .join('\n');
 
   readFileSyncMock.restore();
+
+  t.snapshot(x);
 
   restore();
 });
