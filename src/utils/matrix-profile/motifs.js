@@ -6,7 +6,7 @@ const applyExclusionZone = (exclusionZone, index, distanceProfile) => {
     const ez_end = Math.min(distanceProfile.length, index + exclusionZone);
 
     for (let i = ez_start; i < ez_end; i++) {
-      distanceProfile[i][1] = Infinity;
+      distanceProfile[i] = Infinity;
     }
   }
 
@@ -24,9 +24,12 @@ const calculateMotifs = (matrixProfile, exclusionZone, k = 3, maxNeighbors = 10,
   let mp = data.map((row, i) => [...row, i]);
 
   for (let i = 0; i < k; i++) {
-    const minimum = mp.slice().sort((a, b) => a[1] - b[1])[0];
+    const minimum = mp
+      .slice()
+      .sort((a, b) => a[1] - b[1])
+      .find((x) => x !== Infinity);
 
-    if (minimum === Infinity) {
+    if (!minimum) {
       break;
     }
 
@@ -38,8 +41,6 @@ const calculateMotifs = (matrixProfile, exclusionZone, k = 3, maxNeighbors = 10,
 
     motifs.push([minimum[0], minimum[2]]);
   }
-
-  console.log({ motifs });
 
   return motifs;
 };
