@@ -5,7 +5,7 @@ import HighchartsReact from 'highcharts-react-official';
 
 HighchartsBoost(Highcharts);
 
-const Chart = ({ className, dataPoints, name, min, max }) => {
+const Chart = ({ className, dataPoints, bands, name, min, max }) => {
   const [options, setOptions] = useState({
     time: {
       useUTC: false,
@@ -13,6 +13,7 @@ const Chart = ({ className, dataPoints, name, min, max }) => {
     xAxis: {
       min,
       max,
+      plotBands: bands,
     },
     boost: {
       enabled: true,
@@ -74,10 +75,11 @@ const Chart = ({ className, dataPoints, name, min, max }) => {
       xAxis: {
         min,
         max,
+        plotBands: bands,
       },
       series: { data: dataPoints },
     }));
-  }, [dataPoints, max, min]);
+  }, [bands, dataPoints, max, min]);
 
   return (
     <div className={className}>
