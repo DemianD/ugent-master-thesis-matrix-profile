@@ -8,7 +8,7 @@
     "sinon": "^9.0.2"
   },
   "scripts": {
-    "test": "ava -v --watch ./tests/**/*.test.js"
+    "test": "ava -v ./tests/**/*.test.js"
   },
   "dependencies": {
     "n3": "^1.3.6"
