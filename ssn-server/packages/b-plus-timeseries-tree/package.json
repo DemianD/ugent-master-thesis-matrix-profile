@@ -1,0 +1,16 @@
+{
+  "name": "timeseriestree",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "devDependencies": {
+    "ava": "^3.8.1",
+    "sinon": "^9.0.2"
+  },
+  "scripts": {
+    "test": "ava -v --watch ./tests/**/*.test.js"
+  },
+  "dependencies": {
+    "n3": "^1.3.6"
+  }
+}
