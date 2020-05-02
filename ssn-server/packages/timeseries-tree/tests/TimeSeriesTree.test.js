@@ -2,9 +2,10 @@ import it from 'ava';
 
 import { TimeSeriesTree, AbstractDisk as Disk } from '../index.js';
 import insertAlphabetHelper from './utils/insertAlphabetHelper.js';
+import testNodeNamer from './utils/testNodeNamer.js';
 
 it('1', async t => {
-  const tree = new TimeSeriesTree(new Disk(), 4);
+  const tree = new TimeSeriesTree(new Disk(), 4, testNodeNamer());
 
   await tree.insert('a', 'a');
   await tree.insert('b', 'b');
@@ -15,7 +16,7 @@ it('1', async t => {
 });
 
 it('2', async t => {
-  const tree = new TimeSeriesTree(new Disk(), 4);
+  const tree = new TimeSeriesTree(new Disk(), 4, testNodeNamer());
 
   await tree.insert('a', 'a');
   await tree.insert('b', 'b');
@@ -39,7 +40,7 @@ it('2', async t => {
 });
 
 it('3', async t => {
-  const tree = new TimeSeriesTree(new Disk(), 4);
+  const tree = new TimeSeriesTree(new Disk(), 4, testNodeNamer());
 
   await tree.insert('a', 'a');
   await tree.insert('b', 'b');
@@ -63,7 +64,7 @@ it('3', async t => {
 });
 
 it('4', async t => {
-  const tree = new TimeSeriesTree(new Disk(), 4);
+  const tree = new TimeSeriesTree(new Disk(), 4, testNodeNamer());
 
   await tree.insert('a', 'a');
   await tree.insert('b', 'b');
@@ -89,7 +90,7 @@ it('4', async t => {
 });
 
 it('5', async t => {
-  const tree = new TimeSeriesTree(new Disk(), 4);
+  const tree = new TimeSeriesTree(new Disk(), 4, testNodeNamer());
 
   const nodes = await insertAlphabetHelper(tree, 'l');
 

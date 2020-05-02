@@ -2,9 +2,10 @@ import it from 'ava';
 
 import { TimeSeriesTree, AbstractDisk as Disk } from '../index.js';
 import insertAlphabetHelper from './utils/insertAlphabetHelper.js';
+import testNodeNamer from './utils/testNodeNamer.js';
 
 it('should split the leave page (even degree)', async t => {
-  const tree = new TimeSeriesTree(new Disk(), 6);
+  const tree = new TimeSeriesTree(new Disk(), 6, testNodeNamer());
 
   await insertAlphabetHelper(tree, 'e');
   t.is(tree.path.length, 1);
@@ -25,7 +26,7 @@ it('should split the leave page (even degree)', async t => {
 });
 
 it('should split the leave page (odd degree)', async t => {
-  const tree = new TimeSeriesTree(new Disk(), 7);
+  const tree = new TimeSeriesTree(new Disk(), 7, testNodeNamer());
 
   await insertAlphabetHelper(tree, 'f');
   t.is(tree.path.length, 1);
@@ -46,7 +47,7 @@ it('should split the leave page (odd degree)', async t => {
 });
 
 it('should split a internal page (odd degree)', async t => {
-  const tree = new TimeSeriesTree(new Disk(), 5);
+  const tree = new TimeSeriesTree(new Disk(), 5, testNodeNamer());
 
   const nodes = await insertAlphabetHelper(tree, 'p');
 
@@ -90,7 +91,7 @@ it('should split a internal page (odd degree)', async t => {
 });
 
 it('should split a internal page (even degree)', async t => {
-  const tree = new TimeSeriesTree(new Disk(), 6);
+  const tree = new TimeSeriesTree(new Disk(), 6, testNodeNamer());
 
   const nodes = await insertAlphabetHelper(tree, 'y');
 
