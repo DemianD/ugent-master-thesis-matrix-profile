@@ -1,6 +1,6 @@
 import fs from 'fs';
 import N3 from 'n3';
-import test from 'ava';
+import it from 'ava';
 import sinon from 'sinon';
 
 import { Domain, HydraStorage, CommunicationManager } from '../../index.js';
@@ -14,7 +14,7 @@ const op1 = foi1.addObservableProperty(namedNode('ObservableProperty1'));
 
 const currentDate = new Date(Date.UTC(2020, 3, 1, 10, 30, 45, 909));
 
-test('it should create a new page if the directory does not exists', t => {
+it('should create a new page if the directory does not exists', t => {
   const communicationManager = new CommunicationManager();
 
   const existsSyncMock = sinon.stub(fs, 'existsSync').returns(false);
@@ -32,6 +32,8 @@ test('it should create a new page if the directory does not exists', t => {
     dataPath: './hydra-storage-test',
     observationsPerPage: 2
   });
+
+  storage.boot();
 
   t.true(existsSyncMock.calledWith('./hydra-storage-test'));
   t.true(mkdirSyncMock.calledWith('./hydra-storage-test'));
@@ -57,7 +59,7 @@ test('it should create a new page if the directory does not exists', t => {
   clock.restore();
 });
 
-test('it should reopen the latest file if a file exits and set the remaining observations', t => {
+it('should reopen the latest file if a file exits and set the remaining observations', t => {
   const communicationManager = new CommunicationManager();
 
   const existsSyncMock = sinon.stub(fs, 'existsSync').returns(true);
@@ -75,6 +77,8 @@ test('it should reopen the latest file if a file exits and set the remaining obs
     observationsPerPage: 10
   });
 
+  storage.boot();
+
   t.true(readFileSyncMock.calledWith('./hydra-storage-test/2020-04-01T09:30:45.909Z.ttl'));
 
   t.is(
@@ -90,7 +94,7 @@ test('it should reopen the latest file if a file exits and set the remaining obs
   existsSyncMock.restore();
 });
 
-test('it should create a new file when a new observation is added and the current file is full', t => {
+it('should create a new file when a new observation is added and the current file is full', t => {
   const domain = new Domain('https://www.example.com');
   const foi1 = domain.addFeatureOfInterest('Feature1');
   const op1 = foi1.addObservableProperty(namedNode('ObservableProperty1'));
@@ -118,6 +122,9 @@ test('it should create a new file when a new observation is added and the curren
     dataPath: './hydra-storage-test',
     observationsPerPage: 2
   });
+
+  storage.boot();
+
   const clock = sinon.useFakeTimers(new Date(currentDate.getTime() + 1000 * 60 * 60 + 91));
 
   const subject = namedNode(

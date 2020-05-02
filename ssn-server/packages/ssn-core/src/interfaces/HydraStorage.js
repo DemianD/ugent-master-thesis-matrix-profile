@@ -15,9 +15,6 @@ class HydraStorage extends PaginationAbstractStorage {
     super(communicationManager, options);
 
     this.collection = new HydraCollection(observableProperty);
-
-    this.boot();
-    this.listen();
   }
 
   addObservation(observationStore) {
@@ -104,6 +101,8 @@ class HydraStorage extends PaginationAbstractStorage {
     this.pageNameNamed = newPageNameNamed;
 
     this.flushWriter();
+
+    return newPageName;
   }
 }
 
