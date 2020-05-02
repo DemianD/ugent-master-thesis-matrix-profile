@@ -12,7 +12,7 @@ class CommunicationManager {
     this.server.use(cors);
   }
 
-  handleResponse(req, res) {
+  handleResponse(req, res, next) {
     return async handler => {
       try {
         let promiseOrObject = handler(req.params);
@@ -21,15 +21,24 @@ class CommunicationManager {
           promiseOrObject = await promiseOrObject;
         }
 
-        const { immutable, body } = promiseOrObject;
+        const { immutable, body, headers } = promiseOrObject;
 
         res.setHeader('Cache-Control', immutable ? IMMMUTABLE_CACHE : NO_CACHE);
 
         // Currently, only trig is supported
         res.setHeader('Content-Type', 'application/trig');
 
+        if (headers) {
+          Object.entries(headers).forEach(([name, value]) => {
+            res.setHeader(name, value);
+          });
+        }
+
         if (isReadableStream(body)) {
           body.pipe(res);
+
+          body.once('close', () => next(false));
+          res.once('close', () => body.close());
         } else {
           streamQuads(body || [], res);
         }
