@@ -7,6 +7,7 @@ import isValidDate from '../utils/isValidDate.js';
 import PaginationAbstractStorage from './PaginationAbstractStorage.js';
 import { PageNotFoundException, InvalidDateException } from '../exceptions/index.js';
 import HydraCollection from '../collections/HydraCollection.js';
+import stat from '../utils/stat.js';
 
 const { quad } = N3.DataFactory;
 
@@ -48,21 +49,23 @@ class HydraStorage extends PaginationAbstractStorage {
     };
   }
 
-  getPage(pageName) {
-    const pageDate = new Date(pageName);
+  async getPage({ pageName: originalPageName }) {
+    const pageDate = new Date(originalPageName);
 
-    // For security reasons
     if (!isValidDate(pageDate)) {
       throw new InvalidDateException();
     }
 
-    if (!fs.existsSync(`${this.dataPath}/${pageDate.toISOString()}.ttl`)) {
-      throw new PageNotFoundException();
-    }
+    const pageName = `${this.dataPath}/${pageDate.toISOString()}.ttl`;
+    const stats = await stat(pageName);
 
     return {
       immutable: this.pageName === pageDate.toISOString(),
-      body: fs.createReadStream(`${this.dataPath}/${pageDate.toISOString()}.ttl`)
+      body: fs.createReadStream(pageName),
+      headers: {
+        'Content-Length': stats.size,
+        'Last-Modified': stats.mtime
+      }
     };
   }
 
