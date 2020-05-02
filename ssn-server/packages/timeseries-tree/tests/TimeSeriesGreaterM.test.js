@@ -16,7 +16,7 @@ it('should split the leave page (even degree)', async t => {
 
   await tree.insert('f', 'f');
 
-  t.deepEqual(tree.path[0].keys, ['d']);
+  t.deepEqual(tree.path[0].keys, ['e']);
   t.deepEqual(tree.mostRightIndexNode.keys, ['e', 'f']);
   t.deepEqual(tree.mostRightIndexNode.relations, ['e', 'f']);
 
@@ -37,7 +37,7 @@ it('should split the leave page (odd degree)', async t => {
 
   await tree.insert('g', 'g');
 
-  t.deepEqual(tree.path[0].keys, ['d']);
+  t.deepEqual(tree.path[0].keys, ['e']);
   t.deepEqual(tree.mostRightIndexNode.keys, ['e', 'f', 'g']);
   t.deepEqual(tree.mostRightIndexNode.relations, ['e', 'f', 'g']);
 
@@ -53,7 +53,7 @@ it('should split a internal page (odd degree)', async t => {
   t.is(tree.path.length, 2);
 
   t.is(tree.path[0].nodeNumber, 'root');
-  t.deepEqual(tree.path[0].keys, ['c', 'f', 'i', 'l']);
+  t.deepEqual(tree.path[0].keys, ['d', 'g', 'j', 'm']);
 
   t.deepEqual(nodes['a'].keys, ['a']);
   t.deepEqual(nodes['b'].keys, ['a', 'b']);
@@ -84,9 +84,9 @@ it('should split a internal page (odd degree)', async t => {
   t.is(tree.path[0].nodeNumber, 'root');
   t.not(oldRoot.nodeNumber, 'root');
 
-  t.deepEqual(tree.path[0].keys, ['i']);
-  t.deepEqual(tree.path[1].keys, ['l', 'o']);
-  t.deepEqual(oldRoot.keys, ['c', 'f']);
+  t.deepEqual(tree.path[0].keys, ['j']);
+  t.deepEqual(tree.path[1].keys, ['m', 'p']);
+  t.deepEqual(oldRoot.keys, ['d', 'g']);
 });
 
 it('should split a internal page (even degree)', async t => {
@@ -95,7 +95,7 @@ it('should split a internal page (even degree)', async t => {
   const nodes = await insertAlphabetHelper(tree, 'y');
 
   t.is(tree.path.length, 2);
-  t.deepEqual(tree.path[0].keys, ['d', 'h', 'l', 'p', 't']);
+  t.deepEqual(tree.path[0].keys, ['e', 'i', 'm', 'q', 'u']);
 
   t.deepEqual(nodes['a'].keys, ['a']);
   t.deepEqual(nodes['b'].keys, ['a', 'b']);
@@ -111,7 +111,7 @@ it('should split a internal page (even degree)', async t => {
 
   t.is(tree.path.length, 3);
 
-  t.deepEqual(tree.path[0].keys, ['p']);
-  t.deepEqual(tree.path[1].keys, ['t', 'x']);
-  t.deepEqual(oldRoot.keys, ['d', 'h', 'l']);
+  t.deepEqual(tree.path[0].keys, ['q']);
+  t.deepEqual(tree.path[1].keys, ['u', 'y']);
+  t.deepEqual(oldRoot.keys, ['e', 'i', 'm']);
 });

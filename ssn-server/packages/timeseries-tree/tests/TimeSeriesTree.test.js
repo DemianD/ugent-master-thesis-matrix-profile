@@ -34,7 +34,7 @@ it('2', async t => {
   t.deepEqual(node.relations, ['a', 'b', 'c']);
 
   t.deepEqual(tree.path[0].nodeNumber, 'root');
-  t.deepEqual(tree.path[0].keys, ['c']);
+  t.deepEqual(tree.path[0].keys, ['d']);
   t.deepEqual(tree.path[0].relations, [2, 1]);
 });
 
@@ -58,7 +58,7 @@ it('3', async t => {
   t.deepEqual(node.keys, ['d', 'e', 'f']);
   t.deepEqual(node.relations, ['d', 'e', 'f']);
 
-  t.deepEqual(tree.path[0].keys, ['c', 'f']);
+  t.deepEqual(tree.path[0].keys, ['d', 'g']);
   t.deepEqual(tree.path[0].relations, [2, 1, 3]);
 });
 
@@ -84,7 +84,7 @@ it('4', async t => {
   t.deepEqual(node.keys, ['d', 'e', 'f']);
   t.deepEqual(node.relations, ['d', 'e', 'f']);
 
-  t.deepEqual(tree.path[0].keys, ['c', 'f']);
+  t.deepEqual(tree.path[0].keys, ['d', 'g']);
   t.deepEqual(tree.path[0].relations, [2, 1, 3]);
 });
 
@@ -98,14 +98,14 @@ it('5', async t => {
   await tree.insert('m', 'm');
 
   t.deepEqual(tree.path[0].nodeNumber, 'root');
-  t.deepEqual(tree.path[0].keys, ['i']);
+  t.deepEqual(tree.path[0].keys, ['j']);
   t.deepEqual(tree.path[0].relations, [7, 6]);
 
   t.not(previousRoot.nodeNumber, 'root');
-  t.deepEqual(previousRoot.keys, ['c', 'f']);
+  t.deepEqual(previousRoot.keys, ['d', 'g']);
   t.deepEqual(previousRoot.relations, [2, 1, 3]);
 
-  t.deepEqual(tree.path[1].keys, ['l']);
+  t.deepEqual(tree.path[1].keys, ['m']);
   t.deepEqual(tree.path[1].relations, [4, 5]);
 
   t.is(tree.path[2], tree.mostRightIndexNode);
