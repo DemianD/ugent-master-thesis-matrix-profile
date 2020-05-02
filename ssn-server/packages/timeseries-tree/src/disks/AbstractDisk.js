@@ -6,7 +6,7 @@ class AbstractDisk {
   }
 
   read(name) {
-    return undefined;
+    throw new Error('AbstractDisk does not read files.');
   }
 }
 

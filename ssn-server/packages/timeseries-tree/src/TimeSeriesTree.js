@@ -13,27 +13,9 @@ class TimeSeriesTree {
     this.degree = degree;
     this.nodeNamer = nodeNamer;
 
-    const root = disk.read('root');
+    this.path = [];
 
-    if (root === undefined) {
-      this.path = [new LeafNode('root', this.degree)];
-    } else {
-      this.path = [root];
-
-      const current = root;
-      let nextRelation = current.getLastRelation();
-
-      while (nextRelation) {
-        const nextNode = disk.read(nextRelation);
-
-        if (!nextNode) {
-          throw new Error(`Could not resture the tree. Node ${nextRelation} not found`);
-        }
-
-        this.path.push(nextNode);
-        nextRelation = nextNode.getLastRelation();
-      }
-    }
+    this.load();
   }
 
   get mostRightIndexNode() {
@@ -85,6 +67,23 @@ class TimeSeriesTree {
     }
 
     this.disk.write(currentNode);
+  }
+
+  load() {
+    try {
+      this.path.push(this.disk.read('root'));
+    } catch {
+      this.path.push(new LeafNode('root', this.degree));
+    }
+
+    let nextRelation = this.path[0].getLastRelation();
+
+    while (nextRelation) {
+      const nextNode = this.disk.read(nextRelation);
+
+      this.path.push(nextNode);
+      nextRelation = nextNode.isLeaf() ? undefined : nextNode.getLastRelation();
+    }
   }
 }
 
