@@ -76,13 +76,11 @@ class TimeSeriesTree {
       this.path.push(new LeafNode('root', this.degree));
     }
 
-    let nextRelation = this.path[0].getLastRelation();
+    let currentNode = this.path[0];
 
-    while (nextRelation) {
-      const nextNode = this.disk.read(nextRelation);
-
-      this.path.push(nextNode);
-      nextRelation = nextNode.isLeaf() ? undefined : nextNode.getLastRelation();
+    while (!currentNode.isLeaf()) {
+      currentNode = this.disk.read(currentNode.getLastRelation());
+      this.path.push(currentNode);
     }
   }
 }
