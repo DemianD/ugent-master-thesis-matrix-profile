@@ -4,7 +4,7 @@ import IndexNode from './IndexNode.js';
 const defaultNodeNamer = () => {
   let i = 1;
 
-  return () => i++;
+  return () => `${new Date().getTime()}${i++}`;
 };
 
 class TimeSeriesTree {
