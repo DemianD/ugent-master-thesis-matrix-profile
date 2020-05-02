@@ -36,7 +36,7 @@ const decode = encoded => {
 };
 
 class LDDisk extends Disk {
-  constructor(directory, degree, treePath) {
+  constructor(directory, degree, treePath, collectionSubject) {
     super();
 
     if (!directory) {
@@ -51,20 +51,27 @@ class LDDisk extends Disk {
       throw new Error('No treepath specified');
     }
 
+    if (!collectionSubject) {
+      throw new Error('No collectionSubject specified');
+    }
+
     this.directory = directory;
     this.degree = degree;
     this.treePath = treePath;
+    this.collectionSubject = collectionSubject;
   }
 
-  _getView(name) {
-    return namedNode(`https://example.com/Collection/${name}`);
+  _getView(name, withPrefix = true) {
+    return namedNode(
+      `${this.collectionSubject}${name && withPrefix ? '/node' : ''}${name ? '/' + name : ''}`
+    );
   }
 
   _getTypeAndValueForLeafNode(node, relation, i) {
     const relationBlankNode = blankNode(`leaf_${encode(relation)}`);
     let type, value;
 
-    const isFirstRelation = i === 0 && node.keys.length > 0;
+    const isFirstRelation = i === 0 && node.keys.length > 1;
     const isLastRelation = i === node.relations.length - 1 || node.keys.length === 1;
 
     if (isFirstRelation) {
@@ -104,7 +111,7 @@ class LDDisk extends Disk {
   }
 
   _getQuadsForNode(node) {
-    const collectionSubject = namedNode('https://example.com/collection');
+    const collectionSubject = this._getView();
     const viewSubject = this._getView(node.nodeNumber);
 
     return [
@@ -118,7 +125,7 @@ class LDDisk extends Disk {
 
         return [
           quad(viewSubject, TREE('Relation'), relationBlankNode),
-          quad(relationBlankNode, TREE('node'), this._getView(relation)),
+          quad(relationBlankNode, TREE('node'), this._getView(relation, !node.isLeaf())),
           quad(relationBlankNode, TREE('path'), this.treePath),
           quad(relationBlankNode, RDF('type'), type),
           quad(relationBlankNode, TREE('value'), value)
