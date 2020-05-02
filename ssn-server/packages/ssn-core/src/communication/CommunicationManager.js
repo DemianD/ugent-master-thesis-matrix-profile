@@ -9,6 +9,7 @@ import { NotFoundException, InvalidDateException } from '../exceptions/index.js'
 class CommunicationManager {
   constructor() {
     this.server = restify.createServer();
+    this.server.pre(restify.plugins.pre.sanitizePath());
     this.server.use(cors);
   }
 
