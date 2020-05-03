@@ -21,6 +21,14 @@ class HydraStorage extends PaginationAbstractStorage {
   addObservation(observationStore) {
     const observationQuads = observationStore.getQuads();
 
+    this.remainingObservations -= 1;
+
+    if (this.remainingObservations <= 0) {
+      const ISOString = observationStore.getObjects(null, SOSA('resultTime'))[0].value;
+
+      this.createNewPage(ISOString);
+    }
+
     // Add the quads for the Observation
     this.writer.addQuads(observationQuads);
 
@@ -29,13 +37,7 @@ class HydraStorage extends PaginationAbstractStorage {
       quad(this.collection.getSubject(), HYDRA('member'), observationQuads[0].subject)
     );
 
-    this.remainingObservations -= 1;
-
-    if (this.remainingObservations <= 0) {
-      this.createNewPage();
-    } else {
-      this.flushWriter();
-    }
+    this.flushWriter();
   }
 
   getIndexPage() {
@@ -69,10 +71,9 @@ class HydraStorage extends PaginationAbstractStorage {
     };
   }
 
-  createNewPage() {
+  createNewPage(newPageName) {
     const hasPrevious = this.fileStream !== undefined;
 
-    const newPageName = new Date().toISOString();
     const newPageNameNamed = this.collection.getSubject(newPageName);
 
     const { newWriter, newFileStream } = super.createNewPage(newPageName, newPageNameNamed);
@@ -102,8 +103,6 @@ class HydraStorage extends PaginationAbstractStorage {
 
     this.pageName = newPageName;
     this.pageNameNamed = newPageNameNamed;
-
-    this.flushWriter();
 
     return newPageName;
   }
