@@ -140,7 +140,7 @@ class LDDisk extends Disk {
 
       const writer = new N3.Writer(writeStream);
       writer.addQuads(this._getQuadsForNode(node));
-      writer.end(() => {});
+      writer.end(() => writeStream.close());
 
       writeStream.once('close', () => {
         resolve();
