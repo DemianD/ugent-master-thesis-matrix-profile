@@ -1,7 +1,7 @@
 import fs from 'fs';
 import N3 from 'n3';
 import { promisify } from 'util';
-import uuid from 'uuid';
+import uuid from 'uuid/v4';
 import { SOSA, RDF } from '../vocs.js';
 import { exec } from '../utils.js';
 
@@ -63,7 +63,7 @@ const createSnippets = async (tree, node, snippetSizes, dataPath, nodesPath) => 
   }
 
   const data = await getData(dataPath, pages);
-  const tempFile = `./temp/${uuid.v4()}.json`;
+  const tempFile = `./temp/${uuid}.json`;
 
   await writeFile(tempFile, JSON.stringify(data));
 
