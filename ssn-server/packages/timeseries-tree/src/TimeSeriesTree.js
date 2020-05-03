@@ -83,6 +83,25 @@ class TimeSeriesTree {
       this.path.push(currentNode);
     }
   }
+
+  getLeavesForNode(node) {
+    const stack = [node];
+    const leaves = [];
+
+    while (stack.length) {
+      const current = stack.pop();
+
+      if (current.containLeaves()) {
+        leaves.push(...current.relations);
+      } else {
+        for (let i = current.relations.length - 1; i >= 0; i--) {
+          stack.push(this.disk.read(current.relations[i]));
+        }
+      }
+    }
+
+    return leaves;
+  }
 }
 
 export default TimeSeriesTree;

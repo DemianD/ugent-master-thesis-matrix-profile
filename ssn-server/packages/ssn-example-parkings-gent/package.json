@@ -8,7 +8,8 @@
     "@ssn/core": "^1.0.0",
     "@ssn/matrix-profile-interface": "^1.0.0",
     "n3": "^1.3.5",
-    "restify": "^8.5.1"
+    "restify": "^8.5.1",
+    "uuid": "^8.0.0"
   },
   "scripts": {
     "deploy": "forever start -a -l ./logs.log -o ./out.log -e ./error.log index.js"

@@ -1,6 +1,6 @@
-class AbstractDisk {
-  constructor() {}
+import EventEmitter from 'events';
 
+class AbstractDisk extends EventEmitter {
   async write() {
     return Promise.resolve();
   }

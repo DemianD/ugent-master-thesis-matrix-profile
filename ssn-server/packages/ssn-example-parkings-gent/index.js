@@ -1,18 +1,16 @@
 import N3 from 'n3';
 import MatrixProfileInterface from '@ssn/matrix-profile-interface';
-import { Domain, CatalogInterface, TreeStorage, CommunicationManager } from '@ssn/core';
+import { Domain, CatalogInterface, BPlusTreeStorage, CommunicationManager } from '@ssn/core';
 
 import domains from './config.js';
-import { RDF, DATEX, RDFS } from './src/vocs.js';
+import { DATEX } from './src/vocs.js';
 import ParkingGentSourceReader from './src/ParkingGentSourceReader.js';
-
-const { quad, literal } = N3.DataFactory;
+import createSnippets from './src/snippets/createSnippets.js';
 
 // Create a configuration manager
 const communicationManager = new CommunicationManager();
 
 Object.entries(domains).map(([city, { parkings }]) => {
-  // Create a new domain
   const domain = new Domain(`https://mp-server.dem.be/${city}`);
 
   Object.entries(parkings).map(([parkingKey, options]) => {
@@ -22,11 +20,27 @@ Object.entries(domains).map(([city, { parkings }]) => {
       DATEX('numberOfVacantParkingSpaces')
     );
 
+    const dataPath = `./data/${city}/${parkingKey}`;
+    const nodesPath = `./data/${city}/${parkingKey}-nodes`;
+
     // Add the tree storage interface
-    const storageInterface = new TreeStorage(observableProperty, communicationManager, {
-      dataPath: `./data/${city}/${parkingKey}`,
-      observationsPerPage: 720
+    const storageInterface = new BPlusTreeStorage(observableProperty, communicationManager, {
+      dataPath,
+      observationsPerPage: 1440,
+      degree: 8,
+      nodesPath
     });
+
+    storageInterface.boot();
+    storageInterface.listen();
+
+    createSnippets(
+      storageInterface.tree,
+      storageInterface.tree.path[0],
+      [1440],
+      dataPath,
+      nodesPath
+    );
 
     if (city === 'leuven') {
       new MatrixProfileInterface(communicationManager, storageInterface.getCollection(), {
