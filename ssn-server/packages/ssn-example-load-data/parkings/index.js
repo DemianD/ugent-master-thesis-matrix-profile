@@ -1,7 +1,7 @@
 import N3 from 'n3';
 import fs from 'fs';
 import rimraf from 'rimraf';
-import { Domain, TreeStorage, CommunicationManager } from '@ssn/core';
+import { Domain, BPlusTreeStorage, CommunicationManager } from '@ssn/core';
 import MatrixProfileInterface from '@ssn/matrix-profile-interface';
 
 const { literal } = N3.DataFactory;
@@ -14,7 +14,7 @@ const sleep = () => new Promise(resolve => setTimeout(() => resolve(), 1000));
 // TODO: dit veranderen
 import { DATEX } from '../../ssn-example-parkings-gent/src/vocs.js';
 
-const fromDate = new Date(Date.UTC(2017, 7 - 1, 20, 14));
+const fromDate = new Date(Date.UTC(2018, 12, 1, 1));
 const toDate = new Date();
 
 const parkings = {
@@ -22,29 +22,29 @@ const parkings = {
     baseUri: 'https://leuven.datapiloten.be/parking',
     folder: './data/leuven',
     parkings: {
-      Philipssite: undefined,
-      'De-Bond': undefined,
-      Kinepolis: undefined,
-      'Heilig-Hart': undefined,
+      Philipssite: undefined, // 17, 19
+      'De-Bond': undefined, // 3, 9
+      Kinepolis: undefined, // 5
+      'Heilig-Hart': undefined, // 4, 10
       Station: undefined,
       Center: undefined,
       'Sint-Jacob': undefined,
-      Ladeuze: undefined
+      Ladeuze: undefined // 11, 16
     }
   },
   kortrijk: {
     baseUri: 'https://kortrijk.datapiloten.be/parking',
     folder: './data/kortrijk',
     parkings: {
-      'P-Veemarkt': undefined,
+      'P-Veemarkt': undefined, // 8, 15
       'P-Schouwburg': undefined,
-      'P-Broeltorens': undefined,
+      'P-Broeltorens': undefined, // 1, 6, 12, 18
       'P-Haven': undefined,
       'P-P+R-Expo': undefined,
       'P-Houtmarkt': undefined,
-      'P-Budabrug': undefined,
-      'P-K-in-Kortrijk': undefined,
-      'P-Kortrijk-Weide': undefined
+      'P-Budabrug': undefined, // 13
+      'P-K-in-Kortrijk': undefined, // 7, 14
+      'P-Kortrijk-Weide': undefined // 2
     }
   }
 };
@@ -64,13 +64,9 @@ Object.entries(parkings).map(async ([city, p]) => {
 });
 
 const store = async (folder, city, parking) => {
-  // TODO: env variable
   const domain = new Domain(`https://mp-server.dem.be/parkings/${city}`);
-
   const fromDateStore = new Date(Date.UTC(2018, 12 - 1, 1, 1));
 
-  console.log('Storing in tree...');
-  // Configure domain:
   const featureOfInterest = domain.addFeatureOfInterest(parking);
 
   const observableProperty = featureOfInterest.addObservableProperty(
@@ -78,22 +74,27 @@ const store = async (folder, city, parking) => {
   );
 
   rimraf.sync(`../../ssn-example-parkings-gent/data/${city}/${parking}`);
-  rimraf.sync(`../../ssn-example-parkings-gent/matrix-profiles/${city}/${parking}`);
+  // rimraf.sync(`../../ssn-example-parkings-gent/matrix-profiles/${city}/${parking}`);
 
-  const storageInterface = new TreeStorage(observableProperty, communicationManager, {
+  const storageInterface = new BPlusTreeStorage(observableProperty, communicationManager, {
     dataPath: `../../ssn-example-parkings-gent/data/${city}/${parking}`,
     observationsPerPage: 720,
+    degree: 8,
+    nodesPath: `../../ssn-example-parkings-gent/data/${city}/${parking}-nodes`,
     initialPageName: fromDateStore.toISOString()
   });
 
-  const collection = storageInterface.getCollection();
+  storageInterface.boot();
+  storageInterface.listen();
 
-  new MatrixProfileInterface(communicationManager, collection, {
-    resultsFolder: `./matrix-profiles/${city}/${parking}`,
-    queueFolder: '../../../../matrix-profile-service/queue',
-    seriesWindow: 1 * 60 * 24 * 365,
-    windowSizes: [1 * 60 * 24, 1 * 60 * 24 * 7, 1 * 60 * 24 * 30]
-  });
+  // const collection = storageInterface.getCollection();
+
+  // new MatrixProfileInterface(communicationManager, collection, {
+  //   resultsFolder: `./matrix-profiles/${city}/${parking}`,
+  //   queueFolder: '../../../../matrix-profile-service/queue',
+  //   seriesWindow: 5 * 12 * 24 * 365,
+  //   windowSizes: [1 * 12 * 24, 1 * 12 * 24 * 7, 1 * 12 * 24 * 30]
+  // });
 
   // Add observations
   console.log('Reading', `${folder}/${parking}-grouped.csv`);
@@ -115,6 +116,7 @@ const store = async (folder, city, parking) => {
       i++;
 
       if (i % 1000 === 0) {
+        console.log('sleep', date);
         await sleep();
       }
     }
