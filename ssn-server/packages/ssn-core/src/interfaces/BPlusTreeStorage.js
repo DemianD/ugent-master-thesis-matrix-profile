@@ -39,8 +39,8 @@ class BPlusTreeStorage extends HydraStorage {
     super.boot();
   }
 
-  createNewPage() {
-    const newPageName = super.createNewPage();
+  createNewPage(newPageName) {
+    super.createNewPage(newPageName);
 
     this.tree.insert(newPageName, newPageName);
   }
