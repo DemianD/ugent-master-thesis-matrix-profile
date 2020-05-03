@@ -11,7 +11,7 @@ class Node {
     return this.keys.length === this.degree;
   }
 
-  isLeaf() {
+  containLeaves() {
     throw new Error('Not implemented');
   }
 

@@ -119,13 +119,13 @@ class LDDisk extends Disk {
       quad(collectionSubject, TREE('view'), viewSubject),
       quad(viewSubject, RDF('type'), TREE('Node')),
       node.relations.map((relation, i) => {
-        const [relationBlankNode, type, value] = node.isLeaf()
+        const [relationBlankNode, type, value] = node.containLeaves()
           ? this._getTypeAndValueForLeafNode(node, relation, i)
           : this._getTypeAndValueForIndexNode(node, relation, i);
 
         return [
           quad(viewSubject, TREE('Relation'), relationBlankNode),
-          quad(relationBlankNode, TREE('node'), this._getView(relation, !node.isLeaf())),
+          quad(relationBlankNode, TREE('node'), this._getView(relation, !node.containLeaves())),
           quad(relationBlankNode, TREE('path'), this.treePath),
           quad(relationBlankNode, RDF('type'), type),
           quad(relationBlankNode, TREE('value'), value)
@@ -157,14 +157,14 @@ class LDDisk extends Disk {
 
     const nodeSubjects = store.getSubjects(TREE('node'));
     let previousKey;
-    let isLeaf = false;
+    let containLeaves = false;
 
     nodeSubjects.map(nodeSubject => {
       let relation = decode(nodeSubject.value.replace('_:'));
 
       if (relation.startsWith('leaf_')) {
         relation = relation.replace('leaf_', '');
-        isLeaf = true;
+        containLeaves = true;
 
         if (previousKey === undefined) {
           keys.push(undefined);
@@ -184,7 +184,7 @@ class LDDisk extends Disk {
       relations.push(convertToNumberIfNumber(relation));
     });
 
-    const Type = isLeaf ? LeafNode : IndexNode;
+    const Type = containLeaves ? LeafNode : IndexNode;
     const node = new Type(name, this.degree);
 
     node.keys = keys;

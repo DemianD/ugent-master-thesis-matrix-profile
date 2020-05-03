@@ -25,7 +25,7 @@ class IndexNode extends Node {
     );
   }
 
-  isLeaf() {
+  containLeaves() {
     return false;
   }
 

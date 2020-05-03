@@ -111,11 +111,11 @@ it('5', async t => {
 
   t.is(tree.path[2], tree.mostRightIndexNode);
 
-  t.is(tree.mostRightIndexNode.isLeaf(), true);
+  t.is(tree.mostRightIndexNode.containLeaves(), true);
   t.deepEqual(tree.mostRightIndexNode.keys, ['m']);
   t.deepEqual(tree.mostRightIndexNode.relations, ['m']);
 
-  t.is(nodes['l'].node.isLeaf(), true);
+  t.is(nodes['l'].node.containLeaves(), true);
   t.deepEqual(nodes['l'].keys, ['j', 'k', 'l']);
   t.deepEqual(nodes['l'].relations, ['j', 'k', 'l']);
 });

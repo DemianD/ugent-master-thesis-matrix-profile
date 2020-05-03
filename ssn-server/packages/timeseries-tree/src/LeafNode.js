@@ -5,7 +5,7 @@ class LeafNode extends Node {
     super(nodeNumber, degree);
   }
 
-  isLeaf() {
+  containLeaves() {
     return true;
   }
 

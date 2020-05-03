@@ -38,7 +38,7 @@ class TimeSeriesTree {
     let parentIndex = this.path.length - 1 - 1;
 
     while (currentNode.isFull()) {
-      const brotherNode = currentNode.isLeaf()
+      const brotherNode = currentNode.containLeaves()
         ? new LeafNode(this.nodeNamer(), this.degree)
         : new IndexNode(this.nodeNamer(), this.degree);
 
@@ -78,7 +78,7 @@ class TimeSeriesTree {
 
     let currentNode = this.path[0];
 
-    while (!currentNode.isLeaf()) {
+    while (!currentNode.containLeaves()) {
       currentNode = this.disk.read(currentNode.getLastRelation());
       this.path.push(currentNode);
     }
