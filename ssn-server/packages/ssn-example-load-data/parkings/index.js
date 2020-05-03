@@ -74,6 +74,7 @@ const store = async (folder, city, parking) => {
   );
 
   rimraf.sync(`../../ssn-example-parkings-gent/data/${city}/${parking}`);
+  rimraf.sync(`../../ssn-example-parkings-gent/data/${city}/${parking}-nodes`);
   // rimraf.sync(`../../ssn-example-parkings-gent/matrix-profiles/${city}/${parking}`);
 
   const storageInterface = new BPlusTreeStorage(observableProperty, communicationManager, {
