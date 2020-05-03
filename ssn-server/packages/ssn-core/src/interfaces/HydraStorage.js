@@ -1,7 +1,7 @@
 import fs from 'fs';
 import N3 from 'n3';
 
-import { RDF, HYDRA } from '../utils/vocs.js';
+import { RDF, HYDRA, SOSA } from '../utils/vocs.js';
 import isValidDate from '../utils/isValidDate.js';
 
 import PaginationAbstractStorage from './PaginationAbstractStorage.js';
