@@ -5,7 +5,7 @@ import { Domain, CatalogInterface, BPlusTreeStorage, CommunicationManager } from
 import domains from './config.js';
 import { DATEX } from './src/vocs.js';
 import ParkingGentSourceReader from './src/ParkingGentSourceReader.js';
-import createSnippets from './src/snippets/createSnippets.js';
+import CreateSnippets from './src/snippets/createSnippets.js';
 
 // Create a configuration manager
 const communicationManager = new CommunicationManager();
@@ -34,13 +34,15 @@ Object.entries(domains).map(([city, { parkings }]) => {
     storageInterface.boot();
     storageInterface.listen();
 
-    createSnippets(
+    const createSnippets = new CreateSnippets(
       storageInterface.tree,
-      storageInterface.tree.path[0],
-      [1440],
+      storageInterface.getCollection(),
+      [10],
       dataPath,
       nodesPath
     );
+
+    createSnippets.create(storageInterface.tree.path[0]);
 
     if (city === 'leuven') {
       new MatrixProfileInterface(communicationManager, storageInterface.getCollection(), {
