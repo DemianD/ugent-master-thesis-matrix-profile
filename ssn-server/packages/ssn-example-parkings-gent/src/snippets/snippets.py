@@ -40,6 +40,10 @@ for page in pages:
 result = {}
 
 for snippet_size in snippet_sizes:
+    if len(values) < (2 * snippet_size):
+        # Time series is too short relative to snippet length
+        continue
+
     jsonObjects = []
     snippets = mp.discover.snippets(values, snippet_size, 4)
 

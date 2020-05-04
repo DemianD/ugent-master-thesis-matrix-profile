@@ -4,7 +4,7 @@ export const exec = cmd => {
   return new Promise((resolve, reject) => {
     execCb(cmd, (error, stdout, stderr) => {
       if (error) {
-        console.warn(error);
+        reject(error, stderr);
       }
       resolve(stdout ? stdout : stderr);
     });

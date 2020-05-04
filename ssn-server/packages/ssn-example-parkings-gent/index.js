@@ -26,7 +26,7 @@ Object.entries(domains).map(([city, { parkings }]) => {
     // Add the tree storage interface
     const storageInterface = new BPlusTreeStorage(observableProperty, communicationManager, {
       dataPath,
-      observationsPerPage: 1440,
+      observationsPerPage: 288,
       degree: 8,
       nodesPath
     });
@@ -37,12 +37,14 @@ Object.entries(domains).map(([city, { parkings }]) => {
     const createSnippets = new CreateSnippets(
       storageInterface.tree,
       storageInterface.getCollection(),
-      [10],
+      [288, 288 * 3, 288 * 7, 288 * 30],
       dataPath,
       nodesPath
     );
 
-    createSnippets.create(storageInterface.tree.path[0]);
+    storageInterface.tree.disk.on('write', node => {
+      createSnippets.create(node);
+    });
 
     if (city === 'leuven') {
       new MatrixProfileInterface(communicationManager, storageInterface.getCollection(), {

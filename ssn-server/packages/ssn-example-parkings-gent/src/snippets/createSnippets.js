@@ -44,24 +44,28 @@ class CreateSnippets {
 
     await writeFile(tempFile, JSON.stringify({ snippet_sizes: this.snippetSizes, pages: pages }));
 
-    const results = await exec(
-      `python3 ./src/snippets/snippets.py ${tempFile} ${this.snippetSizes.join(',')}`
-    );
+    try {
+      const results = await exec(
+        `python3 ./src/snippets/snippets.py ${tempFile} ${this.snippetSizes.join(',')}`
+      );
 
-    fs.unlink(tempFile, () => {});
-    delete this.queue[node.nodeNumber];
+      const { mtime: mtimeAfter } = await stat(`${this.nodesPath}/${node.nodeNumber}`);
 
-    const { mtime: mtimeAfter } = await stat(`${this.nodesPath}/${node.nodeNumber}`);
+      if (mtimeAfter.getTime() === mtimeBefore.getTime()) {
+        // File has not changed
+        const quads = this._quads(node, JSON.parse(results));
 
-    if (mtimeAfter.getTime() === mtimeBefore.getTime()) {
-      // File has not changed
-      const quads = this._quads(node, JSON.parse(results));
+        // TODO: don't import stringifyQuads from core library, maybe we need to expose a @ssn/utils package?
+        appendFile(`${this.nodesPath}/${node.nodeNumber}`, stringifyQuads(quads));
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      fs.unlink(tempFile, () => {});
+      delete this.queue[node.nodeNumber];
 
-      // TODO: don't import stringifyQuads from core library, maybe we need to expose a @ssn/utils package?
-      appendFile(`${this.nodesPath}/${node.nodeNumber}`, stringifyQuads(quads));
+      this._handleNext();
     }
-
-    this._handleNext();
   }
 
   _quads(node, results) {
@@ -96,11 +100,7 @@ class CreateSnippets {
   _handleNext() {
     const nextNodes = Object.values(this.queue);
 
-    if (nextNodes.length === 0) {
-      this.currentProcess = undefined;
-    } else {
-      this.currentProcess = this._process(nextNodes[0]);
-    }
+    this.currentProcess = nextNodes.length === 0 ? undefined : this._process(nextNodes[0]);
   }
 }
 
