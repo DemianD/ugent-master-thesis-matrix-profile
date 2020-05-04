@@ -2,8 +2,12 @@ import fs from 'fs';
 import N3 from 'n3';
 import path from 'path';
 import { promisify } from 'util';
+import { fileURLToPath } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 import { exec } from '../utils.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 import { MP, RDF, HYDRA, PROV, XSD } from '../vocs.js';
 import stringifyQuads from '../../../ssn-core/src/utils/stringifyQuads.js';
 
@@ -46,7 +50,9 @@ class CreateSnippets {
 
     try {
       const results = await exec(
-        `python3 ./src/snippets/snippets.py ${tempFile} ${this.snippetSizes.join(',')}`
+        `python3 ${path.resolve(__dirname, 'snippets.py')} ${tempFile} ${this.snippetSizes.join(
+          ','
+        )}`
       );
 
       const { mtime: mtimeAfter } = await stat(`${this.nodesPath}/${node.nodeNumber}`);
