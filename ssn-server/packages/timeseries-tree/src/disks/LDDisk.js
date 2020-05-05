@@ -25,8 +25,8 @@ const convertToNumberIfNumber = string => {
 };
 
 /**
- * The name for a blank node can contain a colon.
- *
+ * The name for a blank node can contain a colon (because of ISO-string)
+ * We fix this by providing some encode/decode functions
  */
 const encode = decoded => {
   return decoded.split(':').join('__colon__');
@@ -67,47 +67,63 @@ class LDDisk extends Disk {
     );
   }
 
-  _getTypeAndValueForLeafNode(node, relation, i) {
-    const relationBlankNode = blankNode(`leaf_${encode(relation)}`);
-    let type, value;
+  _getQuadsForRelation(node, viewSubject, i) {
+    const relation = node.relations[i];
+    const containLeaves = node.containLeaves();
 
-    const isFirstRelation = i === 0 && node.keys.length > 1;
-    const isLastRelation = i === node.relations.length - 1 || node.keys.length === 1;
+    const relationBlankNode = blankNode(`${containLeaves ? 'leaf_' : ''}${encode(relation)}`);
 
-    if (isFirstRelation) {
-      type = TREE('LessThanRelation');
-      value = literal(node.keys[1], XSD('dateTime'));
-    } else if (isLastRelation) {
-      type = TREE('GreaterOrEqualThanRelation');
-      value = literal(node.keys[node.keys.length - 1], XSD('dateTime'));
-    } else {
-      type = TREE('InBetweenRelation');
-      value = literal(`${node.keys[i]};${node.keys[i + 1]}`);
+    const q = (blankNode, ...quads) => [
+      quad(viewSubject, TREE('Relation'), blankNode),
+      quad(blankNode, TREE('node'), this._getView(relation, !node.containLeaves())),
+      quad(blankNode, TREE('path'), this.treePath),
+      ...quads
+    ];
+
+    if (containLeaves && node.keys.length === 1) {
+      return q(
+        relationBlankNode,
+        quad(relationBlankNode, RDF('type'), TREE('GreaterOrEqualThanRelation')),
+        quad(relationBlankNode, TREE('value'), literal(node.keys[0], XSD('dateTime')))
+      );
     }
 
-    return [relationBlankNode, type, value];
-  }
-
-  _getTypeAndValueForIndexNode(node, relation, i) {
-    const relationBlankNode = blankNode(relation);
-
-    let type, value;
+    const keys = containLeaves ? node.keys.slice(1) : node.keys;
 
     const isFirstRelation = i === 0;
     const isLastRelation = i === node.relations.length - 1;
 
     if (isFirstRelation) {
-      type = TREE('LessThanRelation');
-      value = literal(node.keys[0], XSD('dateTime'));
-    } else if (isLastRelation) {
-      type = TREE('GreaterOrEqualThanRelation');
-      value = literal(node.keys[node.keys.length - 1], XSD('dateTime'));
-    } else {
-      type = TREE('InBetweenRelation');
-      value = literal(`${node.keys[i - 1]};${node.keys[i]}`);
+      return q(
+        relationBlankNode,
+        quad(relationBlankNode, RDF('type'), TREE('LessThanRelation')),
+        quad(relationBlankNode, TREE('value'), literal(keys[0], XSD('dateTime')))
+      );
     }
 
-    return [relationBlankNode, type, value];
+    if (isLastRelation) {
+      return q(
+        relationBlankNode,
+        quad(relationBlankNode, RDF('type'), TREE('GreaterOrEqualThanRelation')),
+        quad(relationBlankNode, TREE('value'), literal(keys[keys.length - 1], XSD('dateTime')))
+      );
+    }
+
+    const relationBlankNode1 = relationBlankNode;
+    const relationBlankNode2 = blankNode(`${containLeaves ? 'leaf_' : ''}${encode(relation)}_2`);
+
+    const quads = q(
+      relationBlankNode1,
+      quad(relationBlankNode1, RDF('type'), TREE('GreaterOrEqualThanRelation')),
+      quad(relationBlankNode1, TREE('value'), literal(keys[i - 1], XSD('dateTime')))
+    );
+
+    return q(
+      relationBlankNode2,
+      quad(relationBlankNode2, RDF('type'), TREE('LessThanRelation')),
+      quad(relationBlankNode2, TREE('value'), literal(keys[i], XSD('dateTime'))),
+      ...quads
+    );
   }
 
   _getQuadsForNode(node) {
@@ -118,18 +134,8 @@ class LDDisk extends Disk {
       quad(collectionSubject, RDF('type'), TREE('Collection')),
       quad(collectionSubject, TREE('view'), viewSubject),
       quad(viewSubject, RDF('type'), TREE('Node')),
-      node.relations.map((relation, i) => {
-        const [relationBlankNode, type, value] = node.containLeaves()
-          ? this._getTypeAndValueForLeafNode(node, relation, i)
-          : this._getTypeAndValueForIndexNode(node, relation, i);
-
-        return [
-          quad(viewSubject, TREE('Relation'), relationBlankNode),
-          quad(relationBlankNode, TREE('node'), this._getView(relation, !node.containLeaves())),
-          quad(relationBlankNode, TREE('path'), this.treePath),
-          quad(relationBlankNode, RDF('type'), type),
-          quad(relationBlankNode, TREE('value'), value)
-        ];
+      node.relations.map((_, i) => {
+        return this._getQuadsForRelation(node, viewSubject, i);
       })
     ].flat(Infinity);
   }
