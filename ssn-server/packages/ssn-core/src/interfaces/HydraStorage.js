@@ -62,7 +62,7 @@ class HydraStorage extends PaginationAbstractStorage {
     const stats = await stat(pageName);
 
     return {
-      immutable: this.pageName === pageDate.toISOString(),
+      immutable: this.pageName !== pageDate.toISOString(),
       body: fs.createReadStream(pageName),
       headers: {
         'Content-Length': stats.size,
