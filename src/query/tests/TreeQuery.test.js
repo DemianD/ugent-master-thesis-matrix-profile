@@ -4,149 +4,231 @@ import TreeQuery, {
   LESS_THAN_OR_EQUAL_TO,
   LESS_THAN,
 } from '../TreeQuery';
+
 import { SOSA } from '../../utils/vocs';
-import { mockFetch, waitForResults } from './utils';
+import { mockRequests, waitForResults } from './utils';
+
+const createTreeQuery = (waitForNumberOfResults, relationOrRelations) => {
+  const [getCalls, restore] = mockRequests();
+  const [wait, onData, getResults] = waitForResults(waitForNumberOfResults);
+
+  const treeQuery = new TreeQuery(
+    Array.isArray(relationOrRelations) ? relationOrRelations : [relationOrRelations],
+    false,
+    onData
+  );
+
+  treeQuery.execute('https://example.com/');
+
+  return [
+    getCalls,
+    () =>
+      getResults()
+        .flat()
+        .map((r) => r[SOSA('resultTime').value].value)
+        .sort(),
+    restore,
+    wait,
+  ];
+};
 
 describe('TreeQuery', () => {
   describe('one filter', () => {
-    it('should fetch the right relations', async () => {
-      const spy = mockFetch();
-      const [wait, onData] = waitForResults(2);
-
-      const treeQuery = new TreeQuery(
-        [
-          {
-            relationType: GREATER_THAN_OR_EQUAL_TO,
-            path: SOSA('resultTime'),
-            value: new Date(Date.UTC(2020, 4 - 1, 17, 0, 0, 0, 0)),
-          },
-        ],
-        onData
-      );
-      treeQuery.execute('https://www.example.com/');
+    it('should fetch the fragments on the most right path', async () => {
+      const [getCalls, getResults, restore, wait] = createTreeQuery(4, {
+        relationType: GREATER_THAN_OR_EQUAL_TO,
+        path: SOSA('resultTime'),
+        value: new Date(Date.UTC(2020, 5 - 1, 1, 17, 20, 0, 0)),
+      });
 
       await wait;
 
-      expect(spy.mock.calls.length).toBe(2);
-      expect(spy.mock.calls[1][0]).toBe('https://www.example.com/2020-04-17T17:26:43.887Z');
+      const calls = getCalls();
 
-      spy.mockRestore();
+      expect(calls.length).toBe(4);
+      expect(calls[0]).toBe('/');
+      expect(calls[1]).toBe('/node/15887724979917');
+      expect(calls[2]).toBe('/node/15887724979856');
+      expect(calls[3]).toBe('/2020-05-01T17:20:00.000Z');
+
+      expect(getResults()).toEqual([
+        '2020-05-01T17:20:00.000Z',
+        '2020-05-01T17:21:00.000Z',
+        '2020-05-01T17:22:00.000Z',
+        '2020-05-01T17:23:00.000Z',
+        '2020-05-01T17:24:00.000Z',
+      ]);
+
+      restore();
     });
 
-    it.skip('should fetch the left relations', async () => {
-      const spy = mockFetch();
-      const [wait, onData] = waitForResults(3);
-
-      const treeQuery = new TreeQuery(
-        [
-          {
-            relationType: LESS_THAN_OR_EQUAL_TO,
-            path: SOSA('resultTime'),
-            value: new Date(Date.UTC(2020, 4 - 1, 15, 0, 0, 0, 0)),
-          },
-        ],
-        onData
-      );
-      treeQuery.execute('https://www.example.com/');
+    it('should fetch the fragments on the most left path', async () => {
+      const [getCalls, getResults, restore, wait] = createTreeQuery(4, {
+        relationType: LESS_THAN_OR_EQUAL_TO,
+        path: SOSA('resultTime'),
+        value: new Date(Date.UTC(2020, 5 - 1, 1, 16, 4, 0, 0)),
+      });
 
       await wait;
 
-      expect(spy.mock.calls.length).toBe(4);
-      expect(spy.mock.calls[1][0]).toBe('https://www.example.com/2020-04-16T01:26:33.724Z');
-      expect(spy.mock.calls[2][0]).toBe('https://www.example.com/2020-04-15T18:46:34.035Z');
-      expect(spy.mock.calls[3][0]).toBe('https://www.example.com/2020-04-15T15:26:34.035Z');
+      const calls = getCalls();
 
-      spy.mockRestore();
+      expect(calls.length).toBe(4);
+      expect(calls[0]).toBe('/');
+      expect(calls[1]).toBe('/node/15887724979918');
+      expect(calls[2]).toBe('/node/15887721988392');
+      expect(calls[3]).toBe('/2020-05-01T16:01:00.000Z');
+
+      expect(getResults()).toEqual([
+        '2020-05-01T16:01:00.000Z',
+        '2020-05-01T16:02:00.000Z',
+        '2020-05-01T16:03:00.000Z',
+        '2020-05-01T16:04:00.000Z',
+      ]);
+
+      restore();
     });
 
-    it.skip('fetch the pages zig zag', async () => {
-      const spy = mockFetch();
-      const [wait, onData] = waitForResults(2);
-
-      const treeQuery = new TreeQuery(
-        [
-          {
-            relationType: GREATER_THAN_OR_EQUAL_TO,
-            path: SOSA('resultTime'),
-            value: new Date(Date.UTC(2020, 4 - 1, 16, 9, 0, 0, 0)),
-          },
-        ],
-        onData
-      );
-      treeQuery.execute('https://www.example.com/');
+    it('should fetch fragments on zig zag way', async () => {
+      const [getCalls, getResults, restore, wait] = createTreeQuery(4, {
+        relationType: GREATER_THAN_OR_EQUAL_TO,
+        path: SOSA('resultTime'),
+        value: new Date(Date.UTC(2020, 5 - 1, 1, 16, 44, 0, 0)),
+      });
 
       await wait;
 
-      expect(spy.mock.calls.length).toBe(3);
-      expect(spy.mock.calls[1][0]).toBe('https://www.example.com/2020-04-16T01:26:33.724Z');
-      expect(spy.mock.calls[2][0]).toBe('https://www.example.com/2020-04-16T08:06:38.540Z');
+      const calls = getCalls();
 
-      spy.mockRestore();
+      expect(calls.length).toBe(4);
+      expect(calls[0]).toBe('/');
+      expect(calls[1]).toBe('/node/15887724979918');
+      expect(calls[2]).toBe('/node/15887722729763');
+      expect(calls[3]).toBe('/2020-05-01T16:40:00.000Z');
+
+      expect(getResults()).toEqual(['2020-05-01T16:44:00.000Z']);
+
+      restore();
     });
   });
 
-  describe.skip('two filters (interval)', () => {
-    it('fetches the correct pages', async () => {
-      const spy = mockFetch();
-      const [wait, onData] = waitForResults(4);
-
-      const treeQuery = new TreeQuery(
-        [
-          {
-            relationType: GREATER_THAN,
-            path: SOSA('resultTime'),
-            value: new Date(Date.UTC(2020, 4 - 1, 15, 18, 46, 34, 35)),
-          },
-          {
-            relationType: LESS_THAN,
-            path: SOSA('resultTime'),
-            value: new Date(Date.UTC(2020, 4 - 1, 16, 1, 51, 33, 358)),
-          },
-        ],
-        onData
-      );
-
-      treeQuery.execute('https://www.example.com/');
+  describe('two filters (interval)', () => {
+    it('should fetch the interval in the middle of the tree', async () => {
+      const [getCalls, getResults, restore, wait] = createTreeQuery(8, [
+        {
+          relationType: GREATER_THAN,
+          path: SOSA('resultTime'),
+          value: new Date(Date.UTC(2020, 5 - 1, 1, 16, 42, 0, 0)),
+        },
+        {
+          relationType: LESS_THAN,
+          path: SOSA('resultTime'),
+          value: new Date(Date.UTC(2020, 5 - 1, 1, 16, 53, 0, 0)),
+        },
+      ]);
 
       await wait;
 
-      expect(spy.mock.calls.length).toBe(4);
-      expect(spy.mock.calls[1][0]).toBe('https://www.example.com/2020-04-16T01:26:33.724Z');
-      expect(spy.mock.calls[2][0]).toBe('https://www.example.com/2020-04-15T18:46:34.035Z');
-      expect(spy.mock.calls[3][0]).toBe('https://www.example.com/2020-04-15T22:06:33.680Z');
+      const calls = getCalls().sort();
 
-      spy.mockRestore();
+      expect(calls.length).toBe(8);
+      expect(calls[0]).toBe('/');
+      expect(calls[1]).toBe('/2020-05-01T16:40:00.000Z');
+      expect(calls[2]).toBe('/2020-05-01T16:45:00.000Z');
+      expect(calls[3]).toBe('/2020-05-01T16:50:00.000Z');
+      expect(calls[4]).toBe('/node/15887722729763');
+      expect(calls[5]).toBe('/node/15887723478524');
+      expect(calls[6]).toBe('/node/15887724979917');
+      expect(calls[7]).toBe('/node/15887724979918');
+
+      expect(getResults()).toEqual([
+        '2020-05-01T16:43:00.000Z',
+        '2020-05-01T16:44:00.000Z',
+        '2020-05-01T16:45:00.000Z',
+        '2020-05-01T16:46:00.000Z',
+        '2020-05-01T16:47:00.000Z',
+        '2020-05-01T16:48:00.000Z',
+        '2020-05-01T16:49:00.000Z',
+        '2020-05-01T16:50:00.000Z',
+        '2020-05-01T16:51:00.000Z',
+        '2020-05-01T16:52:00.000Z',
+      ]);
+
+      restore();
     });
 
-    it('fetches the correct pages 2', async () => {
-      const spy = mockFetch();
-      const [wait, onData] = waitForResults(4);
-
-      const treeQuery = new TreeQuery(
-        [
-          {
-            relationType: GREATER_THAN_OR_EQUAL_TO,
-            path: SOSA('resultTime'),
-            value: new Date(Date.UTC(2020, 4 - 1, 16, 14, 46, 43, 555)),
-          },
-          {
-            relationType: LESS_THAN_OR_EQUAL_TO,
-            path: SOSA('resultTime'),
-            value: new Date(Date.UTC(2020, 4 - 1, 17, 17, 26, 0, 0)),
-          },
-        ],
-        onData
-      );
-      treeQuery.execute('https://www.example.com/');
-
+    it('should fetch the interval at the right side', async () => {
+      const [getCalls, getResults, restore, wait] = createTreeQuery(5, [
+        {
+          relationType: GREATER_THAN_OR_EQUAL_TO,
+          path: SOSA('resultTime'),
+          value: new Date(Date.UTC(2020, 5 - 1, 1, 17, 16, 0, 0)),
+        },
+        {
+          relationType: LESS_THAN_OR_EQUAL_TO,
+          path: SOSA('resultTime'),
+          value: new Date(Date.UTC(2020, 6 - 1, 1, 16, 53, 0, 0)),
+        },
+      ]);
       await wait;
 
-      expect(spy.mock.calls.length).toBe(4);
-      expect(spy.mock.calls[1][0]).toBe('https://www.example.com/2020-04-16T01:26:33.724Z');
-      expect(spy.mock.calls[2][0]).toBe('https://www.example.com/2020-04-17T17:26:43.887Z');
-      expect(spy.mock.calls[3][0]).toBe('https://www.example.com/2020-04-16T08:06:38.540Z');
+      const calls = getCalls().sort();
 
-      spy.mockRestore();
+      expect(calls.length).toBe(5);
+      expect(calls[0]).toBe('/');
+      expect(calls[1]).toBe('/2020-05-01T17:15:00.000Z');
+      expect(calls[2]).toBe('/2020-05-01T17:20:00.000Z');
+      expect(calls[3]).toBe('/node/15887724979856');
+      expect(calls[4]).toBe('/node/15887724979917');
+
+      expect(getResults()).toEqual([
+        '2020-05-01T17:16:00.000Z',
+        '2020-05-01T17:17:00.000Z',
+        '2020-05-01T17:18:00.000Z',
+        '2020-05-01T17:19:00.000Z',
+        '2020-05-01T17:20:00.000Z',
+        '2020-05-01T17:21:00.000Z',
+        '2020-05-01T17:22:00.000Z',
+        '2020-05-01T17:23:00.000Z',
+        '2020-05-01T17:24:00.000Z',
+      ]);
+
+      restore();
+    });
+
+    it('should fetch the interval at the left side', async () => {
+      const [getCalls, getResults, restore, wait] = createTreeQuery(5, [
+        {
+          relationType: GREATER_THAN_OR_EQUAL_TO,
+          path: SOSA('resultTime'),
+          value: new Date(Date.UTC(2020, 4 - 1, 1, 17, 16, 0, 0)),
+        },
+        {
+          relationType: LESS_THAN,
+          path: SOSA('resultTime'),
+          value: new Date(Date.UTC(2020, 5 - 1, 1, 16, 6, 0, 0)),
+        },
+      ]);
+      await wait;
+
+      const calls = getCalls().sort();
+
+      expect(calls.length).toBe(5);
+      expect(calls[0]).toBe('/');
+      expect(calls[1]).toBe('/2020-05-01T16:01:00.000Z');
+      expect(calls[2]).toBe('/2020-05-01T16:05:00.000Z');
+      expect(calls[3]).toBe('/node/15887721988392');
+      expect(calls[4]).toBe('/node/15887724979918');
+
+      expect(getResults()).toEqual([
+        '2020-05-01T16:01:00.000Z',
+        '2020-05-01T16:02:00.000Z',
+        '2020-05-01T16:03:00.000Z',
+        '2020-05-01T16:04:00.000Z',
+        '2020-05-01T16:05:00.000Z',
+      ]);
+
+      restore();
     });
   });
 });

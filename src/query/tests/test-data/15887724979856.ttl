@@ -1,0 +1,13 @@
+<https://mp-server.dem.be/gent/P10/numberOfVacantParkingSpacesSeries> a <https://w3id.org/tree#Collection>;
+    <https://w3id.org/tree#view> <https://example.com/node/15887724979856>.
+<https://example.com/node/15887724979856> a <https://w3id.org/tree#Node>;
+    <https://w3id.org/tree#Relation> _:leaf_2020-05-01T17__colon__15__colon__00.000Z.
+_:leaf_2020-05-01T17__colon__15__colon__00.000Z <https://w3id.org/tree#node> <https://example.com/2020-05-01T17:15:00.000Z>;
+    <https://w3id.org/tree#path> <http://www.w3.org/ns/sosa/resultTime>;
+    a <https://w3id.org/tree#LessThanRelation>;
+    <https://w3id.org/tree#value> "2020-05-01T17:20:00.000Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>.
+<https://example.com/node/15887724979856> <https://w3id.org/tree#Relation> _:leaf_2020-05-01T17__colon__20__colon__00.000Z.
+_:leaf_2020-05-01T17__colon__20__colon__00.000Z <https://w3id.org/tree#node> <https://example.com/2020-05-01T17:20:00.000Z>;
+    <https://w3id.org/tree#path> <http://www.w3.org/ns/sosa/resultTime>;
+    a <https://w3id.org/tree#GreaterOrEqualThanRelation>;
+    <https://w3id.org/tree#value> "2020-05-01T17:20:00.000Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>.

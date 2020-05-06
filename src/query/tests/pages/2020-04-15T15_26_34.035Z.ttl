@@ -1,7 +1,0 @@
-<https://mp-server.dem.be/P01> a <http://www.w3.org/ns/sosa/FeatureOfInterest>, <http://vocab.datex.org/terms#UrbanParkingSite>;
-    <http://www.w3.org/2002/07/owl#sameAs> <https://stad.gent/id/parking/P1>;
-    <http://vocab.datex.org/terms#parkingName> "Vrijdagmarkt";
-    <http://vocab.datex.org/terms#parkingNumberOfSpaces> "648"^^<http://www.w3.org/2001/XMLSchema#integer>.
-<https://www.example.com> a <https://w3id.org/tree#collection>;
-    <http://rdfs.org/ns/void#subset> <https://www.example.com/2020-04-15T15:26:34.035Z>.
-<https://www.example.com/2020-04-15T15:26:34.035Z> a <https://w3id.org/tree#node>.

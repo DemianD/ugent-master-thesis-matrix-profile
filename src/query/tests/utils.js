@@ -1,22 +1,55 @@
 import fs from 'fs';
 import util from 'util';
+import nock from 'nock';
 
 const readFile = util.promisify(fs.readFile);
 
-export const mockFetch = () => {
-  return jest.spyOn(window, 'fetch').mockImplementation((url) => {
-    const page = url.replace('https://www.example.com/', '').split(':').join('_') || 'root';
+export const mockRequests = () => {
+  const calls = [];
 
-    return Promise.resolve({
-      text: () => readFile(`./src/query/tests/pages/${page}.ttl`, 'utf8'),
-    });
-  });
+  nock('https://example.com/')
+    .persist()
+    .get(/^(?!\/node\/.*$).*/)
+    .reply(
+      200,
+      (uri) => {
+        calls.push(uri);
+        const pageName = uri.replace('/', '') || 'root';
+        return readFile(`./src/query/tests/test-data/${pageName}.ttl`, 'utf8');
+      },
+      {
+        'Content-Type': 'application/trig',
+        'Cache-Control': 'no-cache',
+      }
+    );
+
+  nock('https://example.com/')
+    .persist()
+    .get(/node\/.*/)
+    .reply(
+      200,
+      (uri) => {
+        calls.push(uri);
+        const pageName = uri.replace('/node/', '') || 'root';
+        return readFile(`./src/query/tests/test-data/${pageName}.ttl`, 'utf8');
+      },
+      {
+        'Content-Type': 'application/trig',
+        'Cache-Control': 'no-cache',
+      }
+    );
+
+  return [() => calls, () => nock.cleanAll()];
 };
 
 export const waitForResults = (timesCalled) => {
+  const results = [];
+
   let called = 0;
   let resolve;
-  const onData = () => {
+
+  const onData = (data) => {
+    results.push(data);
     called++;
 
     if (called === timesCalled) {
@@ -29,5 +62,6 @@ export const waitForResults = (timesCalled) => {
       resolve = innerResolve;
     }),
     onData,
+    () => results,
   ];
 };

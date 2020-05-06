@@ -1,15 +1,19 @@
 import ldfetch from 'ldfetch';
-import { pipe, map, filter, toArray } from 'lazy-collections';
+import { pipe, map, filter, groupBy } from 'lazy-collections';
 
 import { fromRdf } from 'rdf-literal';
 import { TREE, RDF, SOSA } from '../utils/vocs';
+import applyFilter from '../utils/queryFilter';
 
 export const GREATER_THAN_OR_EQUAL_TO = TREE('GreaterOrEqualThanRelation');
 export const GREATER_THAN = TREE('GreaterThanRelation');
 export const LESS_THAN = TREE('LessThanRelation');
 export const LESS_THAN_OR_EQUAL_TO = TREE('LessOrEqualThanRelation');
+export const EQUAL_THAN_RELATION = TREE('EqualThanRelation');
 
-const toObject = (subjectTriples) => {
+const toObject = (subjectTriples, metadata) => {
+  const initialObject = metadata ? { __meta: metadata } : {};
+
   return subjectTriples.reduce((acc, triple) => {
     if (acc[triple.predicate.value]) {
       acc[triple.predicate.value] = [...acc[triple.predicate.value], triple.object];
@@ -18,34 +22,36 @@ const toObject = (subjectTriples) => {
     }
 
     return acc;
-  }, {});
+  }, initialObject);
 };
 
 const fetcher = new ldfetch();
 
-fetcher.on('cache-miss', (obj) => {
+fetcher.on('cache-miss', () => {
   console.log('cache-miss');
 });
-fetcher.on('cache-hit', (obj) => {
+fetcher.on('cache-hit', () => {
   console.log('cache-hit');
 });
-fetcher.on('downloaded', (obj) => {
+fetcher.on('downloaded', () => {
   console.log('cache-downloaded');
 });
 
 class TreeQuery {
   cancelled = false;
+  withMetadata = false;
 
-  constructor(filters, onData) {
+  constructor(filters, withMetadata, onData) {
     this.filters = filters;
     this.onData = onData;
+    this.withMetadata = withMetadata;
   }
 
-  filterValues(value, isLeft) {
+  filterValues(type, value, isLeft) {
     return this.filters.some((filter) => {
       const filterValue = filter.value;
 
-      switch (filter['relationType'].value) {
+      switch (type) {
         case LESS_THAN.value:
         case GREATER_THAN.value:
           return isLeft ? filterValue < value : filterValue > value;
@@ -61,19 +67,23 @@ class TreeQuery {
   }
 
   handleRelations(relations) {
-    relations
-      .filter((relation) => {
-        const relationType = relation[RDF('type').value].value;
-        const relationValue = fromRdf(relation[TREE('value').value]);
+    Object.entries(relations).forEach(([node, conditions]) => {
+      const shouldFollow = conditions.every((condition) => {
+        const conditionType = condition[RDF('type').value].value;
+        const conditionValue = fromRdf(condition[TREE('value').value]);
 
         const isLeft =
-          relationType === LESS_THAN.value || relationType === LESS_THAN_OR_EQUAL_TO.value;
+          conditionType === LESS_THAN.value || conditionType === LESS_THAN_OR_EQUAL_TO.value;
 
-        return this.filterValues(relationValue, isLeft);
-      })
-      .forEach((relation) => {
-        this.execute(relation[TREE('Node').value].value);
+        const res = this.filterValues(conditionType, conditionValue, isLeft);
+
+        return res;
       });
+
+      if (shouldFollow) {
+        this.execute(node);
+      }
+    });
   }
 
   execute(datasource) {
@@ -97,41 +107,33 @@ class TreeQuery {
         return acc;
       }, {});
 
-      const node = subjects[(types[TREE('Node').value] || [])[0]];
+      const node = subjects[(types[TREE('Node').value] || [])[0]] || [];
 
       const relations = pipe(
         node,
-        filter((triple) => triple.predicate.value === TREE('relation').value),
-        map((relation) => subjects[relation.object.value]),
-        map((relation) => toObject(relation)),
-        toArray()
+        filter((triple) => triple.predicate.value === TREE('Relation').value),
+        map((relation) => toObject(subjects[relation.object.value])),
+        groupBy((x) => x[TREE('node').value].value)
       )();
 
-      relations.length > 0 && this.handleRelations(relations);
+      this.handleRelations(relations);
 
       // TODO: make this more generic
       const observations = (types[SOSA('Observation').value] || [])
         .map((observationSubject) => subjects[observationSubject])
-        .map((observation) => toObject(observation))
+        .map((observation) =>
+          toObject(
+            observation,
+            this.withMetadata && {
+              datasource,
+              relations,
+            }
+          )
+        )
         .filter((observation) => {
           const resultTime = fromRdf(observation[SOSA('resultTime').value]);
 
-          return this.filters.every((filter) => {
-            const filterValue = filter.value;
-
-            switch (filter['relationType'].value) {
-              case LESS_THAN.value:
-                return resultTime < filterValue;
-              case LESS_THAN_OR_EQUAL_TO.value:
-                return resultTime <= filterValue;
-              case GREATER_THAN.value:
-                return resultTime > filterValue;
-              case GREATER_THAN_OR_EQUAL_TO.value:
-                return resultTime >= filterValue;
-              default:
-                throw new Error('Relation type not supported');
-            }
-          });
+          return applyFilter(this.filters, resultTime);
         });
 
       this.onData(observations);
