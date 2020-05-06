@@ -10,7 +10,7 @@ class HydraCollection extends AbstractCollection {
 
     this.observableProperty = observableProperty;
 
-    const collectionQuad = quad(this.getSubject(), RDF('type'), HYDRA('collection'));
+    const collectionQuad = quad(this.getSubject(), RDF('type'), HYDRA('Collection'));
 
     this.addQuad(collectionQuad);
     this.observableProperty.featureOfInterest.addQuad(collectionQuad);
