@@ -12,10 +12,10 @@ import stat from '../utils/stat.js';
 const { quad } = N3.DataFactory;
 
 class HydraStorage extends PaginationAbstractStorage {
-  constructor(observableProperty, communicationManager, options) {
+  constructor(observableProperty, communicationManager, collection, options) {
     super(communicationManager, options);
 
-    this.collection = new HydraCollection(observableProperty);
+    this.collection = collection || new HydraCollection(observableProperty);
   }
 
   addObservation(observationStore) {
