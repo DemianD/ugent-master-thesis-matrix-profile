@@ -8,8 +8,7 @@ import { getMatrixProfile } from '../queries';
 import restore from '../utils/matrix-profile/restore';
 import calculateDiscords from '../utils/matrix-profile/discords';
 import calculateMotifs from '../utils/matrix-profile/motifs';
-import ChartDetail from './ChartDetail';
-import { SOSA } from '../utils/vocs';
+
 import applyFilters from '../query/utils/applyFilters';
 import Motif from './Motif';
 import mapObservation from '../utils/mapObservations';

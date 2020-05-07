@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Highcharts from 'highcharts/highstock.src';
 import HighchartsBoost from 'highcharts/modules/boost';
 import HighchartsReact from 'highcharts-react-official';

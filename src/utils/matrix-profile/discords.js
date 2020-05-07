@@ -24,7 +24,8 @@ const calculateDiscords = (matrixProfile, exclusionZone, k = 3, filter = default
   }
 
   for (let item of mpSortedDistance) {
-    const [date, distance, index, idx] = item;
+    const date = item[0];
+    const idx = item[3];
 
     if (!filter(item)) {
       continue;
