@@ -113,15 +113,15 @@ class LDDisk extends Disk {
     const relationBlankNode2 = blankNode(`${containLeaves ? 'leaf_2_' : ''}${encode(relation)}`);
 
     const quads = q(
-      relationBlankNode1,
-      quad(relationBlankNode1, RDF('type'), TREE('GreaterOrEqualThanRelation')),
-      quad(relationBlankNode1, TREE('value'), literal(keys[i - 1], XSD('dateTime')))
+      relationBlankNode2,
+      quad(relationBlankNode2, RDF('type'), TREE('LessThanRelation')),
+      quad(relationBlankNode2, TREE('value'), literal(keys[i], XSD('dateTime')))
     );
 
     return q(
-      relationBlankNode2,
-      quad(relationBlankNode2, RDF('type'), TREE('LessThanRelation')),
-      quad(relationBlankNode2, TREE('value'), literal(keys[i], XSD('dateTime'))),
+      relationBlankNode1,
+      quad(relationBlankNode1, RDF('type'), TREE('GreaterOrEqualThanRelation')),
+      quad(relationBlankNode1, TREE('value'), literal(keys[i - 1], XSD('dateTime'))),
       ...quads
     );
   }
@@ -196,7 +196,7 @@ class LDDisk extends Disk {
         });
 
       if (previousRelation !== relation) {
-        relations.push(convertToNumberIfNumber(relation));
+        relations.push(relation);
         previousRelation = relation;
       }
     });

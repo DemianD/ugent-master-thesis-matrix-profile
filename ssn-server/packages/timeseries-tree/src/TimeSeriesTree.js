@@ -66,7 +66,7 @@ class TimeSeriesTree {
       }
     }
 
-    this.disk.write(currentNode);
+    await this.disk.write(currentNode);
   }
 
   load() {
