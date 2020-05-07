@@ -1,5 +1,9 @@
 // @source: https://github.com/matrix-profile-foundation/matrixprofile/blob/master/matrixprofile/algorithms/top_k_motifs.py
 
+const defaultFilter = (item) => {
+  return true;
+};
+
 const applyExclusionZone = (exclusionZone, index, distanceProfile) => {
   if (exclusionZone > 0) {
     const ez_start = Math.max(0, index - exclusionZone);
@@ -9,25 +13,27 @@ const applyExclusionZone = (exclusionZone, index, distanceProfile) => {
       distanceProfile[i] = Infinity;
     }
   }
-
-  return distanceProfile;
 };
 
-const calculateMotifs = (matrixProfile, exclusionZone, k = 3) => {
+const calculateMotifs = (matrixProfile, exclusionZone, k = 3, filter = defaultFilter) => {
+  const { windowSize, data, dates, length } = matrixProfile;
   const motifs = [];
-  const { windowSize, data, dates } = matrixProfile;
 
   if (!exclusionZone) {
     exclusionZone = Math.floor(windowSize / 2);
   }
 
-  let mp = data.map((row, i) => [...row, i]);
+  // 0: date
+  // 1: distance
+  // 2: index
+  // 3: date mapped to integer
+  const temp = data.map((row, i) => [...row, i]);
 
   for (let i = 0; i < k; i++) {
-    const minimum = mp
+    const minimum = temp
       .slice()
       .sort((a, b) => a[1] - b[1])
-      .find((x) => x !== Infinity);
+      .find((x) => x !== Infinity && filter(x));
 
     if (!minimum) {
       break;
@@ -36,8 +42,8 @@ const calculateMotifs = (matrixProfile, exclusionZone, k = 3) => {
     const min_idx = minimum[3];
     const min_index = dates.get(minimum[2]) || -1;
 
-    mp = applyExclusionZone(exclusionZone, min_idx, mp);
-    mp = applyExclusionZone(exclusionZone, min_index, mp);
+    applyExclusionZone(exclusionZone, min_idx, temp);
+    applyExclusionZone(exclusionZone, min_index, temp);
 
     motifs.push([minimum[0], minimum[2]]);
   }

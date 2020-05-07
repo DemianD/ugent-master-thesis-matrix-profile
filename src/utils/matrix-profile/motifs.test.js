@@ -76,3 +76,15 @@ it('should find the correct motifs', () => {
     ['a-13', 'a-52'],
   ]);
 });
+
+it('should find the correct motifs with a filter', () => {
+  const motifs = calculateMotifs(matrixProfile, 10, 3, (item) => {
+    return item[0] !== 'a-3' && item[0] !== 'a-51';
+  });
+
+  expect(motifs).toEqual([
+    ['a-2', 'a-50'],
+    ['a-12', 'a-52'],
+    ['a-39', 'a-0'],
+  ]);
+});
