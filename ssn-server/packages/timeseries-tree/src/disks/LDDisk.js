@@ -110,7 +110,7 @@ class LDDisk extends Disk {
     }
 
     const relationBlankNode1 = relationBlankNode;
-    const relationBlankNode2 = blankNode(`${containLeaves ? 'leaf_' : ''}${encode(relation)}_2`);
+    const relationBlankNode2 = blankNode(`${containLeaves ? 'leaf_2_' : ''}${encode(relation)}`);
 
     const quads = q(
       relationBlankNode1,
@@ -168,12 +168,15 @@ class LDDisk extends Disk {
 
     const nodeSubjects = store.getSubjects(TREE('node'));
     let previousKey;
+    let previousRelation;
+
     let containLeaves = false;
 
     nodeSubjects.map(nodeSubject => {
       let relation = decode(nodeSubject.value.replace('_:'));
 
       if (relation.startsWith('leaf_')) {
+        relation = relation.replace('leaf_2_', '');
         relation = relation.replace('leaf_', '');
         containLeaves = true;
 
@@ -192,7 +195,10 @@ class LDDisk extends Disk {
           }
         });
 
-      relations.push(convertToNumberIfNumber(relation));
+      if (previousRelation !== relation) {
+        relations.push(convertToNumberIfNumber(relation));
+        previousRelation = relation;
+      }
     });
 
     const Type = containLeaves ? LeafNode : IndexNode;

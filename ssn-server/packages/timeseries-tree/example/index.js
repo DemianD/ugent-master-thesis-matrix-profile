@@ -18,6 +18,6 @@ const date = Date.UTC(2020, 4, 1, 17, 0, 0, 0);
   for (let i = 0; i < 18; i++) {
     const isoDate = new Date(date + 1000 * 60 * 5 * i).toISOString();
 
-    await tree.insert(isoDate, isoDate);
+    // await tree.insert(isoDate, isoDate);
   }
 })();
