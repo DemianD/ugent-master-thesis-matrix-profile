@@ -110,7 +110,7 @@ class LDDisk extends Disk {
     }
 
     const relationBlankNode1 = relationBlankNode;
-    const relationBlankNode2 = blankNode(`${containLeaves ? 'leaf_2_' : ''}${encode(relation)}`);
+    const relationBlankNode2 = blankNode(`${containLeaves ? 'leaf_' : ''}2_${encode(relation)}`);
 
     const quads = q(
       relationBlankNode2,
