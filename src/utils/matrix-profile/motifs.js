@@ -16,7 +16,7 @@ const applyExclusionZone = (exclusionZone, index, distanceProfile) => {
 };
 
 const calculateMotifs = (matrixProfile, exclusionZone, k = 3, filter = defaultFilter) => {
-  const { windowSize, data, dates, length } = matrixProfile;
+  const { windowSize, data, dates } = matrixProfile;
   const motifs = [];
 
   if (!exclusionZone) {
