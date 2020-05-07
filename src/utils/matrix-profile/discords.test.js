@@ -72,3 +72,11 @@ it('should find the correct discords', () => {
 
   expect(discords).toEqual(['a-27', 'a-0', 'a-52']);
 });
+
+it('should find the correct discords with a filter', () => {
+  const discords = calculateDiscords(matrixProfile, 24, 3, (item) => {
+    return item[0] !== 'a-27';
+  });
+
+  expect(discords).toEqual(['a-26', 'a-0', 'a-52']);
+});

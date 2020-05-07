@@ -1,9 +1,5 @@
-import TreeQuery, {
-  GREATER_THAN,
-  GREATER_THAN_OR_EQUAL_TO,
-  LESS_THAN_OR_EQUAL_TO,
-  LESS_THAN,
-} from '../TreeQuery';
+import TreeQuery from '../TreeQuery';
+import { GREATER_THAN, GREATER_THAN_OR_EQUAL_TO, LESS_THAN_OR_EQUAL_TO, LESS_THAN } from '../Query';
 
 import { SOSA } from '../../utils/vocs';
 import { mockRequests, waitForResults } from './utils';

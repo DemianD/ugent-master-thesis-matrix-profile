@@ -1,22 +1,35 @@
 // @source: https://github.com/matrix-profile-foundation/matrixprofile/blob/master/matrixprofile/algorithms/top_k_discords.py
 
-const calculateDiscords = (matrixProfile, exclusionZone, k = 3) => {
+const defaultFilter = () => {
+  return true;
+};
+
+const calculateDiscords = (matrixProfile, exclusionZone, k = 3, filter = defaultFilter) => {
   const { windowSize, data, length } = matrixProfile;
   const discords = [];
   const n = length;
 
+  // 0: date
+  // 1: distance
+  // 2: index (not used)
+  // 3: date mapped to integer
   const temp = data.map((row, i) => [...row, i]);
 
-  const indices = temp
+  const mpSortedDistance = temp
     .slice() // Making a copy because sort sorts in place
-    .sort((a, b) => b[1] - a[1])
-    .map((x) => [x[0], x[3]]);
+    .sort((a, b) => b[1] - a[1]);
 
   if (!exclusionZone) {
     exclusionZone = Math.floor(windowSize / 2);
   }
 
-  for (let [date, idx] of indices) {
+  for (let item of mpSortedDistance) {
+    const [date, distance, index, idx] = item;
+
+    if (!filter(item)) {
+      continue;
+    }
+
     if (temp[idx] !== Infinity) {
       discords.push(date);
 

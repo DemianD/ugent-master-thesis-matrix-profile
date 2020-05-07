@@ -6,7 +6,7 @@ import restoreMatrixProfile from '../utils/matrix-profile/restore';
 
 import Chart from './Chart';
 
-const MatrixProfileChart = ({ subject, filters, fromDate, toDate }) => {
+const MatrixProfileChart = ({ subject, fromDate, toDate }) => {
   const [matrixProfile, setMatrixProfile] = useState();
   const [matrixProfiles] = useComunica(subject, getMatrixProfile, true);
 
@@ -25,7 +25,7 @@ const MatrixProfileChart = ({ subject, filters, fromDate, toDate }) => {
     }
   }, [matrixProfiles]);
 
-  if (!matrixProfile || matrixProfile.data.length === 0) {
+  if (!matrixProfile || !matrixProfile.data) {
     return null;
   }
 

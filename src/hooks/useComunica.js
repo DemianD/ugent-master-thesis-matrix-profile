@@ -7,6 +7,8 @@ const useComunica = (datasources, query, execute) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
+    setData([]);
+
     let iterator;
     let ignore = false;
 

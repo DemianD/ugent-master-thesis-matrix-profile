@@ -7,12 +7,12 @@ import { Link } from '@reach/router';
 
 const Explore = () => {
   const [parkingsGhent] = useComunica(
-    'https://mp-server.dem.be/gent/catalog',
+    'https://mp-server.dem.be/parkings/gent/catalog',
     getParkingsQuery,
     true
   );
   const [parkingsLeuven] = useComunica(
-    'https://mp-server.dem.be/leuven/catalog',
+    'https://mp-server.dem.be/parkings/leuven/catalog',
     getParkingsQuery,
     true
   );

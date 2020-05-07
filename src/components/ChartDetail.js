@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Highcharts from 'highcharts/highstock.src';
 import HighchartsBoost from 'highcharts/modules/boost';
 import HighchartsReact from 'highcharts-react-official';
 
 HighchartsBoost(Highcharts);
 
-const Chart = ({ className, dataPoints, bands, name, min, max }) => {
+const ChartDetail = ({ height, datapoints, name, min, max }) => {
   const [options, setOptions] = useState({
     time: {
       useUTC: false,
@@ -13,7 +13,6 @@ const Chart = ({ className, dataPoints, bands, name, min, max }) => {
     xAxis: {
       min,
       max,
-      plotBands: bands,
     },
     boost: {
       enabled: true,
@@ -23,9 +22,9 @@ const Chart = ({ className, dataPoints, bands, name, min, max }) => {
         timeSeriesProcessing: true,
       },
     },
-    legend: { enabled: true },
+    legend: { enabled: false },
     rangeSelector: {
-      enabled: true,
+      enabled: false,
       inputEnabled: false,
       buttons: [
         {
@@ -45,14 +44,15 @@ const Chart = ({ className, dataPoints, bands, name, min, max }) => {
       ],
     },
     navigator: {
-      enabled: true,
+      enabled: false,
     },
     scrollbar: {
       enabled: false,
     },
     chart: {
-      zoomType: 'x',
-      panning: true,
+      height,
+      zoomType: '',
+      panning: false,
       panKey: 'shift',
       backgroundColor: 'transparent',
     },
@@ -70,28 +70,27 @@ const Chart = ({ className, dataPoints, bands, name, min, max }) => {
   });
 
   useEffect(() => {
-    if (dataPoints.length > 0) {
-      console.log('Updating chart');
+    if (datapoints.length > 0) {
       setOptions((o) => ({
+        chart: {
+          height,
+        },
         xAxis: {
           min,
           max,
-          plotBands: bands,
         },
-        series: { data: dataPoints },
+        series: { data: datapoints },
       }));
     }
-  }, [bands, dataPoints, max, min]);
+  }, [datapoints, height, max, min]);
 
   return (
-    <div className={className}>
-      <HighchartsReact highcharts={Highcharts} options={options} constructorType={'stockChart'} />
-    </div>
+    <HighchartsReact highcharts={Highcharts} options={options} constructorType={'stockChart'} />
   );
 };
 
-Chart.defaultProps = {
-  dataPoints: [],
+ChartDetail.defaultProps = {
+  height: 400,
 };
 
-export default Chart;
+export default ChartDetail;

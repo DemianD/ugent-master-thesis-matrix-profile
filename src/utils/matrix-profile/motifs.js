@@ -13,7 +13,7 @@ const applyExclusionZone = (exclusionZone, index, distanceProfile) => {
   return distanceProfile;
 };
 
-const calculateMotifs = (matrixProfile, exclusionZone, k = 3, maxNeighbors = 10, radius = 3) => {
+const calculateMotifs = (matrixProfile, exclusionZone, k = 3) => {
   const motifs = [];
   const { windowSize, data, dates } = matrixProfile;
 

@@ -1,15 +1,15 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { H1, H2 } from '../components/Heading';
 import useComunica from '../hooks/useComunica';
 import { getTreeCollections, getLabelForSubject } from '../queries';
 import ComunicaLink from '../components/ComunicaLink';
 import Content from '../components/Content';
 import Checkbox from '../components/Checkbox';
-import ObservationsChart from '../components/ObservationsChart';
-import MatrixProfileChart from '../components/MatrixProfileChart';
 import Input from '../components/Input';
 import Label from '../components/Label';
-import { GREATER_THAN_OR_EQUAL_TO, LESS_THAN_OR_EQUAL_TO } from '../query/TreeQuery';
+import AnalyseCollection from '../components/AnalyseCollection';
+import RadioButton from '../components/RadioButton';
+import RadioButtonGroup from '../components/RadioButtonGroup';
 
 const today = new Date();
 const yesterday = new Date();
@@ -31,7 +31,7 @@ const format = (date) => {
 
 const Analyse = ({ location }) => {
   const [checkedCollections, setCheckedCollections] = useState([]);
-  const [checkedMatrixProfiles, setCheckedMatrixProfiles] = useState([]);
+  const [matrixProfiles, setMatrixProfiles] = useState({});
   const subject = decodeURIComponent(location.search).replace('?query=', '');
 
   const [labels] = useComunica(subject, getLabelForSubject(subject), true);
@@ -57,24 +57,7 @@ const Analyse = ({ location }) => {
     .filter(([s, checked]) => !!checked)
     .map(([s]) => s);
 
-  const filteredMatrixProfiles = Object.entries(checkedMatrixProfiles)
-    .filter(([s, checked]) => !!checked)
-    .map(([s]) => s);
-
   const label = labels[0] && labels[0].get('?label').value;
-
-  const filters = useMemo(() => {
-    return [
-      {
-        relationType: GREATER_THAN_OR_EQUAL_TO,
-        value: new Date(fromDate),
-      },
-      {
-        relationType: LESS_THAN_OR_EQUAL_TO,
-        value: new Date(toDate),
-      },
-    ];
-  }, [fromDate, toDate]);
 
   return (
     <>
@@ -84,41 +67,6 @@ const Analyse = ({ location }) => {
 
       <Content className="mt-10">
         <section>
-          <H2>
-            Available collections <ComunicaLink datasource={subject} query={getTreeCollections} />
-          </H2>
-          <ul>
-            {Object.entries(collections).map(([collection, matrixProfiles]) => {
-              return (
-                <li key={collection}>
-                  <Checkbox
-                    id={collection}
-                    onClick={(_, isChecked) =>
-                      setCheckedCollections((c) => ({ ...c, [collection]: isChecked }))
-                    }
-                  >
-                    {collection}
-                  </Checkbox>
-                  <ul className="ml-3">
-                    {matrixProfiles.map((mp) => (
-                      <li key={mp}>
-                        <Checkbox
-                          id={mp}
-                          onClick={(_, isChecked) =>
-                            setCheckedMatrixProfiles((c) => ({ ...c, [mp]: isChecked }))
-                          }
-                        >
-                          {mp}
-                        </Checkbox>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-        <section className="mt-10">
           <H2>Interval</H2>
           <div className="flex">
             <div>
@@ -144,23 +92,48 @@ const Analyse = ({ location }) => {
           </div>
         </section>
         <section className="mt-10">
-          <H2>Visualize</H2>
-          {fromDate &&
-            toDate &&
-            filteredCollections.map((subject) => (
-              <ObservationsChart name={label} key={subject} subject={subject} filters={filters} />
-            ))}
-          {fromDate &&
-            toDate &&
-            filteredMatrixProfiles.map((subject) => (
-              <MatrixProfileChart
-                key={subject}
-                subject={subject}
-                fromDate={new Date(fromDate)}
-                toDate={new Date(toDate)}
-              />
-            ))}
+          <H2>
+            Available collections <ComunicaLink datasource={subject} query={getTreeCollections} />
+          </H2>
+          <ul>
+            {Object.entries(collections).map(([collection, matrixProfiles]) => {
+              return (
+                <li key={collection}>
+                  <Checkbox
+                    id={collection}
+                    onClick={(_, isChecked) =>
+                      setCheckedCollections((c) => ({ ...c, [collection]: isChecked }))
+                    }
+                  >
+                    {collection}
+                  </Checkbox>
+                  <RadioButtonGroup
+                    className="ml-3 mt-2"
+                    name={collection}
+                    onChange={(mp) => setMatrixProfiles((x) => ({ ...x, [collection]: mp }))}
+                  >
+                    {matrixProfiles.map((mp) => (
+                      <RadioButton key={mp} value={mp}>
+                        {mp}
+                      </RadioButton>
+                    ))}
+                  </RadioButtonGroup>
+                </li>
+              );
+            })}
+          </ul>
         </section>
+
+        {filteredCollections.map((collectionSubject) => (
+          <section className="mt-10" key={collectionSubject}>
+            <AnalyseCollection
+              fromDate={fromDate}
+              toDate={toDate}
+              subject={collectionSubject}
+              matrixProfileSubject={matrixProfiles[collectionSubject]}
+            />
+          </section>
+        ))}
       </Content>
     </>
   );

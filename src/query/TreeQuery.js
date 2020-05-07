@@ -1,52 +1,17 @@
-import ldfetch from 'ldfetch';
 import { pipe, map, filter, groupBy } from 'lazy-collections';
-
 import { fromRdf } from 'rdf-literal';
-import { TREE, RDF, SOSA } from '../utils/vocs';
-import applyFilter from '../utils/queryFilter';
 
-export const GREATER_THAN_OR_EQUAL_TO = TREE('GreaterOrEqualThanRelation');
-export const GREATER_THAN = TREE('GreaterThanRelation');
-export const LESS_THAN = TREE('LessThanRelation');
-export const LESS_THAN_OR_EQUAL_TO = TREE('LessOrEqualThanRelation');
-export const EQUAL_THAN_RELATION = TREE('EqualThanRelation');
+import toObject from './utils/toObject';
+import { TREE, RDF } from '../utils/vocs';
 
-const toObject = (subjectTriples, metadata) => {
-  const initialObject = metadata ? { __meta: metadata } : {};
+import Query, {
+  GREATER_THAN,
+  LESS_THAN,
+  GREATER_THAN_OR_EQUAL_TO,
+  LESS_THAN_OR_EQUAL_TO,
+} from './Query';
 
-  return subjectTriples.reduce((acc, triple) => {
-    if (acc[triple.predicate.value]) {
-      acc[triple.predicate.value] = [...acc[triple.predicate.value], triple.object];
-    } else {
-      acc[triple.predicate.value] = triple.object;
-    }
-
-    return acc;
-  }, initialObject);
-};
-
-const fetcher = new ldfetch();
-
-fetcher.on('cache-miss', () => {
-  console.log('cache-miss');
-});
-fetcher.on('cache-hit', () => {
-  console.log('cache-hit');
-});
-fetcher.on('downloaded', () => {
-  console.log('cache-downloaded');
-});
-
-class TreeQuery {
-  cancelled = false;
-  withMetadata = false;
-
-  constructor(filters, withMetadata, onData) {
-    this.filters = filters;
-    this.onData = onData;
-    this.withMetadata = withMetadata;
-  }
-
+class TreeQuery extends Query {
   filterValues(type, value, isLeft) {
     return this.filters.some((filter) => {
       const filterValue = filter.value;
@@ -66,8 +31,17 @@ class TreeQuery {
     });
   }
 
-  handleRelations(relations) {
-    Object.entries(relations).forEach(([node, conditions]) => {
+  handleRelations(types, subjects) {
+    const nodeTriples = this.getNodeTriples(types, subjects);
+
+    const nodeRelations = pipe(
+      nodeTriples || [],
+      filter((triple) => triple.predicate.value === TREE('Relation').value),
+      map((relation) => toObject(subjects[relation.object.value])),
+      groupBy((x) => x[TREE('node').value].value)
+    )();
+
+    Object.entries(nodeRelations).forEach(([node, conditions]) => {
       const shouldFollow = conditions.every((condition) => {
         const conditionType = condition[RDF('type').value].value;
         const conditionValue = fromRdf(condition[TREE('value').value]);
@@ -84,64 +58,6 @@ class TreeQuery {
         this.execute(node);
       }
     });
-  }
-
-  execute(datasource) {
-    fetcher.get(datasource).then((response) => {
-      const triples = response.triples;
-      if (this.cancelled) {
-        return;
-      }
-
-      const types = {};
-
-      const subjects = triples.reduce((acc, triple) => {
-        (acc[triple.subject.value] = acc[triple.subject.value] || []).push(triple);
-
-        if (triple.predicate.value === RDF('type').value) {
-          (types[triple.object.value] = types[triple.object.value] || []).push(
-            triple.subject.value
-          );
-        }
-
-        return acc;
-      }, {});
-
-      const node = subjects[(types[TREE('Node').value] || [])[0]] || [];
-
-      const relations = pipe(
-        node,
-        filter((triple) => triple.predicate.value === TREE('Relation').value),
-        map((relation) => toObject(subjects[relation.object.value])),
-        groupBy((x) => x[TREE('node').value].value)
-      )();
-
-      this.handleRelations(relations);
-
-      // TODO: make this more generic
-      const observations = (types[SOSA('Observation').value] || [])
-        .map((observationSubject) => subjects[observationSubject])
-        .map((observation) =>
-          toObject(
-            observation,
-            this.withMetadata && {
-              datasource,
-              relations,
-            }
-          )
-        )
-        .filter((observation) => {
-          const resultTime = fromRdf(observation[SOSA('resultTime').value]);
-
-          return applyFilter(this.filters, resultTime);
-        });
-
-      this.onData(observations);
-    });
-  }
-
-  cancel() {
-    this.cancelled = true;
   }
 }
 

@@ -14,3 +14,7 @@ export const H2 = ({ className, children }) => {
 export const H3 = ({ className, children }) => {
   return <h3 className={c(commonClassnames, className, 'text-2xl mb-2')}>{children}</h3>;
 };
+
+export const H4 = ({ className, children }) => {
+  return <h3 className={c(commonClassnames, className, 'text-xl mb-2')}>{children}</h3>;
+};
