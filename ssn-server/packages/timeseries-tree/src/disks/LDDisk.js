@@ -176,13 +176,16 @@ class LDDisk extends Disk {
       let relation = decode(nodeSubject.value.replace('_:'));
 
       if (relation.startsWith('leaf_')) {
-        relation = relation.replace('leaf_2_', '');
         relation = relation.replace('leaf_', '');
         containLeaves = true;
 
         if (previousKey === undefined) {
           keys.push(undefined);
         }
+      }
+
+      if (relation.startsWith('2_')) {
+        relation = relation.replace('2_', '');
       }
 
       store
