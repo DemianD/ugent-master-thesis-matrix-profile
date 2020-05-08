@@ -9,7 +9,7 @@ const { literal } = N3.DataFactory;
 import Download from './download.js';
 import { exec } from '../utils.js';
 
-const sleep = () => new Promise(resolve => setTimeout(() => resolve(), 1000));
+const sleep = ms => new Promise(resolve => setTimeout(() => resolve(), ms));
 
 // TODO: dit veranderen
 import { DATEX } from '../../ssn-example-parkings-gent/src/vocs.js';
@@ -83,7 +83,7 @@ const store = async (folder, city, parking) => {
 
   const storageInterface = new BPlusTreeStorage(observableProperty, communicationManager, {
     dataPath,
-    observationsPerPage: 720,
+    observationsPerPage: 288,
     degree: 8,
     nodesPath,
     initialPageName: fromDateStore.toISOString()
@@ -95,7 +95,6 @@ const store = async (folder, city, parking) => {
   const createSnippets = new CreateSnippets(
     storageInterface.tree,
     storageInterface.getCollection(),
-    [288, 288 * 3, 288 * 7, 288 * 30],
     dataPath,
     nodesPath
   );
@@ -132,9 +131,9 @@ const store = async (folder, city, parking) => {
 
       i++;
 
-      if (i % 1000 === 0) {
+      if (i % 288 === 0) {
         console.log('sleep', date);
-        await sleep();
+        await sleep(500);
       }
     }
   }

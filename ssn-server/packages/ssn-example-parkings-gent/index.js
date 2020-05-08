@@ -37,14 +37,13 @@ Object.entries(domains).map(([city, { parkings }]) => {
     const createSnippets = new CreateSnippets(
       storageInterface.tree,
       storageInterface.getCollection(),
-      [288, 288 * 3, 288 * 7, 288 * 30],
       dataPath,
       nodesPath
     );
 
-    storageInterface.tree.disk.on('write', node => {
-      createSnippets.create(node);
-    });
+    // storageInterface.tree.disk.on('write', node => {
+    //   createSnippets.create(node);
+    // });
 
     if (city === 'leuven') {
       new MatrixProfileInterface(communicationManager, storageInterface.getCollection(), {

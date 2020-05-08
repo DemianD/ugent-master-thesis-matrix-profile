@@ -18,10 +18,9 @@ const stat = promisify(fs.stat);
 const { quad, namedNode, literal } = N3.DataFactory;
 
 class CreateSnippets {
-  constructor(tree, collection, snippetSizes, dataPath, nodesPath) {
+  constructor(tree, collection, dataPath, nodesPath) {
     this.tree = tree;
     this.collection = collection;
-    this.snippetSizes = snippetSizes;
     this.dataPath = dataPath;
     this.nodesPath = nodesPath;
 
@@ -38,43 +37,47 @@ class CreateSnippets {
   }
 
   async _process(node) {
+    console.log('_process', node);
     const { mtime: mtimeBefore } = await stat(`${this.nodesPath}/${node.nodeNumber}`);
 
     const pages = this.tree.getLeavesForNode(node).map(page => {
       return path.resolve(this.dataPath, `${page}.ttl`);
     });
 
+    console.log('_process', node.nodeNumber, pages.length);
+
     const tempFile = `./temp/${uuidv4()}.json`;
 
-    await writeFile(tempFile, JSON.stringify({ snippet_sizes: this.snippetSizes, pages: pages }));
+    await writeFile(tempFile, JSON.stringify({ pages: pages }));
 
     try {
-      const results = await exec(
-        `python3 ${path.resolve(__dirname, 'snippets.py')} ${tempFile} ${this.snippetSizes.join(
-          ','
-        )}`
-      );
+      const results = await exec(`python3 ${path.resolve(__dirname, 'snippets.py')} ${tempFile}`);
 
       const { mtime: mtimeAfter } = await stat(`${this.nodesPath}/${node.nodeNumber}`);
 
       if (mtimeAfter.getTime() === mtimeBefore.getTime()) {
         // File has not changed
+
         const quads = this._quads(node, JSON.parse(results));
 
         // TODO: don't import stringifyQuads from core library, maybe we need to expose a @ssn/utils package?
         appendFile(`${this.nodesPath}/${node.nodeNumber}`, stringifyQuads(quads));
+
+        console.log('_processed', node.nodeNumber);
+
+        delete this.queue[node.nodeNumber];
       }
     } catch (err) {
-      console.error(err);
+      console.error('error', err);
     } finally {
       fs.unlink(tempFile, () => {});
-      delete this.queue[node.nodeNumber];
 
       this._handleNext();
     }
   }
 
   _quads(node, results) {
+    console.log(results);
     const quads = [];
     // TODO: this should not be defined here because this is dependent of the value specified in the (LD)Disk
     const nodeSubject = `${this.collection.getSubject().id}/node/${node.nodeNumber}`;
