@@ -32,6 +32,8 @@ class PaginationAbstractStorage extends AbstractStorage {
     // If there were no files, create a new page
     if (this.pages.length === 0) {
       this.createNewPage(this.initialPageName);
+      this.flushWriter();
+
       return;
     }
 
