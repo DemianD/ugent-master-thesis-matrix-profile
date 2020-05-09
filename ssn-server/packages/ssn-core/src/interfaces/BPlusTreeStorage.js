@@ -55,8 +55,13 @@ class BPlusTreeStorage extends HydraStorage {
     const pageName = sanitizeFilename(this.nodesPath, originalPageName);
     const stats = await stat(pageName);
 
+    // If the node is on the path, the file is not immutable.
+    // TODO: this is not always true. E.g. calculating of summaries for nodes
+    // that are not on the path (because they are just split)
+    const node = this.tree.path.find(node => node.nodeNumber === originalPageName);
+
     return {
-      immutable: false,
+      immutable: node ? false : true,
       body: fs.createReadStream(pageName),
       headers: {
         'Content-Length': stats.size,
