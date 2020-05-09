@@ -1,0 +1,7 @@
+.Checkbox {
+  height: 20px;
+  width: 20px;
+  transition-property: background, border, border-color;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.23, 1);
+}
