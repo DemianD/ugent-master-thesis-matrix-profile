@@ -37,7 +37,7 @@ class TreeQuery extends Query {
     const nodeRelations = pipe(
       nodeTriples || [],
       filter((triple) => triple.predicate.value === TREE('Relation').value),
-      map((relation) => toObject(subjects[relation.object.value])),
+      map((relation) => toObject(relation.object.value, subjects[relation.object.value])),
       groupBy((x) => x[TREE('node').value].value)
     )();
 

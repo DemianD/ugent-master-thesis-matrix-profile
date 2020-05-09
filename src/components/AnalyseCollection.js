@@ -13,6 +13,7 @@ import applyFilters from '../query/utils/applyFilters';
 import Motif from './Motif';
 import mapObservation from '../utils/mapObservations';
 import ObservationLimitChart from './ObservationLimitChart';
+import Snippets from './Snippets';
 
 const AnalyseCollection = ({ fromDate, toDate, subject, matrixProfileSubject }) => {
   const filters = useMemo(() => {
@@ -32,7 +33,7 @@ const AnalyseCollection = ({ fromDate, toDate, subject, matrixProfileSubject }) 
   const [discords, setDiscords] = useState([]);
   const [motifs, setMotifs] = useState([]);
 
-  const observations = useTreeQuery(subject, filters);
+  const { observations, snippets } = useTreeQuery(subject, filters);
 
   const datapoints = useMemo(() => {
     return (observations || []).map(mapObservation).sort((a, b) => a[0] - b[0]);
@@ -120,6 +121,10 @@ const AnalyseCollection = ({ fromDate, toDate, subject, matrixProfileSubject }) 
           </section>
         </>
       )}
+      <section className="mt-10">
+        <H3>Snippets</H3>
+        <Snippets collectionSubject={subject} snippets={snippets} />
+      </section>
     </div>
   );
 };

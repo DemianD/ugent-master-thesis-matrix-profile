@@ -31,10 +31,10 @@ const ObservationLimitChart = ({ collectionSubject, startDate, limit }) => {
 
   // Fetching first observation of the motif,
   // then follow the next links until enough observations
-  const observations = useTreeQuery(collectionSubject, motifFirstObservationFilter, true, true);
-  const firstObservation = observations.length && observations[0];
+  const { observations } = useTreeQuery(collectionSubject, motifFirstObservationFilter, true, true);
+  const firstObservation = observations && observations.length && observations[0];
 
-  const results = useHydraQuery(
+  const { observations: nextObservations } = useHydraQuery(
     firstObservation && firstObservation.__meta.datasource,
     motifObservationFilter,
     !!firstObservation,
@@ -42,8 +42,8 @@ const ObservationLimitChart = ({ collectionSubject, startDate, limit }) => {
   );
 
   const datapoints = useMemo(() => {
-    return (results || []).map(mapObservation);
-  }, [results]);
+    return (nextObservations || []).map(mapObservation);
+  }, [nextObservations]);
 
   if (!datapoints || !datapoints.length) {
     return null;

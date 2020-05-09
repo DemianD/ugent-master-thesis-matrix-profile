@@ -1,5 +1,5 @@
-const toObject = (subjectTriples, metadata) => {
-  const initialObject = metadata ? { __meta: metadata } : {};
+const toObject = (subject, subjectTriples, metadata) => {
+  const initialObject = metadata ? { __meta: metadata, subject } : { subject };
 
   return subjectTriples.reduce((acc, triple) => {
     if (acc[triple.predicate.value]) {

@@ -1,4 +1,4 @@
-import { TREE, HYDRA, SOSA } from '../utils/vocs';
+import { TREE, HYDRA, SOSA, MP } from '../utils/vocs';
 import fetcher from './utils/fetcher';
 import mapTriples from './utils/mapTriples';
 import { fromRdf } from 'rdf-literal';
@@ -32,7 +32,7 @@ class Query {
 
   getHydraView(types, subjects) {
     const hydraViews = types[HYDRA('PartialCollectionView').value];
-    return hydraViews && toObject(subjects[hydraViews[0]]);
+    return hydraViews && toObject(hydraViews[0], subjects[hydraViews[0]]);
   }
 
   execute(datasource) {
@@ -48,11 +48,18 @@ class Query {
         this.handleRelations(types, subjects);
 
         // TODO: make this more generic
+        const snippets = (types[MP('Snippet').value] || []).map((snippetSubject) =>
+          toObject(snippetSubject, subjects[snippetSubject], { datasource })
+        );
+
+        this.onData('snippets', snippets);
+
+        // TODO: make this more generic
         const observations = (types[SOSA('Observation').value] || [])
-          .map((observationSubject) => subjects[observationSubject])
-          .map((observation) =>
+          .map((observationSubject) =>
             toObject(
-              observation,
+              observationSubject,
+              subjects[observationSubject],
               this.withMetadata && {
                 datasource,
                 node: this.getNodeTriples(types, subjects),
@@ -66,7 +73,7 @@ class Query {
             return applyFilters(this.filters, resultTime);
           });
 
-        this.onData(observations);
+        this.onData('observations', observations);
       })
       .catch(console.error);
   }

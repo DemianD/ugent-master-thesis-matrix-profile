@@ -29,3 +29,7 @@ export const VOID = (name) => {
 export const DATEX = (name) => {
   return namedNode(`http://vocab.datex.org/terms#${name}`);
 };
+
+export const MP = (name) => {
+  return namedNode(`http://www.example.com/matrix-profile#${name}`);
+};

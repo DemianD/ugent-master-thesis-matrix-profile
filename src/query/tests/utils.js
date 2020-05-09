@@ -48,9 +48,12 @@ export const waitForResults = (timesCalled) => {
   let called = 0;
   let resolve;
 
-  const onData = (data) => {
+  const onData = (event, data) => {
     results.push(data);
-    called++;
+
+    if (event === 'observations') {
+      called++;
+    }
 
     if (called === timesCalled) {
       resolve();
