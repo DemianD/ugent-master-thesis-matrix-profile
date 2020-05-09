@@ -20,12 +20,12 @@ const Explore = () => {
   const parkings = [
     {
       city: 'Ghent',
-      datasource: 'https://mp-server.dem.be/catalog',
+      datasource: 'https://mp-server.dem.be/parkings/gent/catalog',
       data: parkingsGhent,
     },
     {
       city: 'Leuven',
-      datasource: 'https://mp-server.dem.be/leuven/catalog',
+      datasource: 'https://mp-server.dem.be/parkings/leuven/catalog',
       data: parkingsLeuven,
     },
   ];
