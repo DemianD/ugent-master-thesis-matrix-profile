@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ObservationLimitChart from './ObservationLimitChart';
 import { MP } from '../utils/vocs';
 import RadioButtonGroup from './RadioButtonGroup';
@@ -22,6 +22,10 @@ const formatFraction = (fraction) => {
 
 const Snippets = ({ collectionSubject, snippets }) => {
   const [node, setNode] = useState();
+
+  useEffect(() => {
+    setNode(undefined);
+  }, [snippets]);
 
   if (!snippets) {
     return null;
