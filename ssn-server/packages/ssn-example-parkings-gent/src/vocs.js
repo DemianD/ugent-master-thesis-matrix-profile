@@ -25,3 +25,15 @@ export const DATEX = name => {
 export const RDFS = name => {
   return namedNode(`http://www.w3.org/2000/01/rdf-schema#${name}`);
 };
+
+export const PROV = name => {
+  return namedNode(`http://www.w3.org/ns/prov#${name}`);
+};
+
+export const MP = name => {
+  return namedNode(`http://www.example.com/matrix-profile#${name}`);
+};
+
+export const HYDRA = name => {
+  return namedNode(`http://www.w3.org/ns/hydra/core#${name}`);
+};

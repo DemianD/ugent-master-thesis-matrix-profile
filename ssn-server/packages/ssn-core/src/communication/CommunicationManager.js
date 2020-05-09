@@ -39,7 +39,7 @@ class CommunicationManager {
           body.pipe(res);
 
           body.once('close', () => next(false));
-          res.once('close', () => body.close());
+          //res.once('close', () => body.close());
         } else {
           streamQuads(body || [], res);
         }

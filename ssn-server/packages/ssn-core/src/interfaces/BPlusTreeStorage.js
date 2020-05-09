@@ -7,10 +7,16 @@ import { SOSA } from '../utils/vocs.js';
 import getRelativeURI from '../utils/getRelativeURI.js';
 import sanitizeFilename from '../communication/utils/sanitizeFilename.js';
 import stat from '../utils/stat.js';
+import TreeCollection from '../collections/TreeCollection.js';
 
 class BPlusTreeStorage extends HydraStorage {
   constructor(observableProperty, communicationManager, options) {
-    super(observableProperty, communicationManager, options);
+    super(
+      observableProperty,
+      communicationManager,
+      new TreeCollection(observableProperty),
+      options
+    );
 
     if (!options.degree) {
       throw new Error('No degree specified');
@@ -39,8 +45,8 @@ class BPlusTreeStorage extends HydraStorage {
     super.boot();
   }
 
-  createNewPage() {
-    const newPageName = super.createNewPage();
+  createNewPage(newPageName) {
+    super.createNewPage(newPageName);
 
     this.tree.insert(newPageName, newPageName);
   }

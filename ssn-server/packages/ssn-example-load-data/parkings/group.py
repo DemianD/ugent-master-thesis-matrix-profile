@@ -11,14 +11,13 @@ def readParkingDataToDateFrame(file):
     
     return df
 
-
 path = sys.argv[1]
 name = ntpath.basename(sys.argv[1]).replace(".csv", "")
 
 savePath = path.replace(name, name + "-grouped")
 
 df = readParkingDataToDateFrame(sys.argv[1])
-df = df.resample('60S').mean()
+df = df.resample('300S').mean()
 
 print("Empty values:", df['value'].isnull().sum())
 df = df.dropna(subset=['value'])

@@ -28,7 +28,7 @@ it('should create a new page if the directory does not exists', t => {
 
   const clock = sinon.useFakeTimers(currentDate);
 
-  const storage = new HydraStorage(op1, communicationManager, {
+  const storage = new HydraStorage(op1, communicationManager, null, {
     dataPath: './hydra-storage-test',
     observationsPerPage: 2
   });
@@ -72,7 +72,7 @@ it('should reopen the latest file if a file exits and set the remaining observat
 
   const createWriteStreamMock = sinon.stub(fs, 'createWriteStream');
 
-  const storage = new HydraStorage(op1, communicationManager, {
+  const storage = new HydraStorage(op1, communicationManager, null, {
     dataPath: './hydra-storage-test',
     observationsPerPage: 10
   });
@@ -118,7 +118,7 @@ it('should create a new file when a new observation is added and the current fil
     .onSecondCall()
     .returns(newPageStream);
 
-  const storage = new HydraStorage(op1, communicationManager, {
+  const storage = new HydraStorage(op1, communicationManager, null, {
     dataPath: './hydra-storage-test',
     observationsPerPage: 2
   });
@@ -128,12 +128,17 @@ it('should create a new file when a new observation is added and the current fil
   const clock = sinon.useFakeTimers(new Date(currentDate.getTime() + 1000 * 60 * 60 + 91));
 
   const subject = namedNode(
-    'https://www.example.com/Feature1/ObservableProperty1/member/2020-04-01T11:30:45.909Z.ttl'
+    'https://www.example.com/Feature1/ObservableProperty1/member/2020-04-01T11:30:46.000Z.ttl'
   );
 
   const store = new N3.Store([
     quad(subject, RDF('type'), SOSA('Observation')),
-    quad(subject, SOSA('hasSimpleResult'), literal(123, XSD('integer')))
+    quad(subject, SOSA('hasSimpleResult'), literal(123, XSD('integer'))),
+    quad(
+      subject,
+      SOSA('resultTime'),
+      literal(new Date(currentDate.getTime() + 1000 * 60 * 60 + 91).toISOString(), XSD('dateTime'))
+    )
   ]);
 
   storage.addObservation(store);

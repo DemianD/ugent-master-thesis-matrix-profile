@@ -1,7 +1,7 @@
 import fs from 'fs';
 import N3 from 'n3';
 
-import { RDF, HYDRA } from '../utils/vocs.js';
+import { RDF, HYDRA, SOSA } from '../utils/vocs.js';
 import isValidDate from '../utils/isValidDate.js';
 
 import PaginationAbstractStorage from './PaginationAbstractStorage.js';
@@ -12,14 +12,22 @@ import stat from '../utils/stat.js';
 const { quad } = N3.DataFactory;
 
 class HydraStorage extends PaginationAbstractStorage {
-  constructor(observableProperty, communicationManager, options) {
+  constructor(observableProperty, communicationManager, collection, options) {
     super(communicationManager, options);
 
-    this.collection = new HydraCollection(observableProperty);
+    this.collection = collection || new HydraCollection(observableProperty);
   }
 
   addObservation(observationStore) {
     const observationQuads = observationStore.getQuads();
+
+    this.remainingObservations -= 1;
+
+    if (this.remainingObservations <= 0) {
+      const ISOString = observationStore.getObjects(null, SOSA('resultTime'))[0].value;
+
+      this.createNewPage(ISOString);
+    }
 
     // Add the quads for the Observation
     this.writer.addQuads(observationQuads);
@@ -29,13 +37,7 @@ class HydraStorage extends PaginationAbstractStorage {
       quad(this.collection.getSubject(), HYDRA('member'), observationQuads[0].subject)
     );
 
-    this.remainingObservations -= 1;
-
-    if (this.remainingObservations <= 0) {
-      this.createNewPage();
-    } else {
-      this.flushWriter();
-    }
+    this.flushWriter();
   }
 
   getIndexPage() {
@@ -60,7 +62,7 @@ class HydraStorage extends PaginationAbstractStorage {
     const stats = await stat(pageName);
 
     return {
-      immutable: this.pageName === pageDate.toISOString(),
+      immutable: this.pageName !== pageDate.toISOString(),
       body: fs.createReadStream(pageName),
       headers: {
         'Content-Length': stats.size,
@@ -69,10 +71,9 @@ class HydraStorage extends PaginationAbstractStorage {
     };
   }
 
-  createNewPage() {
+  createNewPage(newPageName) {
     const hasPrevious = this.fileStream !== undefined;
 
-    const newPageName = new Date().toISOString();
     const newPageNameNamed = this.collection.getSubject(newPageName);
 
     const { newWriter, newFileStream } = super.createNewPage(newPageName, newPageNameNamed);
@@ -102,8 +103,6 @@ class HydraStorage extends PaginationAbstractStorage {
 
     this.pageName = newPageName;
     this.pageNameNamed = newPageNameNamed;
-
-    this.flushWriter();
 
     return newPageName;
   }
