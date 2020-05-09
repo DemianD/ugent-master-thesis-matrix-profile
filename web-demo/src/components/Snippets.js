@@ -52,10 +52,9 @@ const Snippets = ({ collectionSubject, snippets }) => {
             .map(mapSnippets)
             .sort((a, b) => b.fraction - a.fraction)
             .map(({ subject, size, index, fraction }) => (
-              <div>
+              <div key={subject}>
                 <H4>Snippet {formatFraction(fraction)}</H4>
                 <ObservationLimitChart
-                  key={subject}
                   collectionSubject={collectionSubject}
                   startDate={index}
                   limit={size}
