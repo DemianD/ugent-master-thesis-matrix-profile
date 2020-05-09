@@ -34,7 +34,7 @@ const Explore = () => {
     <>
       <H1 className="mt-8">Explore</H1>
       {parkings.map(({ city, datasource, data }) => (
-        <section className="w-8/12 mb-6">
+        <section className="w-8/12 mb-6" key={city}>
           <H3>
             Parkings {city} <ComunicaLink datasource={datasource} query={getParkingsQuery} />
           </H3>
