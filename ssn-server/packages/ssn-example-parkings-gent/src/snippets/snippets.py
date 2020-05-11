@@ -16,13 +16,16 @@ blockPrint()
 
 try:
     df = pd.read_pickle("./not_existing.pkl")
+    original_snippet_size = 12 * 24 * 7 # 1 week
 except:
     dataPath = sys.argv[1]
 
-    file = open(sys.argv[1], 'r')
+    file = open(dataPath, 'r')
     content = json.loads(file.read())
 
     pages = content['pages']
+    original_snippet_size = int(content['snippet_size'])
+    should_resample_hourly = bool(content['should_resample_hourly'])
 
     observations = []
 
@@ -48,11 +51,11 @@ except:
     df = pd.DataFrame(observations, columns=['date', 'value'])
     df = df.set_index('date')
     df.index = pd.to_datetime(df.index)
+
     # df.to_pickle("./test.pkl")
 
 result = {}
 
-original_snippet_size = 12 * 24 * 7 # 1 week
 original_dates = np.array(df.index.copy().tolist())
 original_values = np.array(df['value'].copy().values.tolist())
 
@@ -60,7 +63,7 @@ start = df.index[0]
 end = df.index[-1]
 delta = end - start
 
-if delta.days < 60:
+if delta.days < 60 or should_resample_hourly == False:
     snippet_size = original_snippet_size
     dates = original_dates
     values = original_values

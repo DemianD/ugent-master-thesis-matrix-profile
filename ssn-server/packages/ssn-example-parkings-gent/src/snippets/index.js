@@ -18,11 +18,13 @@ const stat = promisify(fs.stat);
 const { quad, namedNode, literal } = N3.DataFactory;
 
 class CreateSnippets {
-  constructor(tree, collection, dataPath, nodesPath) {
+  constructor(tree, collection, dataPath, nodesPath, snippet_size, should_resample_hourly = false) {
     this.tree = tree;
     this.collection = collection;
     this.dataPath = dataPath;
     this.nodesPath = nodesPath;
+    this.snippet_size = snippet_size;
+    this.should_resample_hourly = should_resample_hourly;
 
     this.queue = {};
     this.currentProcess = undefined;
@@ -48,7 +50,14 @@ class CreateSnippets {
 
     const tempFile = `./temp/${uuidv4()}.json`;
 
-    await writeFile(tempFile, JSON.stringify({ pages: pages }));
+    await writeFile(
+      tempFile,
+      JSON.stringify({
+        snippet_size: this.snippet_size,
+        should_resample_hourly: this.should_resample_hourly,
+        pages
+      })
+    );
 
     try {
       const results = await exec(`python3 ${path.resolve(__dirname, 'snippets.py')} ${tempFile}`);
