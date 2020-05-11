@@ -98,4 +98,7 @@ const store = async (city, id) => {
   }
 };
 
-store('leuven', 348180);
+// store('leuven', 348180);
+// store('leuven', 348127);
+// store('leuven', 554476);
+store('leuven', 347931);

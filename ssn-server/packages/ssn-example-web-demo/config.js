@@ -93,7 +93,25 @@ const domains = {
       348180: {
         quads: subject => [
           quad(subject, RDF('type'), SOSA('Sensor')),
-          quad(subject, RDFS('label'), literal('Mechelse Steenweg'))
+          quad(subject, RDFS('label'), literal('Mechelsesteenweg'))
+        ]
+      },
+      348127: {
+        quads: subject => [
+          quad(subject, RDF('type'), SOSA('Sensor')),
+          quad(subject, RDFS('label'), literal('Wijnpersstraat'))
+        ]
+      },
+      554476: {
+        quads: subject => [
+          quad(subject, RDF('type'), SOSA('Sensor')),
+          quad(subject, RDFS('label'), literal('Andreas Vesaliusstraat'))
+        ]
+      },
+      347931: {
+        quads: subject => [
+          quad(subject, RDF('type'), SOSA('Sensor')),
+          quad(subject, RDFS('label'), literal('Vital Decostersstraat'))
         ]
       }
     }
