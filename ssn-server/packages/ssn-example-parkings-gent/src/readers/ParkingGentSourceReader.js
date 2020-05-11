@@ -1,5 +1,5 @@
 import { SourceReader } from '@ssn/core';
-import { SOSA, RDF } from './vocs.js';
+import { SOSA, RDF } from '../vocs.js';
 
 class ParkingGentSourceReader extends SourceReader {
   constructor(domain, sources, refreshInterval, mapping) {
@@ -7,6 +7,7 @@ class ParkingGentSourceReader extends SourceReader {
 
     this.domain = domain;
     this.cron.start();
+    this.i = 0;
   }
 
   async run() {
@@ -41,7 +42,10 @@ class ParkingGentSourceReader extends SourceReader {
       }
 
       const literalResult = store.getObjects(subject, SOSA('hasSimpleResult'))[0];
-      observableProperty.addObservation(date, literalResult);
+
+      const date = Date.UTC(2020, 4, 1, 16, 1, 0, 0);
+
+      observableProperty.addObservation(new Date(date + 1000 * 60 * 1 * this.i++), literalResult);
     });
   }
 }

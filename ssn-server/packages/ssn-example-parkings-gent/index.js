@@ -4,8 +4,8 @@ import { Domain, CatalogInterface, BPlusTreeStorage, CommunicationManager } from
 
 import domains from './config.js';
 import { DATEX } from './src/vocs.js';
-import ParkingGentSourceReader from './src/ParkingGentSourceReader.js';
-import CreateSnippets from './src/snippets/createSnippets.js';
+import ParkingGentSourceReader from './src/readers/ParkingGentSourceReader.js';
+import CreateSnippets from './src/snippets/index.js';
 
 // Create a configuration manager
 const communicationManager = new CommunicationManager();
