@@ -1,4 +1,4 @@
-name: SSN CI
+name: web-demo
 
 on: [push]
 

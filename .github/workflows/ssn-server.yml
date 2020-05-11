@@ -1,4 +1,4 @@
-name: SSN CI
+name: ssn-server
 
 on: [push]
 

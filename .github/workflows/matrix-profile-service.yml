@@ -1,4 +1,4 @@
-name: matrix-profile-service CI
+name: matrix-profile-service
 
 on: [push]
 
