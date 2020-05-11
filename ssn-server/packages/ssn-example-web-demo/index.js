@@ -68,7 +68,7 @@ Object.entries(domains).map(([city, { parkings, telraam = [] }]) => {
     // Add the tree storage interface
     const storageInterface = new BPlusTreeStorage(observableProperty, communicationManager, {
       dataPath,
-      observationsPerPage: 24 * 3,
+      observationsPerPage: 14 * 3,
       degree: 8,
       nodesPath
     });
@@ -79,8 +79,8 @@ Object.entries(domains).map(([city, { parkings, telraam = [] }]) => {
     new MatrixProfileInterface(communicationManager, storageInterface.getCollection(), {
       resultsFolder: `./matrix-profiles/telraam/${city}/${id}`,
       queueFolder: '../../../matrix-profile-service/queue',
-      seriesWindow: 24 * 365,
-      windowSizes: [24, 24 * 7, 24 * 30]
+      seriesWindow: 14 * 365,
+      windowSizes: [14, 14 * 7, 14 * 30]
     });
   });
 

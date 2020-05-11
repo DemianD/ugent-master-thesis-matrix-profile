@@ -38,7 +38,7 @@ const store = async (city, id) => {
 
   const storageInterface = new BPlusTreeStorage(observableProperty, communicationManager, {
     dataPath,
-    observationsPerPage: 24 * 3,
+    observationsPerPage: 14 * 3,
     degree: 8,
     nodesPath,
     initialPageName: fromDateStore.toISOString()
@@ -52,7 +52,7 @@ const store = async (city, id) => {
     storageInterface.getCollection(),
     dataPath,
     nodesPath,
-    24 * 7,
+    14 * 7,
     false
   );
 
@@ -65,8 +65,8 @@ const store = async (city, id) => {
   new MatrixProfileInterface(communicationManager, collection, {
     resultsFolder: matrixProfilePath,
     queueFolder: '../../../../matrix-profile-service/queue',
-    seriesWindow: 24 * 365,
-    windowSizes: [24, 24 * 7, 24 * 30]
+    seriesWindow: 14 * 365,
+    windowSizes: [14, 14 * 7, 14 * 30]
   });
 
   // Add observations
@@ -90,7 +90,7 @@ const store = async (city, id) => {
 
       i++;
 
-      if (i % (24 * 3) === 0) {
+      if (i % (14 * 3) === 0) {
         console.log('sleep', date);
         await sleep(500);
       }
