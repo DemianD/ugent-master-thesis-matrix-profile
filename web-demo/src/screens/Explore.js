@@ -1,31 +1,39 @@
 import React from 'react';
 import { H1, H3 } from '../components/Heading';
 import useComunica from '../hooks/useComunica';
-import { getParkingsQuery } from '../queries';
+import { getParkingsQuery, getTelraamsQuery } from '../queries';
 import ComunicaLink from '../components/ComunicaLink';
 import { Link } from '@reach/router';
 
+const telraamDatasource = [
+  'https://mp-server.dem.be/gent/catalog',
+  'https://mp-server.dem.be/leuven/catalog',
+];
+
 const Explore = () => {
   const [parkingsGhent] = useComunica(
-    'https://mp-server.dem.be/parkings/gent/catalog',
+    'https://mp-server.dem.be/gent/catalog',
     getParkingsQuery,
     true
   );
+
   const [parkingsLeuven] = useComunica(
-    'https://mp-server.dem.be/parkings/leuven/catalog',
+    'https://mp-server.dem.be/leuven/catalog',
     getParkingsQuery,
     true
   );
+
+  const [telraams] = useComunica(telraamDatasource, getTelraamsQuery, true);
 
   const parkings = [
     {
       city: 'Ghent',
-      datasource: 'https://mp-server.dem.be/parkings/gent/catalog',
+      datasource: 'https://mp-server.dem.be/gent/catalog',
       data: parkingsGhent,
     },
     {
       city: 'Leuven',
-      datasource: 'https://mp-server.dem.be/parkings/leuven/catalog',
+      datasource: 'https://mp-server.dem.be/leuven/catalog',
       data: parkingsLeuven,
     },
   ];
@@ -58,6 +66,27 @@ const Explore = () => {
           </div>
         </section>
       ))}
+
+      <section className="w-8/12 mb-6">
+        <H3>
+          Telraam <ComunicaLink datasource={telraamDatasource} query={getTelraamsQuery} />
+        </H3>
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4">
+          {telraams.map((telraam) => (
+            <Link
+              key={telraam.get('?label').value}
+              to={`/analyse?query=${encodeURIComponent(telraam.get('?s').value)}`}
+            >
+              <div
+                className="flex flex-col cursor-pointer p-3"
+                style={{ backgroundColor: '#ffecec' }}
+              >
+                <span className="text-xs truncate">{telraam.get('?label').value}</span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
     </>
   );
 };

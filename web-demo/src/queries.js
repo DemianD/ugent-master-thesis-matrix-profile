@@ -9,6 +9,18 @@ WHERE {
        datex:parkingNumberOfSpaces ?parkingNumberOfSpaces.
 }`;
 
+export const getTelraamsQuery = `
+PREFIX sosa: <http://www.w3.org/ns/sosa/>
+PREFIX datex: <http://vocab.datex.org/terms#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?s ?label
+WHERE {
+    ?s rdf:type sosa:Sensor;
+       rdfs:label ?label.
+}`;
+
 export const getTreeCollections = `
 PREFIX tree: <https://w3id.org/tree#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
