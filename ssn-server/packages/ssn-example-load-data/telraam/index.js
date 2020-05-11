@@ -11,8 +11,8 @@ import { exec } from '../utils.js';
 const sleep = ms => new Promise(resolve => setTimeout(() => resolve(), ms));
 
 // TODO: dit veranderen
-import { DATEX } from '../../ssn-example-parkings-gent/src/vocs.js';
-import CreateSnippets from '../../ssn-example-parkings-gent/src/snippets/index.js';
+import { DATEX } from '../../ssn-example-web-demo/src/vocs.js';
+import CreateSnippets from '../../ssn-example-web-demo/src/snippets/index.js';
 
 const communicationManager = new CommunicationManager();
 
@@ -28,9 +28,9 @@ const store = async (city, id) => {
     DATEX('numberOfPassingCars') // TODO: dit bestaat niet.
   );
 
-  const dataPath = `../../ssn-example-parkings-gent/data/telraam/${city}/${id}`;
-  const nodesPath = `../../ssn-example-parkings-gent/data/telraam/${city}/${id}-nodes`;
-  const matrixProfilePath = `../../ssn-example-parkings-gent/matrix-profiles/telraam/${city}/${id}`;
+  const dataPath = `../../ssn-example-web-demo/data/telraam/${city}/${id}`;
+  const nodesPath = `../../ssn-example-web-demo/data/telraam/${city}/${id}-nodes`;
+  const matrixProfilePath = `../../ssn-example-web-demo/matrix-profiles/telraam/${city}/${id}`;
 
   rimraf.sync(dataPath);
   rimraf.sync(nodesPath);

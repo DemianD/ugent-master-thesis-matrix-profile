@@ -12,8 +12,8 @@ import { exec } from '../utils.js';
 const sleep = ms => new Promise(resolve => setTimeout(() => resolve(), ms));
 
 // TODO: dit veranderen
-import { DATEX } from '../../ssn-example-parkings-gent/src/vocs.js';
-import CreateSnippets from '../../ssn-example-parkings-gent/src/snippets/createSnippets.js';
+import { DATEX } from '../../ssn-example-web-demo/src/vocs.js';
+import CreateSnippets from '../../ssn-example-web-demo/src/snippets/createSnippets.js';
 
 const fromDate = new Date(Date.UTC(2018, 12, 1, 1));
 const toDate = new Date();
@@ -74,12 +74,12 @@ const store = async (folder, city, parking) => {
     DATEX('numberOfVacantParkingSpaces')
   );
 
-  const dataPath = `../../ssn-example-parkings-gent/data/${city}/${parking}`;
-  const nodesPath = `../../ssn-example-parkings-gent/data/${city}/${parking}-nodes`;
+  const dataPath = `../../ssn-example-web-demo/data/${city}/${parking}`;
+  const nodesPath = `../../ssn-example-web-demo/data/${city}/${parking}-nodes`;
 
   rimraf.sync(dataPath);
   rimraf.sync(nodesPath);
-  // rimraf.sync(`../../ssn-example-parkings-gent/matrix-profiles/${city}/${parking}`);
+  // rimraf.sync(`../../ssn-example-web-demo/matrix-profiles/${city}/${parking}`);
 
   const storageInterface = new BPlusTreeStorage(observableProperty, communicationManager, {
     dataPath,
