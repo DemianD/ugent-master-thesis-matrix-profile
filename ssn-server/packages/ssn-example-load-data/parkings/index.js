@@ -96,7 +96,9 @@ const store = async (folder, city, parking) => {
     storageInterface.tree,
     storageInterface.getCollection(),
     dataPath,
-    nodesPath
+    nodesPath,
+    12 * 24 * 7,
+    true
   );
 
   storageInterface.tree.disk.on('write', node => {
