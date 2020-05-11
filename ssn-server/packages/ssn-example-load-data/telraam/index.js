@@ -16,8 +16,8 @@ import CreateSnippets from '../../ssn-example-web-demo/src/snippets/index.js';
 
 const communicationManager = new CommunicationManager();
 
-const store = async (city, id) => {
-  const domain = new Domain(`https://mp-server.dem.be/${city}`);
+const store = async id => {
+  const domain = new Domain(`https://mp-server.dem.be/telraams`);
 
   // TODO: first date
   const fromDateStore = new Date(Date.UTC(2018, 12 - 1, 1, 1));
@@ -28,9 +28,9 @@ const store = async (city, id) => {
     DATEX('numberOfPassingCars') // TODO: dit bestaat niet.
   );
 
-  const dataPath = `../../ssn-example-web-demo/data/telraam/${city}/${id}`;
-  const nodesPath = `../../ssn-example-web-demo/data/telraam/${city}/${id}-nodes`;
-  const matrixProfilePath = `../../ssn-example-web-demo/matrix-profiles/telraam/${city}/${id}`;
+  const dataPath = `../../ssn-example-web-demo/data/telraam/${id}`;
+  const nodesPath = `../../ssn-example-web-demo/data/telraam/${id}-nodes`;
+  const matrixProfilePath = `../../ssn-example-web-demo/matrix-profiles/telraam/${id}`;
 
   rimraf.sync(dataPath);
   rimraf.sync(nodesPath);
@@ -98,7 +98,7 @@ const store = async (city, id) => {
   }
 };
 
-// store('leuven', 348180);
-// store('leuven', 348127);
-// store('leuven', 554476);
-store('leuven', 347931);
+// store(348180);
+// store(348127);
+// store(554476);
+store(347931);

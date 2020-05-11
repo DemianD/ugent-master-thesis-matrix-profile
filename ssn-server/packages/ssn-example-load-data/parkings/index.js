@@ -65,7 +65,7 @@ Object.entries(parkings).map(async ([city, p]) => {
 });
 
 const store = async (folder, city, parking) => {
-  const domain = new Domain(`https://mp-server.dem.be/${city}`);
+  const domain = new Domain(`https://mp-server.dem.be/parkings/${city}`);
   const fromDateStore = new Date(Date.UTC(2018, 12 - 1, 1, 1));
 
   const featureOfInterest = domain.addFeatureOfInterest(parking);
