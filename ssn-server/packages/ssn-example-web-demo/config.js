@@ -1,5 +1,5 @@
 import N3 from 'n3';
-import { RDF, DATEX, OWL, RDFS } from './src/vocs.js';
+import { RDF, DATEX, OWL, RDFS, SOSA } from './src/vocs.js';
 
 const { quad, namedNode, literal } = N3.DataFactory;
 
@@ -86,6 +86,14 @@ const domains = {
           quad(subject, RDFS('label'), literal('Heilig-Hart')),
           quad(subject, DATEX('parkingName'), literal('Heilig-Hart')),
           quad(subject, DATEX('parkingNumberOfSpaces'), literal(285))
+        ]
+      }
+    },
+    telraam: {
+      348180: {
+        quads: subject => [
+          quad(subject, RDF('type'), SOSA('Sensor')),
+          quad(subject, RDFS('label'), literal('Mechelse Steenweg'))
         ]
       }
     }

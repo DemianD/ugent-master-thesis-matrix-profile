@@ -10,7 +10,7 @@ import CreateSnippets from './src/snippets/index.js';
 // Create a configuration manager
 const communicationManager = new CommunicationManager();
 
-Object.entries(domains).map(([city, { parkings }]) => {
+Object.entries(domains).map(([city, { parkings, telraam = [] }]) => {
   const domain = new Domain(`https://mp-server.dem.be/parkings/${city}`);
 
   Object.entries(parkings).map(([parkingKey, options]) => {
@@ -53,6 +53,35 @@ Object.entries(domains).map(([city, { parkings }]) => {
         windowSizes: [1 * 12 * 24, 1 * 12 * 24 * 7, 1 * 12 * 24 * 30]
       });
     }
+  });
+
+  Object.entries(telraam).map(([id, options]) => {
+    const featureOfInterest = domain.addFeatureOfInterest(id, options);
+
+    const observableProperty = featureOfInterest.addObservableProperty(
+      DATEX('numberOfPassingCars')
+    );
+
+    const dataPath = `./data/telraam/${city}/${id}`;
+    const nodesPath = `./data/telraam/${city}/${id}-nodes`;
+
+    // Add the tree storage interface
+    const storageInterface = new BPlusTreeStorage(observableProperty, communicationManager, {
+      dataPath,
+      observationsPerPage: 24 * 3,
+      degree: 8,
+      nodesPath
+    });
+
+    storageInterface.boot();
+    storageInterface.listen();
+
+    new MatrixProfileInterface(communicationManager, storageInterface.getCollection(), {
+      resultsFolder: `./matrix-profiles/telraam/${city}/${id}`,
+      queueFolder: '../../../matrix-profile-service/queue',
+      seriesWindow: 24 * 365,
+      windowSizes: [24, 24 * 7, 24 * 30]
+    });
   });
 
   if (city === 'gent') {

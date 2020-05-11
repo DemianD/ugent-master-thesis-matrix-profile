@@ -38,7 +38,7 @@ const store = async (city, id) => {
 
   const storageInterface = new BPlusTreeStorage(observableProperty, communicationManager, {
     dataPath,
-    observationsPerPage: 288,
+    observationsPerPage: 24 * 3,
     degree: 8,
     nodesPath,
     initialPageName: fromDateStore.toISOString()
@@ -90,7 +90,7 @@ const store = async (city, id) => {
 
       i++;
 
-      if (i % 288 === 0) {
+      if (i % (24 * 3) === 0) {
         console.log('sleep', date);
         await sleep(500);
       }
