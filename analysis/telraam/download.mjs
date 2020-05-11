@@ -1,8 +1,8 @@
 import fs from 'fs';
 import { fetch } from '../utils.mjs';
 
-const startDate = '2019-01-01 00:00:00Z';
-const endDate = '2020-03-19 23:59:59Z';
+const startDate = '2018-01-01 00:00:00Z';
+const endDate = '2020-05-11 23:59:59Z';
 
 const main = async () => {
   const { cameras } = await fetch(
