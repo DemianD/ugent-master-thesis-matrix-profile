@@ -1,7 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 @import url( 'https://rsms.me/inter/inter.css');
 
 #root,
@@ -16,4 +15,8 @@ button:focus,
 input,
 textarea {
   outline: none;
+}
+
+.font-tabular-nums {
+  font-variant-numeric: tabular-nums;
 }

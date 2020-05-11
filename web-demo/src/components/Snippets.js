@@ -48,7 +48,7 @@ const Snippets = ({ collectionSubject, snippets }) => {
           const firstSnippet = nodes[node][0];
           return (
             <RadioButton key={node} value={node}>
-              <span className="truncate">
+              <span className="truncate font-tabular-nums">
                 {firstSnippet.from} - {firstSnippet.to}
               </span>
             </RadioButton>
