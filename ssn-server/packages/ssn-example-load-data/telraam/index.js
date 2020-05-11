@@ -17,7 +17,7 @@ import CreateSnippets from '../../ssn-example-web-demo/src/snippets/index.js';
 const communicationManager = new CommunicationManager();
 
 const store = async id => {
-  const domain = new Domain(`https://mp-server.dem.be/telraams`);
+  const domain = new Domain(`https://mp-server.dem.be/telraam`);
 
   // TODO: first date
   const fromDateStore = new Date(Date.UTC(2018, 12 - 1, 1, 1));
