@@ -13,7 +13,7 @@ const sleep = ms => new Promise(resolve => setTimeout(() => resolve(), ms));
 
 // TODO: dit veranderen
 import { DATEX } from '../../ssn-example-web-demo/src/vocs.js';
-import CreateSnippets from '../../ssn-example-web-demo/src/snippets/createSnippets.js';
+import CreateSnippets from '../../ssn-example-web-demo/src/snippets/index.js';
 
 const fromDate = new Date(Date.UTC(2018, 12, 1, 1));
 const toDate = new Date();
