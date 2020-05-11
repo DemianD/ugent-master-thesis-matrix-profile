@@ -5,12 +5,14 @@ import RadioButtonGroup from './RadioButtonGroup';
 import RadioButton from './RadioButton';
 import { H4 } from './Heading';
 
-const mapSnippets = (snippet) => {
+const mapSnippet = (snippet) => {
   return {
     subject: snippet.subject,
     size: snippet[MP('snippet_size').value].value,
     index: snippet[MP('index').value].value,
     fraction: parseFloat(snippet[MP('fraction').value].value),
+    from: snippet[MP('from').value].value,
+    to: snippet[MP('to').value].value,
   };
 };
 
@@ -32,7 +34,9 @@ const Snippets = ({ collectionSubject, snippets }) => {
   }
 
   const nodes = snippets.reduce((acc, snippet) => {
-    (acc[snippet.__meta.datasource] = acc[snippet.__meta.datasource] || []).push(snippet);
+    (acc[snippet.__meta.datasource] = acc[snippet.__meta.datasource] || []).push(
+      mapSnippet(snippet)
+    );
 
     return acc;
   }, {});
@@ -40,16 +44,20 @@ const Snippets = ({ collectionSubject, snippets }) => {
   return (
     <>
       <RadioButtonGroup className="mt-3" name="snippets" onChange={(n) => setNode(n)}>
-        {Object.keys(nodes).map((node) => (
-          <RadioButton key={node} value={node}>
-            <span className="truncate">{node}</span>
-          </RadioButton>
-        ))}
+        {Object.keys(nodes).map((node) => {
+          const firstSnippet = nodes[node][0];
+          return (
+            <RadioButton key={node} value={node}>
+              <span className="truncate">
+                {firstSnippet.from} - {firstSnippet.to}
+              </span>
+            </RadioButton>
+          );
+        })}
       </RadioButtonGroup>
       {node && (
         <div className="mt-8 grid gap-10 grid-cols-2">
           {nodes[node]
-            .map(mapSnippets)
             .sort((a, b) => b.fraction - a.fraction)
             .map(({ subject, size, index, fraction }) => (
               <div key={subject}>
