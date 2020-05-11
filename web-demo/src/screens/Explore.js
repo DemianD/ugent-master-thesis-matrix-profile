@@ -5,35 +5,34 @@ import { getParkingsQuery, getTelraamsQuery } from '../queries';
 import ComunicaLink from '../components/ComunicaLink';
 import { Link } from '@reach/router';
 
-const telraamDatasource = [
-  'https://mp-server.dem.be/gent/catalog',
-  'https://mp-server.dem.be/leuven/catalog',
-];
-
 const Explore = () => {
   const [parkingsGhent] = useComunica(
-    'https://mp-server.dem.be/gent/catalog',
+    'https://mp-server.dem.be/parkings/gent/catalog',
     getParkingsQuery,
     true
   );
 
   const [parkingsLeuven] = useComunica(
-    'https://mp-server.dem.be/leuven/catalog',
+    'https://mp-server.dem.be/parkings/leuven/catalog',
     getParkingsQuery,
     true
   );
 
-  const [telraams] = useComunica(telraamDatasource, getTelraamsQuery, true);
+  const [telraams] = useComunica(
+    'https://mp-server.dem.be/telraam/catalog',
+    getTelraamsQuery,
+    true
+  );
 
   const parkings = [
     {
       city: 'Ghent',
-      datasource: 'https://mp-server.dem.be/gent/catalog',
+      datasource: 'https://mp-server.dem.be/parkings/gent/catalog',
       data: parkingsGhent,
     },
     {
       city: 'Leuven',
-      datasource: 'https://mp-server.dem.be/leuven/catalog',
+      datasource: 'https://mp-server.dem.be/parkings/leuven/catalog',
       data: parkingsLeuven,
     },
   ];
@@ -69,7 +68,11 @@ const Explore = () => {
 
       <section className="w-8/12 mb-6">
         <H3>
-          Telraam <ComunicaLink datasource={telraamDatasource} query={getTelraamsQuery} />
+          Telraam{' '}
+          <ComunicaLink
+            datasource={'https://mp-server.dem.be/telraam/catalog'}
+            query={getTelraamsQuery}
+          />
         </H3>
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4">
           {telraams.map((telraam) => (
