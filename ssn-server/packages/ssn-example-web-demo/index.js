@@ -63,9 +63,9 @@ Object.entries(domains).map(([city, { parkings }]) => {
     };
 
     new ParkingGentSourceReader(domain, sources, '*/5 * * * *', {
-      file: './src/mapping-gent.yml',
+      file: './src/readers/mapping-gent.yml',
       jar: './rmlmapper.jar',
-      tempFolder: './rmlmapper-temp',
+      tempFolder: './temp',
       removeTempFolders: true
     });
   }
