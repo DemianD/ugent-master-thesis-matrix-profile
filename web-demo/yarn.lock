@@ -7437,10 +7437,9 @@ lcid@^2.0.0:
   dependencies:
     invert-kv "^2.0.0"
 
-ldfetch@^1.1.2:
+"ldfetch@https://github.com/pietercolpaert/ldfetch.git":
   version "1.1.2"
-  resolved "https://registry.yarnpkg.com/ldfetch/-/ldfetch-1.1.2.tgz#5e355740067bb1bba3f6518570e4fa9aff185ea3"
-  integrity sha512-LLU0GKrI6+LqBNYeL5TenALkECDh01xZ97Ir1rTtxovgXsX037wyVk02c1mmBDzWr6zBvxAo4RlMKYRi1ij8Bg==
+  resolved "https://github.com/pietercolpaert/ldfetch.git#41573789ec20a7f709f095685e83e064c86edcae"
   dependencies:
     "@rdfjs/data-model" "^1.1.1"
     commander "^2.19.0"
@@ -8002,10 +8001,15 @@ n3@^0.9.1:
   resolved "https://registry.yarnpkg.com/n3/-/n3-0.9.1.tgz#430b547d58dc7381408c45784dd8058171903932"
   integrity sha1-QwtUfVjcc4FAjEV4TdgFgXGQOTI=
 
-n3@^1.0.0, n3@^1.0.0-beta.1, n3@^1.0.4, n3@^1.0.5, n3@^1.0.x, n3@^1.1.1, n3@^1.3.5:
+n3@^1.0.0, n3@^1.0.4, n3@^1.1.1, n3@^1.3.5:
   version "1.3.5"
   resolved "https://registry.yarnpkg.com/n3/-/n3-1.3.5.tgz#ea00062b64fef71dc3a92befc00413a733ef1029"
   integrity sha512-McWb1tCWGGAmHeGEakqZj/UqxQR9cpEYZ/JivBj59YfiOAuaIWZxu0B+jnhbCwCZ2AsxdgQ5Dq8fehIJpYQaMQ==
+
+n3@^1.0.0-beta.1, n3@^1.0.5, n3@^1.0.x:
+  version "1.3.6"
+  resolved "https://registry.yarnpkg.com/n3/-/n3-1.3.6.tgz#02766d11dd4afe4b3546555a00a095027d6e0256"
+  integrity sha512-EPaniuSPI+f66F8MP3GPXI3CA4cgSaA688PGUEs1Q5qyeAf/yIhe/8WbDV5+Hnmn8/ewcP7qYY6vfVnjbL5jcg==
 
 nan@^2.12.1:
   version "2.14.0"
