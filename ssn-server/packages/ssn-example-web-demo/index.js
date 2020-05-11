@@ -11,7 +11,7 @@ import CreateSnippets from './src/snippets/index.js';
 const communicationManager = new CommunicationManager();
 
 Object.entries(domains).map(([city, { parkings, telraam = [] }]) => {
-  const domain = new Domain(`https://mp-server.dem.be/parkings/${city}`);
+  const domain = new Domain(`https://mp-server.dem.be/${city}`);
 
   Object.entries(parkings).map(([parkingKey, options]) => {
     const featureOfInterest = domain.addFeatureOfInterest(parkingKey, options);
