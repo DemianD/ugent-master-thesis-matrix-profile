@@ -65,7 +65,7 @@ const init = (id, featureOfInterest, observablePropertyName) => {
 };
 
 const store = async id => {
-  const domain = new Domain(`https://mp-server.dem.be/luftdaten/${id}`);
+  const domain = new Domain(`https://mp-server.dem.be/luftdaten`);
 
   const featureOfInterest = domain.addFeatureOfInterest(id);
 
