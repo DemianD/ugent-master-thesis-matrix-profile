@@ -61,3 +61,5 @@ export const exec = cmd => {
     });
   });
 };
+
+export const sleep = ms => new Promise(resolve => setTimeout(() => resolve(), ms));
