@@ -114,3 +114,12 @@ export const telraams = {
     ]
   }
 };
+
+export const luftdaten = {
+  8777: {
+    quads: subject => [quad(subject, RDFS('label'), literal('Geldenaaksevest'))]
+  },
+  12030: {
+    quads: subject => [quad(subject, RDFS('label'), literal('Léon Schreursvest'))]
+  }
+};

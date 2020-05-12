@@ -37,3 +37,7 @@ export const MP = name => {
 export const HYDRA = name => {
   return namedNode(`http://www.w3.org/ns/hydra/core#${name}`);
 };
+
+export const OBSERVABLE_PROPERTY = name => {
+  return namedNode(`https://mp-server.dem.be/observable-properties/${name}`);
+};

@@ -5,6 +5,7 @@ import { DATEX } from './src/vocs.js';
 import { parkingDomains, telraams } from './config.js';
 import CreateSnippets from './src/snippets/index.js';
 import ParkingGentSourceReader from './src/readers/ParkingGentSourceReader.js';
+import luftdaten from './src/luftdaten.js';
 
 // Create a configuration manager
 const communicationManager = new CommunicationManager();
@@ -105,6 +106,9 @@ Object.entries(telraams).map(([id, options]) => {
 });
 
 new CatalogInterface(communicationManager, telraamDomain);
+
+// Luftdaten
+luftdaten(communicationManager);
 
 // Start the server
 communicationManager.listen(8080, '127.0.0.1');
