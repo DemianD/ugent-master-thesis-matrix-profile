@@ -9,7 +9,7 @@ const download = async sensorId => {
   let i = 0;
   let currentDate = new Date(startDate.getTime());
 
-  const writeStream = fs.createWriteStream(`./data/${sensorId}-d.csv`, {
+  const writeStream = fs.createWriteStream(`./data/${sensorId}.csv`, {
     flags: 'wx'
   });
 
