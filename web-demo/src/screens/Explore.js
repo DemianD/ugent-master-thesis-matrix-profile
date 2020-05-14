@@ -1,7 +1,7 @@
 import React from 'react';
 import { H1, H3 } from '../components/Heading';
 import useComunica from '../hooks/useComunica';
-import { getParkingsQuery, getTelraamsQuery } from '../queries';
+import { getParkingsQuery, getTelraamsQuery, getFietstellingQuery } from '../queries';
 import ComunicaLink from '../components/ComunicaLink';
 import { Link } from '@reach/router';
 
@@ -21,6 +21,12 @@ const Explore = () => {
   const [telraams] = useComunica(
     'https://mp-server.dem.be/telraam/catalog',
     getTelraamsQuery,
+    true
+  );
+
+  const [fietstellings] = useComunica(
+    'https://mp-server.dem.be/fietstelling/catalog',
+    getFietstellingQuery,
     true
   );
 
@@ -85,6 +91,31 @@ const Explore = () => {
                 style={{ backgroundColor: '#ffecec' }}
               >
                 <span className="text-xs truncate">{telraam.get('?label').value}</span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="w-8/12 mb-6">
+        <H3>
+          Fietstelling AWV{' '}
+          <ComunicaLink
+            datasource={'https://mp-server.dem.be/fietstelling/catalog'}
+            query={getFietstellingQuery}
+          />
+        </H3>
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4">
+          {fietstellings.map((fietstelling) => (
+            <Link
+              key={fietstelling.get('?label').value}
+              to={`/analyse?query=${encodeURIComponent(fietstelling.get('?s').value)}`}
+            >
+              <div
+                className="flex flex-col cursor-pointer p-3"
+                style={{ backgroundColor: '#ffecec' }}
+              >
+                <span className="text-xs truncate">{fietstelling.get('?label').value}</span>
               </div>
             </Link>
           ))}
