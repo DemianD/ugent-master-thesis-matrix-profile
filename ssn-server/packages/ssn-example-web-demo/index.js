@@ -132,7 +132,7 @@ Object.entries(fietstelling).map(([id, options]) => {
   storageInterface.listen();
 
   new MatrixProfileInterface(communicationManager, storageInterface.getCollection(), {
-    resultsFolder: `./matrix-profiles/telraam/${id}`,
+    resultsFolder: `./matrix-profiles/fietstelling/${id}`,
     queueFolder: '../../../matrix-profile-service/queue',
     seriesWindow: 5 * 24 * 365,
     windowSizes: [4 * 24, 4 * 24 * 7, 4 * 24 * 30]

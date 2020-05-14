@@ -2,6 +2,7 @@ import N3 from 'n3';
 import fs from 'fs';
 import rimraf from 'rimraf';
 import { Domain, BPlusTreeStorage, CommunicationManager } from '@ssn/core';
+import MatrixProfileInterface from '@ssn/matrix-profile-interface';
 
 import { OBSERVABLE_PROPERTY } from '../vocs.js';
 import { sleep } from '../utils.js';
@@ -24,6 +25,7 @@ const init = (id, featureOfInterest, observablePropertyName) => {
 
   const dataPath = `../../ssn-example-web-demo/data/fietstelling/${id}`;
   const nodesPath = `../../ssn-example-web-demo/data/fietstelling/${id}-nodes`;
+  const matrixProfilePath = `../../ssn-example-web-demo/matrix-profiles/fietstelling/${id}`;
 
   rimraf.sync(dataPath);
   rimraf.sync(nodesPath);
@@ -50,6 +52,15 @@ const init = (id, featureOfInterest, observablePropertyName) => {
 
   storageInterface.tree.disk.on('write', node => {
     createSnippets.create(node);
+  });
+
+  const collection = storageInterface.getCollection();
+
+  new MatrixProfileInterface(communicationManager, collection, {
+    resultsFolder: matrixProfilePath,
+    queueFolder: '../../../../matrix-profile-service/queue',
+    seriesWindow: 5 * 24 * 365,
+    windowSizes: [4 * 24, 4 * 24 * 7, 4 * 24 * 30]
   });
 
   return observableProperty;
