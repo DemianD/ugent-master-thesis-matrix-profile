@@ -126,6 +126,15 @@ export const luftdaten = {
 
 export const fietstelling = {
   combined: {
-    quads: subject => [quad(subject, RDFS('label'), literal('Fietstellingen AWV'))]
+    quads: subject => [quad(subject, RDFS('label'), literal('Fietstellingen AWV - combined'))]
+  },
+  1: {
+    quads: subject => [quad(subject, RDFS('label'), literal('Fietstellingen AWV - Machelen'))]
+  },
+  13: {
+    quads: subject => [quad(subject, RDFS('label'), literal('Fietstellingen AWV - Gent'))]
+  },
+  18: {
+    quads: subject => [quad(subject, RDFS('label'), literal('Fietstellingen AWV - Oostende'))]
   }
 };
