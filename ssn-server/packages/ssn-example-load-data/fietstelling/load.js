@@ -94,10 +94,14 @@ const store = async id => {
 
       if (i % observationsPerPage === 0) {
         console.log('sleep', date);
-        await sleep(200);
+        await sleep(400);
       }
     }
   }
 };
 
 store('combined');
+
+for (let i = 1; i <= 25; i++) {
+  store(`${i}`);
+}
