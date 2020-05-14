@@ -1,8 +1,8 @@
 import MatrixProfileInterface from '@ssn/matrix-profile-interface';
 import { Domain, CatalogInterface, BPlusTreeStorage, CommunicationManager } from '@ssn/core';
 
-import { DATEX } from './src/vocs.js';
-import { parkingDomains, telraams } from './config.js';
+import { DATEX, OBSERVABLE_PROPERTY } from './src/vocs.js';
+import { parkingDomains, telraams, fietstelling } from './config.js';
 import CreateSnippets from './src/snippets/index.js';
 import ParkingGentSourceReader from './src/readers/ParkingGentSourceReader.js';
 import luftdaten from './src/luftdaten.js';
@@ -106,6 +106,40 @@ Object.entries(telraams).map(([id, options]) => {
 });
 
 new CatalogInterface(communicationManager, telraamDomain);
+
+// Fietstelling
+const fietstellingDomain = new Domain(`https://mp-server.dem.be/fietstelling`);
+
+Object.entries(fietstelling).map(([id, options]) => {
+  const featureOfInterest = fietstellingDomain.addFeatureOfInterest(id, options);
+
+  const observableProperty = featureOfInterest.addObservableProperty(
+    OBSERVABLE_PROPERTY('numberOfPassingBikes')
+  );
+
+  const dataPath = `./data/fietstelling/${id}`;
+  const nodesPath = `./data/fietstelling/${id}-nodes`;
+
+  // Add the tree storage interface
+  const storageInterface = new BPlusTreeStorage(observableProperty, communicationManager, {
+    dataPath,
+    observationsPerPage: 96,
+    degree: 8,
+    nodesPath
+  });
+
+  storageInterface.boot();
+  storageInterface.listen();
+
+  new MatrixProfileInterface(communicationManager, storageInterface.getCollection(), {
+    resultsFolder: `./matrix-profiles/telraam/${id}`,
+    queueFolder: '../../../matrix-profile-service/queue',
+    seriesWindow: 5 * 24 * 365,
+    windowSizes: [4 * 24, 4 * 24 * 7, 4 * 24 * 30]
+  });
+});
+
+new CatalogInterface(communicationManager, fietstellingDomain);
 
 // Luftdaten
 luftdaten(communicationManager);

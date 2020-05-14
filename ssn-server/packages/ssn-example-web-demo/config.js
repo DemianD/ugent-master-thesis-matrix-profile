@@ -123,3 +123,9 @@ export const luftdaten = {
     quads: subject => [quad(subject, RDFS('label'), literal('Léon Schreursvest'))]
   }
 };
+
+export const fietstelling = {
+  combined: {
+    quads: subject => [quad(subject, RDFS('label'), literal('Fietstellingen AWV'))]
+  }
+};
