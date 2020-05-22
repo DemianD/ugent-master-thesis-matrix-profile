@@ -1,7 +1,7 @@
 import N3 from 'n3';
 import fs from 'fs';
 import rimraf from 'rimraf';
-import { Domain, BPlusTreeStorage, CommunicationManager } from '@ssn/core';
+import { Domain, AppendOnlyBPlusTreeStorage, CommunicationManager } from '@ssn/core';
 import MatrixProfileInterface from '@ssn/matrix-profile-interface';
 
 import { OBSERVABLE_PROPERTY } from '../vocs.js';
@@ -28,13 +28,17 @@ const init = (id, featureOfInterest, observablePropertyName) => {
   rimraf.sync(nodesPath);
   rimraf.sync(matrixProfilePath);
 
-  const storageInterface = new BPlusTreeStorage(observableProperty, communicationManager, {
-    dataPath,
-    observationsPerPage: 288,
-    degree: 8,
-    nodesPath,
-    initialPageName: fromDateStore.toISOString()
-  });
+  const storageInterface = new AppendOnlyBPlusTreeStorage(
+    observableProperty,
+    communicationManager,
+    {
+      dataPath,
+      observationsPerPage: 288,
+      degree: 8,
+      nodesPath,
+      initialPageName: fromDateStore.toISOString()
+    }
+  );
 
   storageInterface.boot();
   storageInterface.listen();

@@ -6,7 +6,7 @@ export { default as SourceReader } from './src/readers/SourceReader.js';
 export { default as HydraCollection } from './src/collections/HydraCollection.js';
 export { default as TreeStorage } from './src/interfaces/TreeStorage.js';
 export { default as HydraStorage } from './src/interfaces/HydraStorage.js';
-export { default as BPlusTreeStorage } from './src/interfaces/BPlusTreeStorage.js';
+export { default as AppendOnlyBPlusTreeStorage } from './src/interfaces/AppendOnlyBPlusTreeStorage.js';
 export { default as CatalogInterface } from './src/interfaces/CatalogInterface.js';
 
 export * from './src/exceptions/index.js';

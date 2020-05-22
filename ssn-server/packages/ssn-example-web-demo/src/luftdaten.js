@@ -1,4 +1,4 @@
-import Domain, { BPlusTreeStorage, CatalogInterface } from '@ssn/core';
+import Domain, { AppendOnlyBPlusTreeStorage, CatalogInterface } from '@ssn/core';
 import MatrixProfileInterface from '@ssn/matrix-profile-interface';
 
 import { OBSERVABLE_PROPERTY } from './vocs.js';
@@ -16,12 +16,16 @@ const init = (id, communicationManager, featureOfInterest, observablePropertyNam
   const nodesPath = `./data/luftdaten/${id}-nodes/${observablePropertyName}`;
   const matrixProfilePath = `./matrix-profiles/luftdaten/${id}/${observablePropertyName}`;
 
-  const storageInterface = new BPlusTreeStorage(observableProperty, communicationManager, {
-    dataPath,
-    observationsPerPage: 288,
-    degree: 8,
-    nodesPath
-  });
+  const storageInterface = new AppendOnlyBPlusTreeStorage(
+    observableProperty,
+    communicationManager,
+    {
+      dataPath,
+      observationsPerPage: 288,
+      degree: 8,
+      nodesPath
+    }
+  );
 
   storageInterface.boot();
   storageInterface.listen();

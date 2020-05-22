@@ -1,7 +1,7 @@
 import N3 from 'n3';
 import fs from 'fs';
 import rimraf from 'rimraf';
-import { Domain, BPlusTreeStorage, CommunicationManager } from '@ssn/core';
+import { Domain, AppendOnlyBPlusTreeStorage, CommunicationManager } from '@ssn/core';
 import MatrixProfileInterface from '@ssn/matrix-profile-interface';
 
 const { literal } = N3.DataFactory;
@@ -81,13 +81,17 @@ const store = async (folder, city, parking) => {
   rimraf.sync(nodesPath);
   // rimraf.sync(`../../ssn-example-web-demo/matrix-profiles/${city}/${parking}`);
 
-  const storageInterface = new BPlusTreeStorage(observableProperty, communicationManager, {
-    dataPath,
-    observationsPerPage: 288,
-    degree: 8,
-    nodesPath,
-    initialPageName: fromDateStore.toISOString()
-  });
+  const storageInterface = new AppendOnlyBPlusTreeStorage(
+    observableProperty,
+    communicationManager,
+    {
+      dataPath,
+      observationsPerPage: 288,
+      degree: 8,
+      nodesPath,
+      initialPageName: fromDateStore.toISOString()
+    }
+  );
 
   storageInterface.boot();
   storageInterface.listen();

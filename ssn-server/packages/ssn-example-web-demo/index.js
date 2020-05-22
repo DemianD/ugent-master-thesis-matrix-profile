@@ -1,5 +1,10 @@
 import MatrixProfileInterface from '@ssn/matrix-profile-interface';
-import { Domain, CatalogInterface, BPlusTreeStorage, CommunicationManager } from '@ssn/core';
+import {
+  Domain,
+  CatalogInterface,
+  AppendOnlyBPlusTreeStorage,
+  CommunicationManager
+} from '@ssn/core';
 
 import { DATEX, OBSERVABLE_PROPERTY } from './src/vocs.js';
 import { parkingDomains, telraams, fietstelling } from './config.js';
@@ -25,12 +30,16 @@ Object.entries(parkingDomains).map(([city, parkings]) => {
     const nodesPath = `./data/${city}/${parkingKey}-nodes`;
 
     // Add the tree storage interface
-    const storageInterface = new BPlusTreeStorage(observableProperty, communicationManager, {
-      dataPath,
-      observationsPerPage: 288,
-      degree: 8,
-      nodesPath
-    });
+    const storageInterface = new AppendOnlyBPlusTreeStorage(
+      observableProperty,
+      communicationManager,
+      {
+        dataPath,
+        observationsPerPage: 288,
+        degree: 8,
+        nodesPath
+      }
+    );
 
     storageInterface.boot();
     storageInterface.listen();
@@ -87,12 +96,16 @@ Object.entries(telraams).map(([id, options]) => {
   const nodesPath = `./data/telraam/${id}-nodes`;
 
   // Add the tree storage interface
-  const storageInterface = new BPlusTreeStorage(observableProperty, communicationManager, {
-    dataPath,
-    observationsPerPage: 14 * 3,
-    degree: 8,
-    nodesPath
-  });
+  const storageInterface = new AppendOnlyBPlusTreeStorage(
+    observableProperty,
+    communicationManager,
+    {
+      dataPath,
+      observationsPerPage: 14 * 3,
+      degree: 8,
+      nodesPath
+    }
+  );
 
   storageInterface.boot();
   storageInterface.listen();
@@ -121,12 +134,16 @@ Object.entries(fietstelling).map(([id, options]) => {
   const nodesPath = `./data/fietstelling/${id}-nodes`;
 
   // Add the tree storage interface
-  const storageInterface = new BPlusTreeStorage(observableProperty, communicationManager, {
-    dataPath,
-    observationsPerPage: 96,
-    degree: 8,
-    nodesPath
-  });
+  const storageInterface = new AppendOnlyBPlusTreeStorage(
+    observableProperty,
+    communicationManager,
+    {
+      dataPath,
+      observationsPerPage: 96,
+      degree: 8,
+      nodesPath
+    }
+  );
 
   storageInterface.boot();
   storageInterface.listen();

@@ -9,7 +9,7 @@ import sanitizeFilename from '../communication/utils/sanitizeFilename.js';
 import stat from '../utils/stat.js';
 import TreeCollection from '../collections/TreeCollection.js';
 
-class BPlusTreeStorage extends HydraStorage {
+class AppendOnlyBPlusTreeStorage extends HydraStorage {
   constructor(observableProperty, communicationManager, options) {
     super(
       observableProperty,
@@ -83,4 +83,4 @@ class BPlusTreeStorage extends HydraStorage {
   }
 }
 
-export default BPlusTreeStorage;
+export default AppendOnlyBPlusTreeStorage;
