@@ -7,7 +7,7 @@ const defaultNodeNamer = () => {
   return () => `${new Date().getTime()}${i++}`;
 };
 
-class TimeSeriesTree {
+class AppendOnlyBPlusTree {
   constructor(disk, degree, nodeNamer = defaultNodeNamer()) {
     this.disk = disk;
     this.degree = degree;
@@ -104,4 +104,4 @@ class TimeSeriesTree {
   }
 }
 
-export default TimeSeriesTree;
+export default AppendOnlyBPlusTree;

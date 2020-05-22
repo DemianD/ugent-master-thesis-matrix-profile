@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { TimeSeriesTree, LDDisk } from 'timeseries-tree';
+import { AppendOnlyBPlusTree, LDDisk } from 'append-only-bplus-tree';
 
 import HydraStorage from './HydraStorage.js';
 import createDirectoryIfNotExists from '../utils/createDirectoryIfNotExistsSync.js';
@@ -40,7 +40,7 @@ class AppendOnlyBPlusTreeStorage extends HydraStorage {
       this.collection.getSubject().id
     );
 
-    this.tree = new TimeSeriesTree(disk, this.degree);
+    this.tree = new AppendOnlyBPlusTree(disk, this.degree);
 
     super.boot();
   }
