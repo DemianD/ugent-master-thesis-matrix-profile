@@ -35,7 +35,7 @@ Object.entries(parkingDomains).map(([city, parkings]) => {
       communicationManager,
       {
         dataPath,
-        observationsPerPage: 288,
+        observationsPerPage: 2880,
         degree: 8,
         nodesPath
       }
@@ -56,14 +56,12 @@ Object.entries(parkingDomains).map(([city, parkings]) => {
       // });
     }
 
-    if (city === 'leuven') {
-      new MatrixProfileInterface(communicationManager, storageInterface.getCollection(), {
-        resultsFolder: `./matrix-profiles/${city}/${parkingKey}`,
-        queueFolder: '../../../matrix-profile-service/queue',
-        seriesWindow: 5 * 12 * 24 * 365,
-        windowSizes: [1 * 12 * 24, 1 * 12 * 24 * 7, 1 * 12 * 24 * 30]
-      });
-    }
+    new MatrixProfileInterface(communicationManager, storageInterface.getCollection(), {
+      resultsFolder: `./matrix-profiles/${city}/${parkingKey}`,
+      queueFolder: '../../../matrix-profile-service/queue',
+      seriesWindow: 5 * 12 * 24 * 365,
+      windowSizes: [1 * 12 * 24, 1 * 12 * 24 * 7, 1 * 12 * 24 * 30]
+    });
   });
 
   if (city === 'gent') {
@@ -139,7 +137,7 @@ Object.entries(fietstelling).map(([id, options]) => {
     communicationManager,
     {
       dataPath,
-      observationsPerPage: 96,
+      observationsPerPage: 960,
       degree: 8,
       nodesPath
     }
