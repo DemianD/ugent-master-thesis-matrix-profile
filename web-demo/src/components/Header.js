@@ -40,7 +40,9 @@ const Header = () => {
       <nav className="hidden sm:block">
         <NavLink to="/">Home</NavLink>
         <NavLink to="/explore">Explore</NavLink>
-        <NavLink href="https://github.com/DemianD/masterproef">GitHub</NavLink>
+        <NavLink href="https://github.com/DemianD/ugent-master-thesis-matrix-profile">
+          GitHub
+        </NavLink>
       </nav>
       <div className="w-10"></div>
     </header>
