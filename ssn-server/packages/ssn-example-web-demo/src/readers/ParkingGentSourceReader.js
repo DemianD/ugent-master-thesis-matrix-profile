@@ -43,9 +43,7 @@ class ParkingGentSourceReader extends SourceReader {
 
       const literalResult = store.getObjects(subject, SOSA('hasSimpleResult'))[0];
 
-      const date = Date.UTC(2020, 4, 1, 16, 1, 0, 0);
-
-      observableProperty.addObservation(new Date(date + 1000 * 60 * 1 * this.i++), literalResult);
+      observableProperty.addObservation(new Date(), literalResult);
     });
   }
 }
