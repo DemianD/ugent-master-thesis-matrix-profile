@@ -20,6 +20,17 @@ WHERE {
     ?s rdfs:label ?label.
 }`;
 
+export const getLuftdatenQuery = `
+PREFIX sosa: <http://www.w3.org/ns/sosa/>
+PREFIX datex: <http://vocab.datex.org/terms#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?s ?label
+WHERE {
+    ?s rdfs:label ?label.
+}`;
+
 export const getFietstellingQuery = `
 PREFIX sosa: <http://www.w3.org/ns/sosa/>
 PREFIX datex: <http://vocab.datex.org/terms#>
