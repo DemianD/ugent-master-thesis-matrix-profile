@@ -1,0 +1,19 @@
+<https://mp-server.dem.be/parkings/leuven/Philipssite> a <http://www.w3.org/ns/sosa/FeatureOfInterest>, <http://vocab.datex.org/terms#UrbanParkingSite>;
+    <http://www.w3.org/2000/01/rdf-schema#label> "Philipssite";
+    <http://vocab.datex.org/terms#parkingName> "Philipssite";
+    <http://vocab.datex.org/terms#parkingNumberOfSpaces> "1125"^^<http://www.w3.org/2001/XMLSchema#integer>.
+<https://mp-server.dem.be/parkings/leuven/Philipssite/numberOfVacantParkingSpacesSeries> a <https://w3id.org/tree#collection>;
+    <http://www.example.com/matrix-profile#matrixProfile> <https://mp-server.dem.be/parkings/leuven/Philipssite/numberOfVacantParkingSpacesSeries/matrix-profiles/288>, <https://mp-server.dem.be/parkings/leuven/Philipssite/numberOfVacantParkingSpacesSeries/matrix-profiles/2016>, <https://mp-server.dem.be/parkings/leuven/Philipssite/numberOfVacantParkingSpacesSeries/matrix-profiles/8640>.
+<https://mp-server.dem.be/parkings/leuven/Ladeuze> a <http://www.w3.org/ns/sosa/FeatureOfInterest>, <http://vocab.datex.org/terms#UrbanParkingSite>;
+    <http://www.w3.org/2000/01/rdf-schema#label> "Ladeuze";
+    <http://vocab.datex.org/terms#parkingName> "Ladeuze";
+    <http://vocab.datex.org/terms#parkingNumberOfSpaces> "734"^^<http://www.w3.org/2001/XMLSchema#integer>.
+<https://mp-server.dem.be/parkings/leuven/Ladeuze/numberOfVacantParkingSpacesSeries> a <https://w3id.org/tree#collection>;
+    <http://www.example.com/matrix-profile#matrixProfile> <https://mp-server.dem.be/parkings/leuven/Ladeuze/numberOfVacantParkingSpacesSeries/matrix-profiles/288>, <https://mp-server.dem.be/parkings/leuven/Ladeuze/numberOfVacantParkingSpacesSeries/matrix-profiles/2016>, <https://mp-server.dem.be/parkings/leuven/Ladeuze/numberOfVacantParkingSpacesSeries/matrix-profiles/8640>.
+<https://mp-server.dem.be/parkings/leuven/Heilig-Hart> a <http://www.w3.org/ns/sosa/FeatureOfInterest>, <http://vocab.datex.org/terms#UrbanParkingSite>;
+    <http://www.w3.org/2000/01/rdf-schema#label> "Heilig-Hart";
+    <http://vocab.datex.org/terms#parkingName> "Heilig-Hart";
+    <http://vocab.datex.org/terms#parkingNumberOfSpaces> "285"^^<http://www.w3.org/2001/XMLSchema#integer>.
+<https://mp-server.dem.be/parkings/leuven/Heilig-Hart/numberOfVacantParkingSpacesSeries> a <https://w3id.org/tree#collection>;
+    <http://www.example.com/matrix-profile#matrixProfile> <https://mp-server.dem.be/parkings/leuven/Heilig-Hart/numberOfVacantParkingSpacesSeries/matrix-profiles/288>, <https://mp-server.dem.be/parkings/leuven/Heilig-Hart/numberOfVacantParkingSpacesSeries/matrix-profiles/2016>, <https://mp-server.dem.be/parkings/leuven/Heilig-Hart/numberOfVacantParkingSpacesSeries/matrix-profiles/8640>.
+
