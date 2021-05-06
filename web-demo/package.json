@@ -5,7 +5,7 @@
   "dependencies": {
     "@comunica/actor-init-sparql": "^1.12.0",
     "@reach/router": "^1.3.3",
-    "highcharts": "^8.0.1",
+    "highcharts": "^9.0.0",
     "highcharts-react-official": "^3.0.0",
     "lazy-collections": "^0.7.1",
     "ldfetch": "https://github.com/pietercolpaert/ldfetch.git",
