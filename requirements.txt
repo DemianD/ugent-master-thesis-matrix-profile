@@ -3,7 +3,7 @@ cycler==0.10.0
 Cython==0.29.17
 hdbscan==0.8.26
 isodate==0.6.0
-joblib==0.14.1
+joblib==1.2.0
 kiwisolver==1.2.0
 matplotlib==3.2.1
 matrixprofile==1.1.1
